@@ -1,0 +1,1 @@
+C:\Tools\game\zombie_pacman\target\release\zombie_pacman.exe: C:\Tools\game\zombie_pacman\src\entities.rs C:\Tools\game\zombie_pacman\src\game.rs C:\Tools\game\zombie_pacman\src\main.rs C:\Tools\game\zombie_pacman\src\maze.rs

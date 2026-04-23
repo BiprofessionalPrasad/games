@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ping Pong</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="game-container">
+        <div id="setup-screen">
+            <h1 id="current-date">Ping Pong</h1>
+            <div class="mode-select">
+                <button class="mode-btn active" id="mode-2p">2 Players</button>
+                <button class="mode-btn" id="mode-cpu">vs Computer</button>
+            </div>
+            <div class="instructions" id="instructions">
+                <p>Left: <strong>W</strong> (Up) | <strong>S</strong> (Down)</p>
+                <p>Right: <strong>↑</strong> (Up) | <strong>↓</strong> (Down)</p>
+            </div>
+            <div class="input-group">
+                <input type="text" id="left-name" placeholder="Left Player" maxlength="12">
+                <input type="text" id="right-name" placeholder="Right Player" maxlength="12">
+            </div>
+
+            <div class="settings-container">
+                <div class="settings-column">
+                    <h3>Left Player</h3>
+                    <div class="setting-row">
+                        <label for="left-paddle-height">Paddle Size:</label>
+                        <input type="range" id="left-paddle-height" min="60" max="150" value="100">
+                        <span id="left-paddle-height-value">100</span>
+                    </div>
+                    <div class="setting-row">
+                        <label for="left-paddle-speed">Speed:</label>
+                        <input type="range" id="left-paddle-speed" min="5" max="20" value="10">
+                        <span id="left-paddle-speed-value">10</span>
+                    </div>
+                </div>
+
+                <div class="settings-column">
+                    <h3>Right Player</h3>
+                    <div class="setting-row">
+                        <label for="right-paddle-height">Paddle Size:</label>
+                        <input type="range" id="right-paddle-height" min="60" max="150" value="100">
+                        <span id="right-paddle-height-value">100</span>
+                    </div>
+                    <div class="setting-row">
+                        <label for="right-paddle-speed">Speed:</label>
+                        <input type="range" id="right-paddle-speed" min="5" max="20" value="10">
+                        <span id="right-paddle-speed-value">10</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="global-settings">
+                <div class="setting-row">
+                    <label for="ball-size">Ball Size:</label>
+                    <input type="range" id="ball-size" min="5" max="25" value="10">
+                    <span id="ball-size-value">10</span>
+                </div>
+            </div>
+
+            <button id="start-btn">Start Game</button>
+        </div>
+
+        <div id="victory-screen" style="display: none;">
+            <div class="trophy">🏆</div>
+            <h2 id="winner-text">Player Wins!</h2>
+            <button id="restart-btn">Play Again</button>
+        </div>
+
+        <canvas id="pongCanvas"></canvas>
+        <div id="score">0 - 0</div>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>

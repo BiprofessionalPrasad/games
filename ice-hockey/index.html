@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ice Hockey Game</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="gameContainer">
+        <div id="menuScreen" class="screen">
+            <h1>🏒 Ice Hockey</h1>
+            <div class="menu-section">
+                <h2>Game Mode</h2>
+                <div class="button-group">
+                    <button id="btn1Player" class="mode-btn active">1 Player vs Computer</button>
+                    <button id="btn2Player" class="mode-btn">2 Players</button>
+                </div>
+            </div>
+            <div class="menu-section" id="difficultySection">
+                <h2>Difficulty</h2>
+                <div class="button-group">
+                    <button id="btnEasy" class="diff-btn">Easy</button>
+                    <button id="btnMedium" class="diff-btn active">Medium</button>
+                    <button id="btnHard" class="diff-btn">Hard</button>
+                </div>
+            </div>
+            <div class="menu-section">
+                <h2>Puck Color</h2>
+                <div class="color-picker">
+                    <button class="color-btn active" data-color="#000000" style="background: #000000;"></button>
+                    <button class="color-btn" data-color="#ff0000" style="background: #ff0000;"></button>
+                    <button class="color-btn" data-color="#00ff00" style="background: #00ff00;"></button>
+                    <button class="color-btn" data-color="#0000ff" style="background: #0000ff;"></button>
+                    <button class="color-btn" data-color="#ffff00" style="background: #ffff00;"></button>
+                    <button class="color-btn" data-color="#ff00ff" style="background: #ff00ff;"></button>
+                    <button class="color-btn" data-color="#00ffff" style="background: #00ffff;"></button>
+                    <button class="color-btn" data-color="#ff8800" style="background: #ff8800;"></button>
+                </div>
+            </div>
+            <div class="menu-section">
+                <h2>Controls</h2>
+                <div class="controls-info">
+                    <div class="control-group">
+                        <span class="player-label">Player 1 (Blue):</span>
+                        <span class="keys">WASD</span>
+                    </div>
+                    <div class="control-group">
+                        <span class="player-label">Player 2 (Red):</span>
+                        <span class="keys">Arrow Keys</span>
+                    </div>
+                </div>
+            </div>
+            <button id="startBtn" class="start-btn">Start Game</button>
+        </div>
+
+        <div id="gameScreen" class="screen hidden">
+            <div id="scoreBoard">
+                <div class="score">
+                    <span class="player-name">Blue</span>
+                    <span id="score1" class="score-value">0</span>
+                </div>
+                <div class="timer">⏱️ <span id="gameTimer">03:00</span></div>
+                <div class="score">
+                    <span id="score2" class="score-value">0</span>
+                    <span class="player-name">Red</span>
+                </div>
+            </div>
+            <canvas id="gameCanvas"></canvas>
+            <div id="gameControls">
+                <button id="pauseBtn">⏸️ Pause</button>
+                <button id="menuBtn">📋 Menu</button>
+            </div>
+        </div>
+
+        <div id="pauseScreen" class="screen overlay hidden">
+            <h2>⏸️ Paused</h2>
+            <button id="resumeBtn" class="start-btn">Resume</button>
+            <button id="pauseMenuBtn" class="start-btn secondary">Back to Menu</button>
+        </div>
+
+        <div id="gameOverScreen" class="screen overlay hidden">
+            <h2 id="winnerText">Game Over!</h2>
+            <div id="finalScore"></div>
+            <button id="playAgainBtn" class="start-btn">Play Again</button>
+            <button id="gameOverMenuBtn" class="start-btn secondary">Back to Menu</button>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>

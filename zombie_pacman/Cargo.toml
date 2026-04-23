@@ -1,0 +1,12 @@
+[package]
+name = "zombie_pacman"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4.14"
+rand = "0.8"
+
+[[bin]]
+name = "zombie_pacman"
+path = "src/main.rs"
