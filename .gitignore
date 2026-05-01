@@ -1,0 +1,9 @@
+.claude/
+
+# WASM build artifacts
+**/pkg/
+**/*.wasm
+**/*.d.ts
+
+# Build outputs
+/target/

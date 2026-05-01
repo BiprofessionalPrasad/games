@@ -1,0 +1,11 @@
+C:\Tools\game\borrow_dino\target\wasm32-unknown-unknown\release\deps\crc32fast-cc0b9c83a8956e6d.d: C:\Users\prasa\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\crc32fast-1.5.0\src\lib.rs C:\Users\prasa\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\crc32fast-1.5.0\src\baseline.rs C:\Users\prasa\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\crc32fast-1.5.0\src\combine.rs C:\Users\prasa\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\crc32fast-1.5.0\src\specialized\mod.rs C:\Users\prasa\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\crc32fast-1.5.0\src\table.rs
+
+C:\Tools\game\borrow_dino\target\wasm32-unknown-unknown\release\deps\libcrc32fast-cc0b9c83a8956e6d.rlib: C:\Users\prasa\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\crc32fast-1.5.0\src\lib.rs C:\Users\prasa\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\crc32fast-1.5.0\src\baseline.rs C:\Users\prasa\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\crc32fast-1.5.0\src\combine.rs C:\Users\prasa\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\crc32fast-1.5.0\src\specialized\mod.rs C:\Users\prasa\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\crc32fast-1.5.0\src\table.rs
+
+C:\Tools\game\borrow_dino\target\wasm32-unknown-unknown\release\deps\libcrc32fast-cc0b9c83a8956e6d.rmeta: C:\Users\prasa\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\crc32fast-1.5.0\src\lib.rs C:\Users\prasa\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\crc32fast-1.5.0\src\baseline.rs C:\Users\prasa\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\crc32fast-1.5.0\src\combine.rs C:\Users\prasa\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\crc32fast-1.5.0\src\specialized\mod.rs C:\Users\prasa\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\crc32fast-1.5.0\src\table.rs
+
+C:\Users\prasa\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\crc32fast-1.5.0\src\lib.rs:
+C:\Users\prasa\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\crc32fast-1.5.0\src\baseline.rs:
+C:\Users\prasa\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\crc32fast-1.5.0\src\combine.rs:
+C:\Users\prasa\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\crc32fast-1.5.0\src\specialized\mod.rs:
+C:\Users\prasa\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\crc32fast-1.5.0\src\table.rs:
