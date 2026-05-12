@@ -1,4 +1,4 @@
-import { Ball, TABLE_WIDTH, TABLE_HEIGHT, FRICTION, WALL_BOUNCE, COLLISION_ELASTICITY, POCKETS, POCKET_RADIUS } from '../types/game';
+import { type Ball, TABLE_WIDTH, TABLE_HEIGHT, FRICTION, WALL_BOUNCE, COLLISION_ELASTICITY, POCKETS, POCKET_RADIUS } from '../types/game';
 import { add, subtract, multiply, dot, distance, normalize } from '../utils/math';
 
 export const checkBallPocketed = (ball: Ball): boolean => {

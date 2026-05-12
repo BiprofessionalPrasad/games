@@ -1,4 +1,4 @@
-import { Vector2D } from '../types/game';
+import { type Vector2D } from '../types/game';
 
 export const add = (v1: Vector2D, v2: Vector2D): Vector2D => ({
   x: v1.x + v2.x,

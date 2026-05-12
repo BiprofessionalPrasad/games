@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Ball, TABLE_WIDTH, TABLE_HEIGHT, BALL_RADIUS, Vector2D, POCKETS, POCKET_RADIUS } from '../types/game';
+import { type Ball, TABLE_WIDTH, TABLE_HEIGHT, BALL_RADIUS, type Vector2D, POCKETS, POCKET_RADIUS } from '../types/game';
 import { updateBallPosition, resolveBallCollision, checkBallPocketed } from '../engine/physics';
 
 const INITIAL_BALLS: Ball[] = [
