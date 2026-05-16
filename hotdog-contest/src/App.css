@@ -1,0 +1,131 @@
+#root {
+  width: 100%;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+.game-app {
+  width: 100%;
+  height: 100vh;
+  position: relative;
+  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40' style='font-size:30px'><text y='30'>🌭</text></svg>"), auto;
+  user-select: none;
+}
+
+.ui-layer {
+  position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 50px;
+}
+
+.game-title {
+  color: #fff;
+  font-family: 'Comic Sans MS', cursive;
+  font-size: 3rem;
+  text-shadow: 4px 4px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000;
+  margin: 0;
+}
+
+.contestants-area {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  padding-bottom: 5vh;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+}
+
+.modal {
+  background: #fff;
+  border: 10px solid #ffec3d;
+  padding: 40px;
+  border-radius: 30px;
+  text-align: center;
+  font-family: 'Comic Sans MS', cursive;
+  box-shadow: 10px 10px 0 #ff4500;
+  max-width: 500px;
+}
+
+.modal h2 {
+  font-size: 2.5rem;
+  margin-top: 0;
+  color: #ff4500;
+}
+
+.start-btn {
+  background: #ff4500;
+  color: #fff;
+  border: none;
+  padding: 15px 40px;
+  font-size: 1.5rem;
+  font-family: inherit;
+  font-weight: bold;
+  border-radius: 50px;
+  cursor: pointer;
+  margin-top: 20px;
+  box-shadow: 0 6px 0 #8b0000;
+  transition: transform 0.1s;
+}
+
+.start-btn:active {
+  transform: translateY(4px);
+  box-shadow: 0 2px 0 #8b0000;
+}
+
+.leaderboard {
+  margin: 20px 0;
+  text-align: left;
+  background: #f0f0f0;
+  padding: 15px;
+  border-radius: 10px;
+}
+
+.leaderboard-entry {
+  display: flex;
+  justify-content: space-between;
+  padding: 5px 0;
+  border-bottom: 1px dashed #ccc;
+}
+
+.winner-announcement {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #ffd700;
+  text-shadow: 2px 2px 0 #000;
+  margin-bottom: 20px;
+}
+
+.controls-hint {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.8);
+  padding: 5px 20px;
+  border-radius: 20px;
+  font-weight: bold;
+  pointer-events: none;
+}
