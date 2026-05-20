@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tower Defense Game</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: #2c3e50;
+            font-family: Arial, sans-serif;
+            color: white;
+        }
+
+        #gameContainer {
+            position: relative;
+            margin: 20px 0;
+        }
+
+        #gameCanvas {
+            border: 2px solid #3498db;
+            background-color: #34495e;
+        }
+
+        #ui {
+            display: flex;
+            justify-content: space-between;
+            width: 800px;
+            margin-bottom: 10px;
+        }
+
+        #stats {
+            display: flex;
+            gap: 20px;
+        }
+
+        .stat {
+            background-color: #3498db;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        #controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background-color: #27ae60;
+        }
+
+        button:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+        }
+
+        #towerSelection {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .tower-option {
+            width: 60px;
+            height: 60px;
+            border: 2px solid #3498db;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-weight: bold;
+            background-color: #34495e;
+        }
+
+        .tower-option.selected {
+            border-color: #e74c3c;
+            background-color: #2c3e50;
+        }
+
+        #instructions {
+            max-width: 800px;
+            background-color: #34495e;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Tower Defense Game</h1>
+
+    <div id="ui">
+        <div id="stats">
+            <div class="stat">Lives: <span id="lives">10</span></div>
+            <div class="stat">Money: $<span id="money">100</span></div>
+            <div class="stat">Wave: <span id="wave">1</span></div>
+            <div class="stat">Score: <span id="score">0</span></div>
+        </div>
+        <div id="controls">
+            <button id="startWaveBtn">Start Wave</button>
+            <button id="pauseBtn">Pause</button>
+        </div>
+    </div>
+
+    <div id="gameContainer">
+        <canvas id="gameCanvas" width="800" height="600"></canvas>
+    </div>
+
+    <div id="towerSelection">
+        <div class="tower-option selected" data-type="basic">Basic<br>$10</div>
+        <div class="tower-option" data-type="rapid">Rapid<br>$20</div>
+        <div class="tower-option" data-type="strong">Strong<br>$30</div>
+    </div>
+
+    <div id="instructions">
+        <h3>How to Play:</h3>
+        <p>1. Select a tower type from the options below</p>
+        <p>2. Click on the path (blue squares) to place towers</p>
+        <p>3. Press "Start Wave" to begin sending enemies</p>
+        <p>4. Towers will automatically shoot at enemies in range</p>
+        <p>5. Prevent enemies from reaching the end of the path!</p>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>
