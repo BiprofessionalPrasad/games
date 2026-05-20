@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Tower Defense Prototype</title>
+  <style>
+    body { margin:0; background:#222; color:#ddd; font-family:Arial, sans-serif }
+    #gameCanvas { display:block; margin:16px auto; background:#111; border:2px solid #444 }
+    .info { text-align:center; margin-top:6px }
+    #uiPanel { width:800px; margin:8px auto; color:#ddd; display:flex; justify-content:space-between; align-items:center }_
+    #uiPanel .panel { background:#1b1b1b; padding:8px 12px; border:1px solid #333; border-radius:6px }
+    #uiPanel button { background:#2a8; border:none; padding:6px 10px; color:#032; font-weight:bold; cursor:pointer; border-radius:4px }
+  </style>
+</head>
+<body>
+  <canvas id="gameCanvas" width="800" height="600"></canvas>
+  <div id="uiPanel">
+    <div class="panel">Click empty space to place a tower (cost: 50). Click an existing tower to select it.</div>
+    <div class="panel" id="towerInfo">No tower selected</div>
+    <div class="panel">
+      <button id="btnUpgrade">Upgrade (cost: 75)</button>
+      <button id="btnSell">Sell</button>
+      <button id="btnDeselect">Deselect</button>
+    </div>
+  </div>
+  <div class="info">Minimal prototype: one tower type, one enemy path.</div>
+  <script src="game_final.js"></script>
+</body>
+</html>
