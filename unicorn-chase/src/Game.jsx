@@ -1,4 +1,11 @@
 import React, { useEffect, useRef } from 'react';
+import ThreeScene from './ThreeScene.jsx';
+import PlayerMesh from './meshes/PlayerMesh.jsx';
+import UnicornMesh from './meshes/UnicornMesh.jsx';
+import ObstacleMesh from './meshes/ObstacleMesh.jsx';
+import CollectibleMesh from './meshes/CollectibleMesh.jsx';
+import PowerUpMesh from './meshes/PowerUpMesh.jsx';
+
 
 const GameState = {
     MENU: 'MENU',
@@ -336,6 +343,8 @@ class Unicorn {
 
 const Game = () => {
     const canvasRef = useRef(null);
+    const threeContainerRef = useRef(null);
+    const threeSceneRef = useRef(null);
     const gameRef = useRef({
         state: GameState.MENU,
         score: 0,
@@ -362,6 +371,13 @@ const Game = () => {
         const ctx = canvas.getContext('2d');
         canvas.width = 800;
         canvas.height = 600;
+        // Initialize three.js scene for 2.5‑D rendering
+        threeSceneRef.current = new ThreeScene({ width: canvas.width, height: canvas.height });
+        // Append the WebGL canvas to the dedicated container
+        if (threeContainerRef.current) {
+            threeContainerRef.current.appendChild(threeSceneRef.current.renderer.domElement);
+        }
+
 
         const handleKeyDown = (e) => {
             gameRef.current.keys[e.code] = true;
@@ -421,6 +437,16 @@ const Game = () => {
         window.addEventListener('keydown', handleKeyDown);
         window.addEventListener('keyup', handleKeyUp);
         window.addEventListener('keydown', handleSettingsKeys);
+        // Resize three.js renderer when the window size changes
+        const handleResize = () => {
+            if (threeSceneRef.current && canvasRef.current) {
+                const width = canvasRef.current.width;
+                const height = canvasRef.current.height;
+                threeSceneRef.current.resize(width, height);
+            }
+        };
+        window.addEventListener('resize', handleResize);
+
 
         function resetGame() {
             const g = gameRef.current;
@@ -430,9 +456,16 @@ const Game = () => {
             g.player = new Player(canvas.height);
             g.unicorn = new Unicorn(canvas.height);
             g.unicorn.speed = g.unicornSpeed;
+            // Create 3D mesh representations for player and unicorn
+            g.playerMesh = new PlayerMesh(canvas.width, canvas.height);
+            threeSceneRef.current.add(g.playerMesh.mesh);
+            g.unicornMesh = new UnicornMesh(canvas.width, canvas.height);
+            threeSceneRef.current.add(g.unicornMesh.mesh);
             g.world = new World(canvas.width, canvas.height);
             g.world.gameData = g; // Allow world to update game data
             g.world.unicorn = g.unicorn;
+            // Store reference to three‑scene for later use
+            g.threeScene = threeSceneRef.current;
         }
 
         function gameLoop(time) {
@@ -453,7 +486,13 @@ const Game = () => {
                     g.distance += 1/60;
                     g.score += 5 / 60;
                     g.player.update(g.keys, g.controls);
+                    g.playerMesh.x = g.player.x;
+                    g.playerMesh.y = g.player.y;
+                    g.playerMesh.updateMeshPosition();
                     g.unicorn.update(g.player, setGameState);
+                    g.unicornMesh.x = g.unicorn.x;
+                    g.unicornMesh.y = g.unicorn.y;
+                    g.unicornMesh.updateMeshPosition();
                     g.world.update(g.player, g.state, setGameState);
                     
                     if (g.tokens >= g.tokenGoal) {
@@ -513,17 +552,20 @@ const Game = () => {
         function drawGameplay() {
             ctx.fillStyle = 'green';
             ctx.fillRect(0, canvas.height - 100, canvas.width, 100);
-            
-            gameRef.current.world.draw(ctx);
-            gameRef.current.player.draw(ctx);
-            gameRef.current.unicorn.draw(ctx);
-            
+
+                        gameRef.current.world.draw(ctx);
+
             ctx.fillStyle = 'black';
             ctx.font = '20px Comic Sans MS';
             ctx.textAlign = 'left';
             ctx.fillText(`Score: ${Math.floor(gameRef.current.score)}`, 20, 30);
             ctx.fillText(`Tokens: ${Math.floor(gameRef.current.tokens)} / ${gameRef.current.tokenGoal}`, 20, 60);
             ctx.fillText(`Distance: ${Math.floor(gameRef.current.distance)}m`, 20, 90);
+
+            // Render the three.js scene (currently empty or contains future 3‑D entities)
+            if (threeSceneRef.current) {
+                threeSceneRef.current.render();
+            }
         }
 
         function drawGameOver() {
@@ -574,19 +616,36 @@ const Game = () => {
             window.removeEventListener('keydown', handleKeyDown);
             window.removeEventListener('keyup', handleKeyUp);
             window.removeEventListener('keydown', handleSettingsKeys);
+            window.removeEventListener('resize', handleResize);
+
         };
     }, []);
 
     return (
-        <canvas 
-            ref={canvasRef} 
-            style={{ 
-                backgroundColor: '#87CEEB', 
-                boxShadow: '0 0 20px rgba(0,0,0,0.2)', 
-                border: '4px solid #fff', 
-                borderRadius: '10px' 
-            }}
-        />
+        <div style={{ position: 'relative', width: 800, height: 600, display: 'inline-block' }}>
+            <canvas
+                ref={canvasRef}
+                style={{
+                    backgroundColor: '#87CEEB',
+                    boxShadow: '0 0 20px rgba(0,0,0,0.2)',
+                    border: '4px solid #fff',
+                    borderRadius: '10px',
+                    position: 'relative',
+                    zIndex: 2,
+                }}
+            />
+            <div
+                ref={threeContainerRef}
+                style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: 800,
+                    height: 600,
+                    zIndex: 1,
+                }}
+            />
+        </div>
     );
 };
 
