@@ -1,7 +1,12 @@
-# Ignore everything except what we need
+# Ignore everything except what we need for the image
 *
 
-# Allow
-!index.html
+# Explicitly allow
 !Dockerfile
+!requirements.txt
+!main.py
+!static/
+!static/**
 !README.md
+!.env
+!.env.example
