@@ -1,0 +1,7 @@
+services:
+  daily-positive:
+    build: .
+    container_name: daily-positive
+    ports:
+      - "8080:80"
+    restart: unless-stopped

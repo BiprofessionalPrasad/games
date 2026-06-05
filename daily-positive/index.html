@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daily Positive • Boost</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Playfair+Display:wght@700&amp;display=swap');
+    
+    :root {
+      --accent: #10b981;
+    }
+    
+    body {
+      font-family: 'Inter', system_ui, sans-serif;
+    }
+    
+    .heading-font {
+      font-family: 'Playfair Display', Georgia, serif;
+    }
+
+    .positive-gradient {
+      background: linear-gradient(135deg, #ecfdf5 0%, #f0fdfa 50%, #fefce8 100%);
+    }
+
+    .quote-card {
+      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.05), 0 8px 10px -6px rgb(0 0 0 / 0.05);
+    }
+
+    .quote-card.show {
+      animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes popIn {
+      0% {
+        opacity: 0;
+        transform: scale(0.8) translateY(20px);
+      }
+      50% {
+        transform: scale(1.03) translateY(-4px);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+    }
+
+    .boost-btn {
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .boost-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 20px 25px -5px rgb(16 185 129 / 0.15), 0 8px 10px -6px rgb(16 185 129 / 0.15);
+    }
+    
+    .boost-btn:active {
+      transform: translateY(-1px) scale(0.985);
+    }
+
+    .boost-btn::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -100%;
+      width: 50%;
+      height: 200%;
+      background: linear-gradient(
+        120deg,
+        transparent,
+        rgba(255,255,255,0.35),
+        transparent
+      );
+      transition: 0.6s;
+    }
+    
+    .boost-btn:hover::after {
+      left: 250%;
+    }
+
+    .quote-text {
+      font-size: 1.15rem;
+      line-height: 1.6;
+      font-weight: 500;
+      color: #134e4b;
+    }
+
+    .section-shadow {
+      box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.05),
+                  0 4px 6px -4px rgb(0 0 0 / 0.05);
+    }
+
+    .soft-glow {
+      box-shadow: 0 0 0 1px #a7f3d0;
+    }
+  </style>
+</head>
+<body class="positive-gradient min-h-screen flex items-center justify-center p-4 sm:p-6">
+  <div class="w-full max-w-lg mx-auto">
+    <!-- Header -->
+    <div class="text-center mb-8">
+      <div class="inline-flex items-center justify-center w-16 h-16 bg-white rounded-2xl shadow-sm mb-4 soft-glow">
+        <span class="text-4xl">🌱</span>
+      </div>
+      <h1 class="text-4xl sm:text-5xl font-semibold tracking-tighter text-emerald-950 heading-font">Daily Positive</h1>
+      <p class="mt-2 text-emerald-700/80 text-lg">A little boost, whenever you need it.</p>
+    </div>
+
+    <!-- Main Card -->
+    <div class="bg-white rounded-3xl shadow-xl p-8 sm:p-10 section-shadow">
+      
+      <!-- Button -->
+      <div class="text-center">
+        <button 
+          id="give-btn"
+          class="boost-btn w-full sm:w-auto inline-flex items-center justify-center gap-x-3 px-12 py-4 text-xl font-semibold bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 text-white rounded-2xl shadow-lg shadow-emerald-500/30 focus:outline-none focus:ring-4 focus:ring-emerald-200">
+          <i class="fa-solid fa-hand-holding-heart text-2xl"></i>
+          <span>Give me</span>
+        </button>
+        <p class="text-xs text-emerald-700/60 mt-3 tracking-wide">click for a random positive quote, message or boost</p>
+      </div>
+
+      <!-- Quote Display -->
+      <div id="quote-container" class="hidden mt-9">
+        <div class="quote-card bg-emerald-50/70 border border-emerald-100 rounded-3xl p-7 sm:p-8">
+          <div class="flex items-start gap-4">
+            <!-- Emoji -->
+            <div id="quote-emoji" 
+                 class="flex-shrink-0 w-12 h-12 flex items-center justify-center text-4xl select-none">
+            </div>
+            
+            <div class="flex-1 min-w-0 pt-1">
+              <div class="flex items-center gap-2 mb-2">
+                <span class="uppercase tracking-[1.5px] text-[10px] font-semibold text-emerald-600/70">Your boost</span>
+              </div>
+              
+              <blockquote id="quote-text" 
+                          class="quote-text leading-relaxed">
+              </blockquote>
+              
+              <div id="quote-source" 
+                   class="hidden mt-3 text-xs text-emerald-700/70 font-medium">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex items-center justify-between mt-4 px-1">
+          <button 
+            id="copy-btn"
+            class="inline-flex items-center gap-x-2 text-sm font-medium px-4 py-2 rounded-xl text-emerald-700 hover:bg-emerald-100/70 active:bg-emerald-200/70 transition-colors">
+            <i class="fa-solid fa-copy"></i>
+            <span id="copy-text">Copy</span>
+          </button>
+
+          <button 
+            id="another-btn"
+            class="inline-flex items-center gap-x-2 text-sm font-semibold px-5 py-2 rounded-xl bg-white text-emerald-700 border border-emerald-200 hover:bg-emerald-50 active:bg-emerald-100 transition-all">
+            <i class="fa-solid fa-sync-alt"></i>
+            <span>Another one</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Subtle footer info -->
+    <div class="text-center mt-6">
+      <div class="inline-flex items-center gap-1.5 text-xs text-emerald-800/60">
+        <i class="fa-solid fa-heart text-emerald-400"></i>
+        <span>Positivity delivered in Docker</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Tailwind script configuration
+    function initTailwind() {
+      document.documentElement.style.setProperty('--accent', '#10b981');
+    }
+
+    // Curated list of positive quotes, affirmations, messages & boosts
+    const quotes = [
+      "I am enough just as I am.",
+      "I am worthy of love, joy, and happiness.",
+      "I am capable of achieving my goals.",
+      "Every day is a fresh start filled with new possibilities.",
+      "I choose joy and gratitude today.",
+      "I am strong, resilient, and brave.",
+      "I trust that I am exactly where I need to be.",
+      "I radiate love and positivity.",
+      "I am at peace with what is.",
+      "Asking for help is a sign of self-respect.",
+      "I am allowed to feel good and enjoy life.",
+      "I am growing at my own perfect pace.",
+      "I am safe, supported, and loved.",
+      "I belong here and deserve to take up space.",
+      "I practice gratitude for all that I have.",
+      "I let go of what I cannot control.",
+      "I choose peace over worry.",
+      "One small positive thought can change your whole day.",
+      "Start each day with a positive thought and a grateful heart.",
+      "You are braver than you believe, stronger than you seem, and smarter than you think. — A.A. Milne",
+      "The happiness of your life depends upon the quality of your thoughts. — Marcus Aurelius",
+      "We become what we think about. — Earl Nightingale",
+      "I am the architect of my own destiny.",
+      "I release self-doubt and embrace confidence.",
+      "You've got this. One step at a time.",
+      "Progress, not perfection.",
+      "Breathe. This moment is yours.",
+      "Your potential is endless. Go shine.",
+      "Today I choose to see the good.",
+      "I am becoming the best version of myself.",
+      "Kindness to yourself is never wasted.",
+      "Small steps lead to big changes.",
+      "You make the world brighter just by being in it.",
+      "Everything I need is already within me.",
+      "I am open to wonderful surprises today.",
+      "My heart is open and my spirit is light."
+    ];
+
+    const emojis = ['🌱', '☀️', '🌟', '💚', '🦋', '🌈', '✨', '💖', '🍃', '🔆', '🌻', '🕊️'];
+
+    let lastIndex = -1;
+
+    function getRandomQuote() {
+      let index;
+      do {
+        index = Math.floor(Math.random() * quotes.length);
+      } while (index === lastIndex && quotes.length > 1);
+      lastIndex = index;
+      return quotes[index];
+    }
+
+    function getRandomEmoji() {
+      return emojis[Math.floor(Math.random() * emojis.length)];
+    }
+
+    function showQuote(quote) {
+      const container = document.getElementById('quote-container');
+      const textEl = document.getElementById('quote-text');
+      const emojiEl = document.getElementById('quote-emoji');
+      const sourceEl = document.getElementById('quote-source');
+
+      // Split attribution if present (last " — ")
+      let mainText = quote;
+      let source = '';
+      const separator = ' — ';
+      const sepIndex = quote.lastIndexOf(separator);
+      if (sepIndex > 20) { // avoid splitting short phrases
+        mainText = quote.substring(0, sepIndex);
+        source = quote.substring(sepIndex + separator.length);
+      }
+
+      // Update content
+      textEl.textContent = mainText;
+      emojiEl.textContent = getRandomEmoji();
+
+      if (source) {
+        sourceEl.textContent = source;
+        sourceEl.classList.remove('hidden');
+      } else {
+        sourceEl.classList.add('hidden');
+      }
+
+      // Show container with animation
+      if (container.classList.contains('hidden')) {
+        container.classList.remove('hidden');
+        container.classList.add('flex', 'flex-col');
+      }
+
+      // Trigger pop animation
+      const card = container.querySelector('.quote-card');
+      card.classList.remove('show');
+      // Force reflow
+      void card.offsetWidth;
+      card.classList.add('show');
+
+      // Reset copy button state
+      resetCopyButton();
+    }
+
+    function resetCopyButton() {
+      const copyText = document.getElementById('copy-text');
+      copyText.textContent = 'Copy';
+      copyText.parentElement.classList.remove('text-emerald-600');
+    }
+
+    function copyCurrentQuote() {
+      const textEl = document.getElementById('quote-text');
+      const sourceEl = document.getElementById('quote-source');
+      let fullText = textEl.textContent.trim();
+      
+      if (!sourceEl.classList.contains('hidden') && sourceEl.textContent) {
+        fullText += ' — ' + sourceEl.textContent;
+      }
+
+      navigator.clipboard.writeText(fullText).then(() => {
+        const copyText = document.getElementById('copy-text');
+        const original = copyText.textContent;
+        copyText.textContent = 'Copied!';
+        copyText.parentElement.classList.add('text-emerald-600');
+
+        setTimeout(() => {
+          if (copyText.textContent === 'Copied!') {
+            resetCopyButton();
+          }
+        }, 1800);
+      }).catch(() => {
+        // Fallback for older browsers
+        const textarea = document.createElement('textarea');
+        textarea.value = fullText;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        const copyText = document.getElementById('copy-text');
+        copyText.textContent = 'Copied!';
+        setTimeout(resetCopyButton, 1800);
+      });
+    }
+
+    function initApp() {
+      initTailwind();
+
+      const giveBtn = document.getElementById('give-btn');
+      const anotherBtn = document.getElementById('another-btn');
+      const copyBtn = document.getElementById('copy-btn');
+
+      function giveBoost() {
+        const quote = getRandomQuote();
+        showQuote(quote);
+      }
+
+      // Primary action
+      giveBtn.addEventListener('click', giveBoost);
+
+      // Another one
+      anotherBtn.addEventListener('click', giveBoost);
+
+      // Copy
+      copyBtn.addEventListener('click', copyCurrentQuote);
+
+      // Keyboard support: press "g" or space when focused on body
+      document.addEventListener('keydown', (e) => {
+        if (e.key.toLowerCase() === 'g' || e.key === ' ') {
+          // Don't trigger when typing in inputs (none here) or if modifier
+          if (document.activeElement.tagName === 'BUTTON') return;
+          if (e.key === ' ' && document.activeElement.tagName === 'BUTTON') return;
+          e.preventDefault();
+          giveBoost();
+        }
+        if (e.key.toLowerCase() === 'c' && !document.getElementById('quote-container').classList.contains('hidden')) {
+          if (document.activeElement.tagName === 'BUTTON') return;
+          copyCurrentQuote();
+        }
+      });
+
+      // Nice initial hint: auto-show one after a short delay (optional delight)
+      // Comment out for pure "click to start"
+      // setTimeout(() => {
+      //   if (document.getElementById('quote-container').classList.contains('hidden')) {
+      //     // giveBtn.classList.add('animate-pulse');
+      //   }
+      // }, 2200);
+
+      // Bonus: allow clicking the emoji area to get another (fun)
+      const emojiArea = document.getElementById('quote-emoji');
+      emojiArea.addEventListener('click', () => {
+        if (!document.getElementById('quote-container').classList.contains('hidden')) {
+          giveBoost();
+        }
+      });
+      emojiArea.style.cursor = 'pointer';
+
+      // Accessibility: aria
+      giveBtn.setAttribute('aria-label', 'Give me a positive boost');
+    }
+
+    // Boot
+    window.onload = initApp;
+  </script>
+</body>
+</html>

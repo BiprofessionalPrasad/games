@@ -1,0 +1,7 @@
+# Ignore everything except what we need
+*
+
+# Allow
+!index.html
+!Dockerfile
+!README.md
