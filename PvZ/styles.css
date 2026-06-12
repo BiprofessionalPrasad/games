@@ -670,6 +670,18 @@ body::before {
     font-size: 1.05rem;
 }
 
+.pause-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+}
+
+.pause-actions .primary-btn,
+.pause-actions .secondary-btn {
+    min-width: 180px;
+}
+
 .overlay-stats {
     display: flex;
     gap: 24px;
@@ -770,4 +782,10 @@ body::before {
 
 .admin-btn:active {
     transform: scale(0.98);
+}
+
+.admin-btn.active {
+    background: rgba(82, 183, 136, 0.45);
+    border-color: #52b788;
+    color: #fff;
 }

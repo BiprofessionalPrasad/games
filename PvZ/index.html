@@ -25,8 +25,12 @@
                     <li>Wall-nuts block zombies · Cherry Bombs explode</li>
                     <li>Potato Mines bury underground, arm in 7s, then detonate on contact</li>
                     <li>Snow Peas slow zombies with icy projectiles</li>
+                    <li><strong>Doom Shroom</strong> (5000☀) — wipes all zombies, leaves a 2-min crater</li>
+                    <li><strong>Lily Pad</strong> (25☀, Pool only) — place on water, then plant on top</li>
+                    <li><strong>Flower Pot</strong> (25☀, Roof only) — required before planting on roof tiles</li>
                     <li>Click <strong>Upgrade</strong>, then click a plant to power it up (max level 3)</li>
                     <li>A <strong>Flag Zombie</strong> marches in first — when it raises the flag, the wave begins!</li>
+                    <li>Every <strong>20 waves</strong>, <strong>Dr. Zomboss</strong> appears — defeat him to advance!</li>
                     <li>Don't let zombies reach your house!</li>
                 </ul>
             </div>
@@ -89,7 +93,10 @@
                 <div class="overlay-content">
                     <h2>Paused</h2>
                     <p>Press P or click Resume to continue</p>
-                    <button id="resumeBtn" class="primary-btn">Resume</button>
+                    <div class="pause-actions">
+                        <button id="resumeBtn" class="primary-btn">Resume</button>
+                        <button id="pauseRestartBtn" class="secondary-btn">Restart</button>
+                    </div>
                 </div>
             </div>
             <div id="adminPanel" class="admin-panel hidden">
@@ -99,12 +106,16 @@
                 </div>
                 <p class="admin-hint">Press <kbd>G</kbd> to toggle</p>
                 <div class="admin-buttons">
-                    <button id="adminGiveSunBtn" class="admin-btn">Give Sun (+200)</button>
+                    <button id="adminToggleInfiniteSunBtn" class="admin-btn">Infinite Sun: OFF</button>
                     <button id="adminSpawnZombieBtn" class="admin-btn">Spawn Zombie</button>
                     <button id="adminSpawnConeBtn" class="admin-btn">Spawn Conehead</button>
                     <button id="adminSpawnBucketBtn" class="admin-btn">Spawn Buckethead</button>
+                    <button id="adminSpawnAllStarBtn" class="admin-btn">Spawn All-Star</button>
                     <button id="adminSpawnGargBtn" class="admin-btn">Spawn Gargantuar</button>
-                    <button id="adminForceWaveBtn" class="admin-btn">Start Wave Assault</button>
+                    <button id="adminSpawnZombossBtn" class="admin-btn">Spawn Dr. Zomboss</button>
+                    <button id="adminForceWaveBtn" class="admin-btn">Spawn Wave</button>
+                    <button id="adminToggleCooldownsBtn" class="admin-btn">Cooldowns: ON</button>
+                    <button id="adminToggleDoomCratersBtn" class="admin-btn">Doom Craters: ON</button>
                 </div>
             </div>
         </div>

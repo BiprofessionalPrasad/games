@@ -7,15 +7,36 @@ const PLANT_TYPES = {
     cherrybomb: { name: 'Cherry Bomb', cost: 150, cooldown: 30, hp: 1, icon: '🍒', color: '#e63946' },
     potatomine: { name: 'Potato Mine', cost: 25, cooldown: 10, hp: 80, icon: '🥔', color: '#c4a35a', armTime: 7 },
     snowpea: { name: 'Snow Pea', cost: 175, cooldown: 7, hp: 80, icon: '❄️', color: '#48cae4' },
+    doomshroom: { name: 'Doom Shroom', cost: 5000, cooldown: 300, hp: 1, icon: '💀', color: '#5a189a' },
+    lilypad: { name: 'Lily Pad', cost: 25, cooldown: 5, hp: 80, icon: '🪷', color: '#2d6a4f', poolOnly: true },
+    flowerpot: { name: 'Flower Pot', cost: 25, cooldown: 5, hp: 80, icon: '🏺', color: '#bc6c25', roofOnly: true },
 };
+
+const DOOM_SHROOM_CRATER_DURATION = 120;
+const ROOF_STARTER_POT_COLS = 3;
 
 const ZOMBIE_TYPES = {
     regular: { name: 'Zombie', hp: 100, speed: 0.3, damage: 15, color: '#6b705c', hat: null, score: 10 },
     cone: { name: 'Conehead', hp: 200, speed: 0.28, damage: 15, color: '#6b705c', hat: 'cone', score: 25 },
     bucket: { name: 'Buckethead', hp: 350, speed: 0.25, damage: 18, color: '#6b705c', hat: 'bucket', score: 40 },
+    allstar: { name: 'All-Star Zombie', hp: 450, speed: 0.38, damage: 18, color: '#6b705c', hat: 'allstar', score: 55 },
     gargantuar: { name: 'Gargantuar', hp: 600, speed: 0.16, damage: 25, color: '#5a5340', hat: 'gargantuar', score: 75, instantPlantHitsToKill: 2 },
     flag: { name: 'Flag Zombie', hp: 100, speed: 0.32, damage: 15, color: '#6b705c', hat: 'flag', score: 15 },
+    zomboss: {
+        name: 'Dr. Zomboss',
+        hp: 5000,
+        speed: 0,
+        damage: 0,
+        color: '#8d99ae',
+        hat: 'zomboss',
+        score: 500,
+        instantPlantHitsToKill: 10,
+    },
 };
+
+const BOSS_WAVE_INTERVAL = 20;
+
+const SPAWN_WAVE_TYPES = ['regular', 'cone', 'bucket', 'allstar', 'gargantuar'];
 
 const MAX_PLANT_LEVEL = 3;
 
@@ -62,6 +83,9 @@ const PLANT_UPGRADES = {
     },
     cherrybomb: { upgradeable: false },
     potatomine: { upgradeable: false },
+    doomshroom: { upgradeable: false },
+    lilypad: { upgradeable: false },
+    flowerpot: { upgradeable: false },
 };
 
 function getUpgradeCost(type, currentLevel) {
@@ -228,6 +252,10 @@ class PvZGame {
         this.upgradeMode = false;
         this.shovelMode = false;
         this.adminPanelOpen = false;
+        this.cooldownsDisabled = false;
+        this.infiniteSunEnabled = false;
+        this.savedSunAmount = 0;
+        this.doomShroomCratersEnabled = true;
         this.selectedUpgradePlant = null;
         this.hoveredPlant = null;
         this.plants = [];
@@ -240,6 +268,7 @@ class PvZGame {
         this.clouds = [];
         this.explosionRings = [];
         this.lawnmowers = [];
+        this.craters = [];
 
         this.wave = 1;
         this.zombiesInWave = 0;
@@ -247,6 +276,7 @@ class PvZGame {
         this.waveTimer = 0;
         this.spawnTimer = 0;
         this.waveAssaultActive = false;
+        this.zombossActive = false;
         this.flagZombieSpawned = false;
         this.skySunTimer = 0;
 
@@ -347,8 +377,60 @@ class PvZGame {
         return this.waterCells.has(`${row},${col}`);
     }
 
+    hasCraterAt(row, col) {
+        return this.craters.some((c) => c.row === row && c.col === col);
+    }
+
+    getCraterAt(row, col) {
+        return this.craters.find((c) => c.row === row && c.col === col);
+    }
+
     canPlantAt(row, col) {
-        return row >= 0 && row < this.rows && col >= 0 && col < this.cols && !this.isWaterCell(row, col);
+        return row >= 0 && row < this.rows && col >= 0 && col < this.cols
+            && !this.isWaterCell(row, col) && !this.hasCraterAt(row, col);
+    }
+
+    getPlantsAt(row, col) {
+        return this.plants.filter((p) => p.row === row && p.col === col && p.hp > 0);
+    }
+
+    isCarrierPlant(type) {
+        return type === 'lilypad' || type === 'flowerpot';
+    }
+
+    getRequiredCarrier(row, col) {
+        if (this.isWaterCell(row, col)) return 'lilypad';
+        if (this.currentLevel === 'roof') return 'flowerpot';
+        return null;
+    }
+
+    hasCarrierAt(row, col, carrierType) {
+        return this.plants.some(
+            (p) => p.row === row && p.col === col && p.type === carrierType && p.hp > 0
+        );
+    }
+
+    canPlacePlant(row, col, plantType) {
+        if (row < 0 || row >= this.rows || col < 0 || col >= this.cols) return false;
+        if (this.hasCraterAt(row, col)) return false;
+
+        const here = this.getPlantsAt(row, col);
+        const requiredCarrier = this.getRequiredCarrier(row, col);
+        const hasTopPlant = here.some((p) => !this.isCarrierPlant(p.type));
+
+        if (plantType === 'lilypad') {
+            return requiredCarrier === 'lilypad' && !this.hasCarrierAt(row, col, 'lilypad') && !hasTopPlant;
+        }
+
+        if (plantType === 'flowerpot') {
+            return requiredCarrier === 'flowerpot' && !this.hasCarrierAt(row, col, 'flowerpot') && !hasTopPlant;
+        }
+
+        if (requiredCarrier) {
+            return this.hasCarrierAt(row, col, requiredCarrier) && !hasTopPlant;
+        }
+
+        return here.length === 0;
     }
 
     initLawnmowers() {
@@ -360,6 +442,36 @@ class PvZGame {
                 x: this.lawnX - 22,
                 y: this.lawnY + row * this.cellH + this.cellH / 2,
             });
+        }
+    }
+
+    initRoofStarterFlowerPots() {
+        if (this.currentLevel !== 'roof') return;
+
+        const data = PLANT_TYPES.flowerpot;
+        for (let row = 0; row < this.rows; row++) {
+            for (let col = 0; col < ROOF_STARTER_POT_COLS; col++) {
+                const px = this.lawnX + col * this.cellW + this.cellW / 2;
+                const py = this.lawnY + row * this.cellH + this.cellH / 2;
+                this.plants.push({
+                    type: 'flowerpot',
+                    row,
+                    col,
+                    x: px,
+                    y: py,
+                    level: 1,
+                    hp: data.hp,
+                    maxHp: data.hp,
+                    shootTimer: 0,
+                    sunTimer: 0,
+                    explodeTimer: 0,
+                    armTimer: null,
+                    armed: false,
+                    spawnScale: 1,
+                    spawnAnim: 0,
+                    upgradeAnim: 0,
+                });
+            }
         }
     }
 
@@ -389,6 +501,9 @@ class PvZGame {
         const bar = document.getElementById('plantBar');
         bar.innerHTML = '';
         for (const [type, data] of Object.entries(PLANT_TYPES)) {
+            if (data.poolOnly && this.currentLevel !== 'pool') continue;
+            if (data.roofOnly && this.currentLevel !== 'roof') continue;
+
             const card = document.createElement('div');
             card.className = 'plant-card';
             card.dataset.type = type;
@@ -421,6 +536,7 @@ class PvZGame {
         document.getElementById('restartBtn').addEventListener('click', () => this.startGame());
         document.getElementById('menuBtn').addEventListener('click', () => this.returnToMenu());
         document.getElementById('resumeBtn').addEventListener('click', () => this.togglePause());
+        document.getElementById('pauseRestartBtn').addEventListener('click', () => this.startGame());
         document.getElementById('pauseBtn').addEventListener('click', () => this.togglePause());
         document.getElementById('muteBtn').addEventListener('click', () => {
             const muted = this.audio.toggleMute();
@@ -430,12 +546,16 @@ class PvZGame {
         document.getElementById('closeUpgradeBtn').addEventListener('click', () => this.hideUpgradePanel());
         document.getElementById('confirmUpgradeBtn').addEventListener('click', () => this.confirmUpgrade());
         document.getElementById('closeAdminBtn').addEventListener('click', () => this.toggleAdminPanel(false));
-        document.getElementById('adminGiveSunBtn').addEventListener('click', () => this.adminGiveSun(200));
+        document.getElementById('adminToggleInfiniteSunBtn').addEventListener('click', () => this.adminToggleInfiniteSun());
         document.getElementById('adminSpawnZombieBtn').addEventListener('click', () => this.adminSpawnZombie('regular'));
         document.getElementById('adminSpawnConeBtn').addEventListener('click', () => this.adminSpawnZombie('cone'));
         document.getElementById('adminSpawnBucketBtn').addEventListener('click', () => this.adminSpawnZombie('bucket'));
+        document.getElementById('adminSpawnAllStarBtn').addEventListener('click', () => this.adminSpawnZombie('allstar'));
         document.getElementById('adminSpawnGargBtn').addEventListener('click', () => this.adminSpawnZombie('gargantuar'));
+        document.getElementById('adminSpawnZombossBtn').addEventListener('click', () => this.adminSpawnZomboss());
         document.getElementById('adminForceWaveBtn').addEventListener('click', () => this.adminForceWave());
+        document.getElementById('adminToggleCooldownsBtn').addEventListener('click', () => this.adminToggleCooldowns());
+        document.getElementById('adminToggleDoomCratersBtn').addEventListener('click', () => this.adminToggleDoomCraters());
 
         this.canvas.addEventListener('click', (e) => this.handleClick(e));
         this.canvas.addEventListener('mousemove', (e) => {
@@ -522,11 +642,34 @@ class PvZGame {
         document.getElementById('adminPanel').classList.toggle('hidden', !this.adminPanelOpen);
     }
 
-    adminGiveSun(amount) {
+    adminToggleInfiniteSun() {
         if (!this.isPlaying || this.isGameOver) return;
-        this.sun += amount;
-        this.pulseSunCounter();
+        if (!this.infiniteSunEnabled) {
+            this.savedSunAmount = this.sun;
+            this.infiniteSunEnabled = true;
+        } else {
+            this.sun = this.savedSunAmount;
+            this.infiniteSunEnabled = false;
+        }
+        this.updateAdminInfiniteSunButton();
         this.updateHUD();
+        this.updatePlantBar();
+        if (this.selectedUpgradePlant) this.showUpgradePanel(this.selectedUpgradePlant);
+    }
+
+    updateAdminInfiniteSunButton() {
+        const btn = document.getElementById('adminToggleInfiniteSunBtn');
+        if (!btn) return;
+        btn.classList.toggle('active', this.infiniteSunEnabled);
+        btn.textContent = this.infiniteSunEnabled ? 'Infinite Sun: ON' : 'Infinite Sun: OFF';
+    }
+
+    hasEnoughSun(cost) {
+        return this.infiniteSunEnabled || this.sun >= cost;
+    }
+
+    spendSun(cost) {
+        if (!this.infiniteSunEnabled) this.sun -= cost;
     }
 
     adminSpawnZombie(type) {
@@ -535,18 +678,92 @@ class PvZGame {
         this.updateHUD();
     }
 
+    adminSpawnZomboss() {
+        if (!this.isPlaying || this.isGameOver) return;
+        const bossAlive = this.zombies.some((z) => z.isBoss && !z.dying && z.hp > 0);
+        if (bossAlive) return;
+
+        this.zombossActive = true;
+        this.waveAssaultActive = true;
+        this.zombiesSpawned = this.zombiesInWave;
+        this.spawnZomboss();
+        this.addFloatingText(
+            this.lawnX + (this.cols * this.cellW) / 2,
+            this.lawnY + 60,
+            'DR. ZOMBOSS!',
+            '#e63946',
+            2.5,
+            30
+        );
+        this.updateHUD();
+    }
+
+    getZombiesInWave(wave) {
+        if (wave <= 1) return 5;
+        return 8 + wave * 3;
+    }
+
+    spawnDiverseWave(count) {
+        const pool = [...SPAWN_WAVE_TYPES].sort(() => Math.random() - 0.5);
+        for (let i = 0; i < count; i++) {
+            this.spawnZombie(pool[i % pool.length]);
+        }
+    }
+
     adminForceWave() {
         if (!this.isPlaying || this.isGameOver) return;
-        if (!this.waveAssaultActive) this.beginWaveAssault();
+        const count = this.getZombiesInWave(Math.max(2, this.wave));
+        this.spawnDiverseWave(count);
+        this.showWaveBanner();
+        this.audio.play('wave');
+        this.updateHUD();
+    }
+
+    adminToggleCooldowns() {
+        if (!this.isPlaying || this.isGameOver) return;
+        this.cooldownsDisabled = !this.cooldownsDisabled;
+        if (this.cooldownsDisabled) {
+            for (const key of Object.keys(this.cooldowns)) this.cooldowns[key] = 0;
+        }
+        this.updateAdminCooldownButton();
+        this.updatePlantBar();
+    }
+
+    updateAdminCooldownButton() {
+        const btn = document.getElementById('adminToggleCooldownsBtn');
+        if (!btn) return;
+        btn.classList.toggle('active', this.cooldownsDisabled);
+        btn.textContent = this.cooldownsDisabled ? 'Cooldowns: OFF' : 'Cooldowns: ON';
+    }
+
+    adminToggleDoomCraters() {
+        if (!this.isPlaying || this.isGameOver) return;
+        this.doomShroomCratersEnabled = !this.doomShroomCratersEnabled;
+        this.updateAdminDoomCratersButton();
+    }
+
+    updateAdminDoomCratersButton() {
+        const btn = document.getElementById('adminToggleDoomCratersBtn');
+        if (!btn) return;
+        btn.classList.toggle('active', !this.doomShroomCratersEnabled);
+        btn.textContent = this.doomShroomCratersEnabled ? 'Doom Craters: ON' : 'Doom Craters: OFF';
+    }
+
+    isPlantOnCooldown(type) {
+        return !this.cooldownsDisabled && this.cooldowns[type] > 0;
     }
 
     getPlantAt(x, y) {
+        let carrier = null;
         for (let i = this.plants.length - 1; i >= 0; i--) {
             const p = this.plants[i];
             if (p.hp <= 0) continue;
-            if (Math.hypot(x - p.x, y - p.y) < 38) return p;
+            if (Math.hypot(x - p.x, y - p.y) < 38) {
+                if (!this.isCarrierPlant(p.type)) return p;
+                carrier = p;
+            }
         }
-        return null;
+        return carrier;
     }
 
     getPlantStats(plant) {
@@ -576,7 +793,7 @@ class PvZGame {
         if (!plant || !PLANT_UPGRADES[plant.type]?.upgradeable) return false;
         if ((plant.level || 1) >= MAX_PLANT_LEVEL) return false;
         const cost = getUpgradeCost(plant.type, plant.level || 1);
-        return cost !== null && this.sun >= cost;
+        return cost !== null && this.hasEnoughSun(cost);
     }
 
     showUpgradePanel(plant) {
@@ -603,7 +820,7 @@ class PvZGame {
         } else {
             desc.textContent = up.descriptions[level];
             btn.textContent = `Upgrade — ☀ ${cost}`;
-            btn.disabled = this.sun < cost;
+            btn.disabled = !this.hasEnoughSun(cost);
         }
 
         document.getElementById('upgradePanel').classList.remove('hidden');
@@ -627,7 +844,7 @@ class PvZGame {
         const up = PLANT_UPGRADES[plant.type];
         const oldMaxHp = plant.maxHp;
 
-        this.sun -= cost;
+        this.spendSun(cost);
         plant.level = level + 1;
         plant.upgradeAnim = 0.5;
 
@@ -663,6 +880,8 @@ class PvZGame {
         document.getElementById('pauseOverlay').classList.add('hidden');
 
         this.applyLevel(this.currentLevel);
+        this.setupPlantBar();
+        this.deselectPlant();
 
         const badge = document.getElementById('levelBadge');
         badge.textContent = `${this.levelConfig.icon} ${this.levelConfig.name}`;
@@ -675,6 +894,8 @@ class PvZGame {
         this.upgradeMode = false;
         this.shovelMode = false;
         this.adminPanelOpen = false;
+        this.cooldownsDisabled = false;
+        this.doomShroomCratersEnabled = true;
         this.selectedUpgradePlant = null;
         this.hoveredPlant = null;
         this.plants = [];
@@ -685,13 +906,16 @@ class PvZGame {
         this.floatingTexts = [];
         this.muzzleFlashes = [];
         this.explosionRings = [];
+        this.craters = [];
         this.initLawnmowers();
+        this.initRoofStarterFlowerPots();
         this.wave = 1;
-        this.zombiesInWave = 5;
+        this.zombiesInWave = this.getZombiesInWave(1);
         this.zombiesSpawned = 0;
         this.waveTimer = 0;
         this.spawnTimer = 0;
         this.waveAssaultActive = false;
+        this.zombossActive = false;
         this.flagZombieSpawned = false;
         this.skySunTimer = 5;
         this.isPlaying = true;
@@ -706,9 +930,14 @@ class PvZGame {
             this.cooldowns[key] = 0;
         }
 
+        this.infiniteSunEnabled = false;
+        this.savedSunAmount = 0;
         this.toggleUpgradeMode(false);
         this.toggleShovelMode(false);
         this.toggleAdminPanel(false);
+        this.updateAdminCooldownButton();
+        this.updateAdminInfiniteSunButton();
+        this.updateAdminDoomCratersButton();
         this.hideUpgradePanel();
         this.startWave();
         this.updateHUD();
@@ -725,12 +954,103 @@ class PvZGame {
         this.audio.play('wave');
     }
 
+    isBossWave(wave = this.wave) {
+        return wave > 0 && wave % BOSS_WAVE_INTERVAL === 0;
+    }
+
     startWave() {
         this.waveAssaultActive = false;
+        this.zombossActive = false;
         this.flagZombieSpawned = false;
         this.zombiesSpawned = 0;
         this.spawnTimer = 0;
+
+        if (this.isBossWave()) {
+            this.startBossWave();
+            return;
+        }
         this.spawnFlagZombie();
+    }
+
+    startBossWave() {
+        this.zombossActive = true;
+        this.waveAssaultActive = true;
+        this.zombiesSpawned = this.zombiesInWave;
+        this.spawnZomboss();
+
+        const banner = document.getElementById('waveBanner');
+        banner.textContent = '⚠️ DR. ZOMBOSS! ⚠️';
+        banner.classList.remove('show');
+        void banner.offsetWidth;
+        banner.classList.add('show');
+        this.audio.play('wave');
+        this.addFloatingText(
+            this.lawnX + (this.cols * this.cellW) / 2,
+            this.lawnY + 60,
+            'DR. ZOMBOSS!',
+            '#e63946',
+            3,
+            34
+        );
+    }
+
+    getBoss() {
+        return this.zombies.find((z) => z.isBoss && !z.dying && z.hp > 0);
+    }
+
+    isLaneEmptyForBoss(row) {
+        return !this.zombies.some(
+            (z) => !z.isBoss && !z.dying && z.hp > 0 && z.row === row
+        );
+    }
+
+    canPlantShootBoss(plant) {
+        const boss = this.getBoss();
+        if (!boss || !this.isLaneEmptyForBoss(plant.row)) return false;
+        return boss.x > plant.x;
+    }
+
+    getBossHitY(row) {
+        return this.lawnY + row * this.cellH + this.cellH / 2;
+    }
+
+    spawnZomboss() {
+        const data = ZOMBIE_TYPES.zomboss;
+        const bossCol = this.cols - 1;
+        const x = this.lawnX + bossCol * this.cellW + this.cellW / 2;
+        const y = this.lawnY + (this.rows * this.cellH) / 2;
+        this.zombies.push({
+            type: 'zomboss',
+            isBoss: true,
+            row: Math.floor(this.rows / 2),
+            col: bossCol,
+            x,
+            y,
+            hp: data.hp,
+            maxHp: data.hp,
+            speed: 0,
+            damage: 0,
+            slowTimer: 0,
+            walkAnim: 0,
+            eatAnim: 0,
+            dying: false,
+            deathTimer: 0,
+            fallAngle: 0,
+            spawnTimer: 1.5,
+            animTimer: 0,
+            instantPlantHits: 0,
+            displayHp: data.hp,
+        });
+    }
+
+    spawnZombossMinion() {
+        const roll = Math.random();
+        let type = 'regular';
+        if (roll < 0.12) type = 'gargantuar';
+        else if (roll < 0.28) type = 'allstar';
+        else if (roll < 0.45) type = 'bucket';
+        else if (roll < 0.65) type = 'cone';
+        this.spawnZombie(type);
     }
 
     getSpawnInterval() {
@@ -772,6 +1092,7 @@ class PvZGame {
             fallAngle: 0,
             flagRaised: false,
             raiseTimer: 0,
+            displayHp: data.hp,
         });
         this.flagZombieSpawned = true;
     }
@@ -779,7 +1100,7 @@ class PvZGame {
     selectPlant(type) {
         if (!this.isPlaying || this.isPaused || this.isGameOver) return;
         const data = PLANT_TYPES[type];
-        if (this.sun < data.cost || this.cooldowns[type] > 0) return;
+        if (!this.hasEnoughSun(data.cost) || this.isPlantOnCooldown(type)) return;
 
         if (this.upgradeMode) this.toggleUpgradeMode(false);
         if (this.shovelMode) this.toggleShovelMode(false);
@@ -814,16 +1135,23 @@ class PvZGame {
         const col = Math.floor((x - this.lawnX) / this.cellW);
         const row = Math.floor((y - this.lawnY) / this.cellH);
 
-        if (!this.canPlantAt(row, col)) return;
+        if (!this.canPlacePlant(row, col, this.selectedPlant)) return;
 
         const data = PLANT_TYPES[this.selectedPlant];
-        if (this.sun < data.cost || this.cooldowns[this.selectedPlant] > 0) return;
-
-        const occupied = this.plants.some((p) => p.row === row && p.col === col && p.hp > 0);
-        if (occupied) return;
+        if (!this.hasEnoughSun(data.cost) || this.isPlantOnCooldown(this.selectedPlant)) return;
 
         const px = this.lawnX + col * this.cellW + this.cellW / 2;
         const py = this.lawnY + row * this.cellH + this.cellH / 2;
+
+        if (this.selectedPlant === 'doomshroom') {
+            this.activateDoomShroom(row, col, px, py);
+            this.spendSun(data.cost);
+            if (!this.cooldownsDisabled) this.cooldowns.doomshroom = data.cooldown;
+            this.deselectPlant();
+            this.updateHUD();
+            this.updatePlantBar();
+            return;
+        }
 
         const stats = this.getPlantStats({ type: this.selectedPlant, level: 1 });
         const maxHp = stats.maxHp || data.hp;
@@ -847,12 +1175,42 @@ class PvZGame {
             upgradeAnim: 0,
         });
 
-        this.sun -= data.cost;
-        this.cooldowns[this.selectedPlant] = data.cooldown;
+        this.spendSun(data.cost);
+        if (!this.cooldownsDisabled) this.cooldowns[this.selectedPlant] = data.cooldown;
         this.spawnParticles(px, py, data.color, 12, 'burst');
         this.audio.play('plant');
         this.deselectPlant();
         this.updateHUD();
+    }
+
+    activateDoomShroom(row, col, px, py) {
+        this.spawnParticles(px, py, '#5a189a', 50, 'explosion');
+        this.spawnParticles(px, py, '#240046', 30, 'sparkle');
+        this.explosionRings.push({ x: px, y: py, radius: 15, life: 0.8, color: '#5a189a' });
+        this.explosionRings.push({ x: px, y: py, radius: 8, life: 0.6, color: '#10002b' });
+        this.addScreenShake(30);
+        this.addScreenFlash('#5a189a', 0.85);
+        this.audio.play('explode');
+        this.addFloatingText(px, py - 40, 'DOOM!', '#c77dff', 2, 28);
+
+        const victims = this.zombies.filter((z) => !z.dying && z.hp > 0);
+        for (const zombie of victims) {
+            zombie.hp = 0;
+            this.killZombie(zombie);
+        }
+
+        if (!this.zombies.some((z) => z.isBoss && !z.dying && z.hp > 0)) {
+            this.zombossActive = false;
+        }
+
+        if (this.doomShroomCratersEnabled) {
+            this.craters.push({ row, col, timer: DOOM_SHROOM_CRATER_DURATION });
+        }
+    }
+
+    updateCraters(dt) {
+        for (const crater of this.craters) crater.timer -= dt;
+        this.craters = this.craters.filter((c) => c.timer > 0);
     }
 
     pulseSunCounter() {
@@ -865,7 +1223,7 @@ class PvZGame {
     collectSun(index) {
         const s = this.suns[index];
         if (!s) return;
-        this.sun += s.value;
+        if (!this.infiniteSunEnabled) this.sun += s.value;
         this.suns.splice(index, 1);
         this.spawnParticles(s.x, s.y, '#ffd60a', 10, 'sparkle');
         this.addFloatingText(s.x, s.y - 20, `+${s.value}`, '#ffd60a', 1);
@@ -921,14 +1279,18 @@ class PvZGame {
     }
 
     update(dt) {
-        for (const key of Object.keys(this.cooldowns)) {
-            if (this.cooldowns[key] > 0) this.cooldowns[key] = Math.max(0, this.cooldowns[key] - dt);
+        if (!this.cooldownsDisabled) {
+            for (const key of Object.keys(this.cooldowns)) {
+                if (this.cooldowns[key] > 0) this.cooldowns[key] = Math.max(0, this.cooldowns[key] - dt);
+            }
         }
         this.updatePlantBar();
         this.checkSunAutoCollect();
 
         if (this.screenShake > 0) this.screenShake = Math.max(0, this.screenShake - dt * 8);
         if (this.screenFlash > 0) this.screenFlash = Math.max(0, this.screenFlash - dt * 3);
+
+        this.updateCraters(dt);
 
         for (const c of this.clouds) {
             c.x += c.speed * dt;
@@ -979,8 +1341,8 @@ class PvZGame {
                 const interval = stats.shootInterval || (plant.type === 'snowpea' ? 1.8 : 1.5);
                 if (plant.shootTimer >= interval) {
                     const hasZombie = this.zombies.some(
-                        (z) => z.row === plant.row && z.x > plant.x && z.hp > 0 && !z.dying
-                    );
+                        (z) => !z.isBoss && z.row === plant.row && z.x > plant.x && z.hp > 0 && !z.dying
+                    ) || this.canPlantShootBoss(plant);
                     if (hasZombie) {
                         plant.shootTimer = 0;
                         this.projectiles.push({
@@ -1021,6 +1383,14 @@ class PvZGame {
             }
         }
 
+        for (const plant of this.plants) {
+            if (this.isCarrierPlant(plant.type) || plant.hp <= 0) continue;
+            const requiredCarrier = this.getRequiredCarrier(plant.row, plant.col);
+            if (requiredCarrier && !this.hasCarrierAt(plant.row, plant.col, requiredCarrier)) {
+                plant.hp = 0;
+            }
+        }
+
         this.plants = this.plants.filter((p) => p.hp > 0);
 
         if (this.selectedUpgradePlant && !this.plants.includes(this.selectedUpgradePlant)) {
@@ -1036,7 +1406,25 @@ class PvZGame {
 
         for (const proj of this.projectiles) {
             for (const zombie of this.zombies) {
-                if (zombie.row !== proj.row || zombie.hp <= 0 || zombie.dying) continue;
+                if (zombie.hp <= 0 || zombie.dying) continue;
+
+                if (zombie.isBoss) {
+                    if (!this.isLaneEmptyForBoss(proj.row)) continue;
+                    const hitW = 42;
+                    const hitH = 36;
+                    const hitY = this.getBossHitY(proj.row);
+                    if (Math.abs(proj.x - zombie.x) < hitW && Math.abs(proj.y - hitY) < hitH) {
+                        zombie.hp -= proj.damage;
+                        if (proj.frozen) zombie.slowTimer = proj.slowDuration || 3;
+                        proj.hit = true;
+                        this.spawnParticles(proj.x, proj.y, proj.color, 5);
+                        this.audio.play('hit');
+                        if (zombie.hp <= 0) this.killZombie(zombie);
+                    }
+                    continue;
+                }
+
+                if (zombie.row !== proj.row) continue;
                 const hitW = zombie.type === 'gargantuar' ? 30 : 20;
                 const hitH = zombie.type === 'gargantuar' ? 45 : 30;
                 if (Math.abs(proj.x - zombie.x) < hitW && Math.abs(proj.y - zombie.y) < hitH) {
@@ -1060,6 +1448,21 @@ class PvZGame {
             }
             if (zombie.hp <= 0) continue;
 
+            if (zombie.displayHp === undefined) zombie.displayHp = zombie.hp;
+            zombie.displayHp += (zombie.hp - zombie.displayHp) * Math.min(1, dt * 12);
+
+            if (zombie.isBoss) {
+                if (zombie.slowTimer > 0) zombie.slowTimer -= dt;
+                zombie.animTimer += dt;
+                zombie.spawnTimer -= dt;
+                if (zombie.spawnTimer <= 0) {
+                    this.spawnZombossMinion();
+                    zombie.spawnTimer = 1.0 + Math.random() * 1.5;
+                    this.spawnParticles(zombie.x - 40, zombie.y + 20, '#6b705c', 6, 'debris');
+                }
+                continue;
+            }
+
             const speedMult = zombie.slowTimer > 0 ? 0.5 : 1;
             if (zombie.slowTimer > 0) zombie.slowTimer -= dt;
 
@@ -1079,11 +1482,21 @@ class PvZGame {
                 this.beginWaveAssault();
             }
 
-            for (const plant of this.plants) {
-                if (plant.row !== zombie.row || plant.hp <= 0) continue;
-                const eatRange = zombie.type === 'gargantuar' ? 50 : 35;
-                if (Math.abs(zombie.x - plant.x) >= eatRange) continue;
+            const eatRange = zombie.type === 'gargantuar' ? 50 : 35;
+            const eatTargets = this.plants.filter((plant) => {
+                if (plant.row !== zombie.row || plant.hp <= 0) return false;
+                if (plant.type === 'cherrybomb' && plant.explodeTimer > 0) return false;
+                return Math.abs(zombie.x - plant.x) < eatRange;
+            });
+            eatTargets.sort((a, b) => {
+                const aCarrier = this.isCarrierPlant(a.type);
+                const bCarrier = this.isCarrierPlant(b.type);
+                if (aCarrier && !bCarrier) return 1;
+                if (bCarrier && !aCarrier) return -1;
+                return 0;
+            });
 
+            for (const plant of eatTargets) {
                 if (plant.type === 'potatomine' && plant.armed) {
                     this.explodePotatoMine(plant);
                     plant.hp = 0;
@@ -1169,7 +1582,7 @@ class PvZGame {
             mower.x += mowerSpeed * dt;
 
             for (const zombie of this.zombies) {
-                if (zombie.row !== mower.row || zombie.dying || zombie.hp <= 0) continue;
+                if (zombie.isBoss || zombie.row !== mower.row || zombie.dying || zombie.hp <= 0) continue;
                 if (Math.abs(zombie.x - mower.x) < 45) {
                     zombie.hp = 0;
                     this.killZombie(zombie);
@@ -1193,11 +1606,16 @@ class PvZGame {
         zombie.dying = true;
         zombie.deathTimer = 0.6;
         zombie.fallAngle = 0;
-        const debris = zombie.type === 'gargantuar' ? 22 : 14;
-        const particleColor = zombie.type === 'gargantuar' ? '#5a5340' : '#6b705c';
+        const debris = zombie.isBoss ? 50 : zombie.type === 'gargantuar' ? 22 : 14;
+        const particleColor = zombie.isBoss ? '#8d99ae' : zombie.type === 'gargantuar' ? '#5a5340' : '#6b705c';
         this.spawnParticles(zombie.x, zombie.y, particleColor, debris, zombie.type === 'gargantuar' ? 'debris' : 'default');
         if (zombie.type === 'gargantuar') this.addScreenShake(6);
-        this.addFloatingText(zombie.x, zombie.y - 30, `+${data.score}`, '#95d5b2', 0.8, 16);
+        if (zombie.isBoss) {
+            this.addScreenShake(25);
+            this.addFloatingText(zombie.x, zombie.y - 90, 'BOSS DEFEATED!', '#ffd60a', 2.5, 28);
+        } else {
+            this.addFloatingText(zombie.x, zombie.y - 30, `+${data.score}`, '#95d5b2', 0.8, 16);
+        }
         this.audio.play('death');
     }
 
@@ -1216,10 +1634,35 @@ class PvZGame {
             zombie.hp = 0;
             this.killZombie(zombie);
         } else {
+            zombie.hp = zombie.maxHp * (1 - zombie.instantPlantHits / hitsRequired);
             this.spawnParticles(zombie.x, zombie.y - 15, '#e63946', 14, 'explosion');
             this.audio.play('hit');
             this.addScreenShake(5);
         }
+    }
+
+    getZombieHpPercent(zombie) {
+        const maxHp = zombie.maxHp || 1;
+        const current = zombie.displayHp !== undefined ? zombie.displayHp : zombie.hp;
+        return Math.max(0, Math.min(1, current / maxHp));
+    }
+
+    drawZombieHealthBar(ctx, x, y, zombie, barW, barH) {
+        const hpPct = this.getZombieHpPercent(zombie);
+        const left = x - barW / 2;
+        const top = y;
+
+        ctx.fillStyle = 'rgba(40, 15, 15, 0.85)';
+        ctx.fillRect(left, top, barW, barH);
+
+        if (hpPct > 0) {
+            ctx.fillStyle = hpPct > 0.55 ? '#52b788' : hpPct > 0.28 ? '#ffd60a' : '#e63946';
+            ctx.fillRect(left, top, barW * hpPct, barH);
+        }
+
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.35)';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(left + 0.5, top + 0.5, barW - 1, barH - 1);
     }
 
     explodeArea(plant, color) {
@@ -1231,6 +1674,12 @@ class PvZGame {
         this.audio.play('explode');
 
         for (const zombie of this.zombies) {
+            if (zombie.isBoss) {
+                const dx = Math.abs(zombie.x - plant.x);
+                const dy = Math.abs(zombie.y - plant.y);
+                if (dx < 130 && dy < 160 && !zombie.dying) this.applyInstantPlantHit(zombie);
+                continue;
+            }
             const rowDist = Math.abs(zombie.row - plant.row);
             const colApprox = Math.floor((zombie.x - this.lawnX) / this.cellW);
             const colDist = Math.abs(colApprox - plant.col);
@@ -1254,7 +1703,14 @@ class PvZGame {
         this.audio.play('explode');
 
         for (const zombie of this.zombies) {
-            if (zombie.dying || zombie.row !== plant.row) continue;
+            if (zombie.dying) continue;
+            if (zombie.isBoss) {
+                const dx = Math.abs(zombie.x - plant.x);
+                const dy = Math.abs(zombie.y - plant.y);
+                if (dx < 90 && dy < 120) this.applyInstantPlantHit(zombie);
+                continue;
+            }
+            if (zombie.row !== plant.row) continue;
             const colApprox = Math.floor((zombie.x - this.lawnX) / this.cellW);
             if (colApprox === plant.col) {
                 this.applyInstantPlantHit(zombie);
@@ -1305,6 +1761,23 @@ class PvZGame {
     }
 
     updateWaves(dt) {
+        if (this.zombossActive) {
+            const bossAlive = this.zombies.some((z) => z.isBoss && !z.dying && z.hp > 0);
+            if (bossAlive) return;
+
+            if (this.zombies.length === 0) {
+                this.zombossActive = false;
+                this.waveTimer += dt;
+                if (this.waveTimer >= 5) {
+                    this.wave++;
+                    this.zombiesInWave = this.getZombiesInWave(this.wave);
+                    this.waveTimer = 0;
+                    this.startWave();
+                }
+            }
+            return;
+        }
+
         if (!this.waveAssaultActive) {
             if (this.flagZombieSpawned) {
                 const flagAlive = this.zombies.some((z) => z.isFlag && !z.dying && z.hp > 0);
@@ -1324,11 +1797,13 @@ class PvZGame {
             this.waveTimer += dt;
             if (this.waveTimer >= 5) {
                 this.wave++;
-                if (this.wave > 10) {
-                    this.endGame(true);
+                if (this.isBossWave()) {
+                    this.zombiesInWave = this.getZombiesInWave(this.wave);
+                    this.waveTimer = 0;
+                    this.startWave();
                     return;
                 }
-                this.zombiesInWave = 4 + this.wave * 2;
+                this.zombiesInWave = this.getZombiesInWave(this.wave);
                 this.waveTimer = 0;
                 this.startWave();
             }
@@ -1341,8 +1816,9 @@ class PvZGame {
         if (!forcedType) {
             const roll = Math.random();
             if (this.wave >= 7 && roll < 0.1) type = 'gargantuar';
-            else if (this.wave >= 5 && roll < 0.18) type = 'bucket';
-            else if (this.wave >= 3 && roll < 0.3) type = 'cone';
+            else if (this.wave >= 6 && roll < 0.2) type = 'allstar';
+            else if (this.wave >= 5 && roll < 0.28) type = 'bucket';
+            else if (this.wave >= 3 && roll < 0.38) type = 'cone';
         }
 
         const data = ZOMBIE_TYPES[type];
@@ -1364,6 +1840,7 @@ class PvZGame {
             deathTimer: 0,
             fallAngle: 0,
             instantPlantHits: type === 'gargantuar' ? 0 : undefined,
+            displayHp: data.hp,
         });
     }
 
@@ -1376,20 +1853,26 @@ class PvZGame {
         content.classList.toggle('victory', won);
         document.getElementById('gameOverTitle').textContent = won ? 'Victory!' : 'Game Over';
         document.getElementById('gameOverMessage').textContent = won
-            ? 'You survived all 10 waves! Your lawn is safe.'
+            ? 'You survived the zombie apocalypse! Your lawn is safe.'
             : 'The zombies ate your brains!';
         document.getElementById('finalScore').textContent = this.score;
-        document.getElementById('finalWave').textContent = won ? 10 : this.wave;
+        document.getElementById('finalWave').textContent = this.wave;
         document.getElementById('finalKills').textContent = this.kills;
         if (won) this.audio.play('win');
         else this.audio.play('death');
     }
 
     updateHUD() {
-        document.getElementById('sunAmount').textContent = Math.floor(this.sun);
+        document.getElementById('sunAmount').textContent =
+            this.infiniteSunEnabled ? '∞' : Math.floor(this.sun);
         document.getElementById('waveNum').textContent = this.wave;
         document.getElementById('scoreAmount').textContent = this.score;
-        if (!this.waveAssaultActive) {
+        if (this.zombossActive) {
+            const boss = this.getBoss();
+            document.getElementById('zombieCount').textContent = boss
+                ? `👹 ${Math.ceil(boss.hp)}`
+                : this.zombies.length;
+        } else if (!this.waveAssaultActive) {
             document.getElementById('zombieCount').textContent = '🚩';
         } else {
             const remaining = this.zombiesInWave - this.zombiesSpawned + this.zombies.length;
@@ -1409,7 +1892,7 @@ class PvZGame {
         }
         const cost = getUpgradeCost(plant.type, level);
         btn.textContent = `Upgrade — ☀ ${cost}`;
-        btn.disabled = this.sun < cost;
+        btn.disabled = !this.hasEnoughSun(cost);
     }
 
     updatePlantBar() {
@@ -1418,7 +1901,7 @@ class PvZGame {
             if (!type || !PLANT_TYPES[type]) return;
 
             const data = PLANT_TYPES[type];
-            const disabled = this.sun < data.cost || this.cooldowns[type] > 0;
+            const disabled = !this.hasEnoughSun(data.cost) || this.isPlantOnCooldown(type);
             card.classList.toggle('disabled', disabled);
 
             const overlay = card.querySelector('.cooldown-overlay');
@@ -1452,7 +1935,12 @@ class PvZGame {
             if (mower.state === 'idle') this.drawLawnmower(ctx, mower);
         }
 
-        for (const plant of this.plants) this.drawPlant(ctx, plant);
+        for (const plant of this.plants) {
+            if (this.isCarrierPlant(plant.type)) this.drawPlant(ctx, plant);
+        }
+        for (const plant of this.plants) {
+            if (!this.isCarrierPlant(plant.type)) this.drawPlant(ctx, plant);
+        }
         for (const proj of this.projectiles) this.drawProjectile(ctx, proj);
         for (const zombie of this.zombies) this.drawZombie(ctx, zombie);
 
@@ -1599,6 +2087,41 @@ class PvZGame {
         ctx.fill();
     }
 
+    drawCrater(ctx, x, y, crater) {
+        const cx = x + this.cellW / 2;
+        const cy = y + this.cellH / 2 + 8;
+        const heal = Math.min(1, crater.timer / DOOM_SHROOM_CRATER_DURATION);
+        const alpha = 0.55 + heal * 0.35;
+
+        ctx.fillStyle = `rgba(16, 0, 43, ${alpha})`;
+        ctx.beginPath();
+        ctx.ellipse(cx, cy, 30, 18, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.strokeStyle = `rgba(60, 40, 30, ${alpha + 0.1})`;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.ellipse(cx, cy, 32, 20, 0, 0, Math.PI * 2);
+        ctx.stroke();
+
+        ctx.strokeStyle = `rgba(90, 60, 45, ${alpha})`;
+        ctx.lineWidth = 1.5;
+        for (let i = 0; i < 6; i++) {
+            const angle = (i / 6) * Math.PI * 2 + this.time * 0.2;
+            ctx.beginPath();
+            ctx.moveTo(cx + Math.cos(angle) * 20, cy + Math.sin(angle) * 12);
+            ctx.lineTo(cx + Math.cos(angle) * 34, cy + Math.sin(angle) * 20);
+            ctx.stroke();
+        }
+
+        if (crater.timer < 30) {
+            ctx.fillStyle = `rgba(82, 183, 136, ${(1 - crater.timer / 30) * 0.25})`;
+            ctx.beginPath();
+            ctx.ellipse(cx, cy, 28, 16, 0, 0, Math.PI * 2);
+            ctx.fill();
+        }
+    }
+
     drawHouse(ctx) {
         const hx = 5;
         const hy = this.lawnY + 20;
@@ -1691,6 +2214,11 @@ class PvZGame {
                     ctx.strokeStyle = theme === 'night' ? 'rgba(20, 50, 35, 0.6)' : 'rgba(45, 106, 79, 0.5)';
                     ctx.lineWidth = 1;
                     ctx.strokeRect(x, y, this.cellW - 2, this.cellH - 2);
+                }
+
+                const crater = this.getCraterAt(row, col);
+                if (crater) {
+                    this.drawCrater(ctx, x, y, crater);
                 }
 
                 if (theme === 'day' || theme === 'pool') {
@@ -1900,6 +2428,56 @@ class PvZGame {
         ctx.translate(plant.x, plant.y);
         ctx.scale(scale, scale);
         ctx.translate(-plant.x, -plant.y);
+
+        if (plant.type === 'lilypad') {
+            ctx.fillStyle = '#1b4332';
+            ctx.beginPath();
+            ctx.ellipse(plant.x, plant.y + 8 + bob, 34, 14, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#40916c';
+            ctx.beginPath();
+            ctx.ellipse(plant.x, plant.y + 6 + bob, 30, 11, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = '#2d6a4f';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.ellipse(plant.x, plant.y + 6 + bob, 30, 11, 0, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.fillStyle = '#52b788';
+            ctx.beginPath();
+            ctx.ellipse(plant.x - 10, plant.y + 2 + bob, 8, 5, -0.4, 0, Math.PI * 2);
+            ctx.ellipse(plant.x + 12, plant.y + 4 + bob, 7, 4, 0.3, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+            return;
+        }
+
+        if (plant.type === 'flowerpot') {
+            const potY = plant.y + 10 + bob;
+            ctx.fillStyle = '#8b4513';
+            ctx.beginPath();
+            ctx.moveTo(plant.x - 22, potY - 8);
+            ctx.lineTo(plant.x + 22, potY - 8);
+            ctx.lineTo(plant.x + 16, potY + 14);
+            ctx.lineTo(plant.x - 16, potY + 14);
+            ctx.closePath();
+            ctx.fill();
+            ctx.fillStyle = '#a0522d';
+            ctx.fillRect(plant.x - 24, potY - 12, 48, 6);
+            ctx.strokeStyle = '#6b3a1f';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(plant.x - 24, potY - 12, 48, 6);
+            ctx.fillStyle = '#5c3d1e';
+            ctx.beginPath();
+            ctx.ellipse(plant.x, potY + 14, 17, 4, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#3d2817';
+            ctx.beginPath();
+            ctx.ellipse(plant.x, potY - 4, 14, 5, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+            return;
+        }
 
         if (plant.type === 'potatomine') {
             this.drawPotatoMine(ctx, plant, bob);
@@ -2112,6 +2690,130 @@ class PvZGame {
         drawBandaid(x + 5, y + 3, 0.15);
     }
 
+    drawZomboss(ctx, zombie) {
+        const data = ZOMBIE_TYPES.zomboss;
+        const bob = Math.sin(zombie.animTimer * 2) * 4;
+        const stomp = Math.sin(zombie.animTimer * 3) * 2;
+        const x = zombie.x;
+        const y = zombie.y;
+        const lawnHeight = this.rows * this.cellH;
+        const scale = Math.min(0.82, (this.cellW - 6) / 96, lawnHeight / 175);
+
+        ctx.save();
+        ctx.translate(x, y);
+        if (zombie.dying) {
+            ctx.rotate(zombie.fallAngle);
+            ctx.globalAlpha = zombie.deathTimer / 0.6;
+        }
+        ctx.scale(scale, scale);
+        ctx.translate(-x, -y);
+
+        if (zombie.slowTimer > 0 && !zombie.dying) {
+            ctx.fillStyle = 'rgba(72, 202, 228, 0.3)';
+            ctx.beginPath();
+            ctx.ellipse(x, y, 65, 85, 0, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        ctx.fillStyle = 'rgba(0,0,0,0.2)';
+        ctx.beginPath();
+        ctx.ellipse(x, y + 72 + bob, 48, 14, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Robot legs
+        ctx.fillStyle = '#495057';
+        ctx.fillRect(x - 38, y + 40 + bob + stomp, 22, 32);
+        ctx.fillRect(x + 16, y + 40 + bob - stomp, 22, 32);
+        ctx.fillStyle = '#343a40';
+        ctx.fillRect(x - 42, y + 68 + bob, 30, 10);
+        ctx.fillRect(x + 12, y + 68 + bob, 30, 10);
+
+        // Robot torso
+        const bodyGrad = ctx.createLinearGradient(x - 50, y - 30, x + 50, y + 50);
+        bodyGrad.addColorStop(0, '#adb5bd');
+        bodyGrad.addColorStop(0.5, '#6c757d');
+        bodyGrad.addColorStop(1, '#495057');
+        ctx.fillStyle = bodyGrad;
+        ctx.fillRect(x - 48, y - 20 + bob, 96, 65);
+        ctx.strokeStyle = '#343a40';
+        ctx.lineWidth = 3;
+        ctx.strokeRect(x - 48, y - 20 + bob, 96, 65);
+
+        // Rivets
+        ctx.fillStyle = '#dee2e6';
+        for (let i = 0; i < 6; i++) {
+            ctx.beginPath();
+            ctx.arc(x - 36 + i * 14, y + 5 + bob, 2.5, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        // Robot arms
+        const armBob = Math.sin(zombie.animTimer * 4) * 6;
+        ctx.fillStyle = '#6c757d';
+        ctx.fillRect(x - 68, y - 5 + bob + armBob, 22, 14);
+        ctx.fillRect(x + 46, y - 5 + bob - armBob, 22, 14);
+        ctx.fillStyle = '#495057';
+        ctx.fillRect(x - 72, y + 8 + bob + armBob, 14, 22);
+        ctx.fillRect(x + 58, y + 8 + bob - armBob, 14, 22);
+
+        // Cockpit dome
+        ctx.fillStyle = 'rgba(72, 202, 228, 0.25)';
+        ctx.beginPath();
+        ctx.ellipse(x, y - 42 + bob, 32, 22, 0, Math.PI, 0);
+        ctx.fill();
+        ctx.strokeStyle = '#495057';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Dr. Zomboss in white lab coat
+        ctx.fillStyle = '#f8f9fa';
+        ctx.fillRect(x - 10, y - 58 + bob, 20, 22);
+        ctx.fillRect(x - 14, y - 48 + bob, 8, 14);
+        ctx.fillRect(x + 6, y - 48 + bob, 8, 14);
+
+        ctx.fillStyle = '#7a8c6f';
+        ctx.beginPath();
+        ctx.ellipse(x, y - 62 + bob, 10, 11, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#2d3436';
+        ctx.fillRect(x - 8, y - 66 + bob, 6, 4);
+        ctx.fillRect(x + 2, y - 66 + bob, 6, 4);
+
+        ctx.fillStyle = '#e63946';
+        ctx.beginPath();
+        ctx.arc(x - 5, y - 64 + bob, 1.5, 0, Math.PI * 2);
+        ctx.arc(x + 5, y - 64 + bob, 1.5, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Robot eyes
+        ctx.fillStyle = '#e63946';
+        ctx.shadowColor = '#e63946';
+        ctx.shadowBlur = 8;
+        ctx.fillRect(x - 22, y - 8 + bob, 10, 6);
+        ctx.fillRect(x + 12, y - 8 + bob, 10, 6);
+        ctx.shadowBlur = 0;
+
+        // Spawn chute glow
+        if (!zombie.dying && zombie.spawnTimer < 0.4) {
+            ctx.fillStyle = 'rgba(230, 57, 70, 0.5)';
+            ctx.beginPath();
+            ctx.ellipse(x - 30, y + 35 + bob, 12, 8, 0, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        if (!zombie.dying) {
+            const barW = 90;
+            this.drawZombieHealthBar(ctx, x, y - 88 + bob, zombie, barW, 8);
+            ctx.font = 'bold 11px Fredoka, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillStyle = '#fff';
+            ctx.fillText(data.name, x, y - 94 + bob);
+        }
+
+        ctx.restore();
+    }
+
     drawGargantuar(ctx, zombie, bob) {
         const data = ZOMBIE_TYPES.gargantuar;
         const scale = 1.55;
@@ -2173,12 +2875,7 @@ class PvZGame {
         ctx.fillRect(zombie.x + 1, zombie.y + 18 + bob - armSwing * 0.5, 9, 10);
 
         if (!zombie.dying) {
-            const barW = 44;
-            const hpPct = zombie.hp / zombie.maxHp;
-            ctx.fillStyle = 'rgba(0,0,0,0.55)';
-            ctx.fillRect(zombie.x - barW / 2, zombie.y - 72 + bob, barW, 6);
-            ctx.fillStyle = hpPct > 0.5 ? '#52b788' : hpPct > 0.25 ? '#ffd60a' : '#e63946';
-            ctx.fillRect(zombie.x - barW / 2, zombie.y - 72 + bob, barW * hpPct, 6);
+            this.drawZombieHealthBar(ctx, zombie.x, zombie.y - 72 + bob, zombie, 44, 6);
         }
 
         ctx.restore();
@@ -2186,9 +2883,15 @@ class PvZGame {
 
     drawZombie(ctx, zombie) {
         const data = ZOMBIE_TYPES[zombie.type];
+        const walkBob = zombie.type === 'allstar' ? 5 : 3;
         const bob = zombie.eatAnim > 0
             ? Math.sin(zombie.eatAnim) * 4
-            : Math.sin(zombie.walkAnim) * 3;
+            : Math.sin(zombie.walkAnim * (zombie.type === 'allstar' ? 1.6 : 1)) * walkBob;
+
+        if (zombie.type === 'zomboss') {
+            this.drawZomboss(ctx, zombie);
+            return;
+        }
 
         if (zombie.type === 'gargantuar') {
             ctx.save();
@@ -2268,17 +2971,32 @@ class PvZGame {
             ctx.fillRect(zombie.x - 14, zombie.y - 58 + bob, 28, 14);
             ctx.fillStyle = '#6c757d';
             ctx.fillRect(zombie.x - 16, zombie.y - 46 + bob, 32, 4);
+        } else if (data.hat === 'allstar') {
+            const hy = zombie.y - 54 + bob;
+            ctx.fillStyle = '#2d6a4f';
+            ctx.beginPath();
+            ctx.ellipse(zombie.x, hy, 18, 14, 0, Math.PI, 0);
+            ctx.fill();
+            ctx.fillStyle = '#f8f9fa';
+            ctx.fillRect(zombie.x - 3, hy - 12, 6, 16);
+            ctx.strokeStyle = '#dee2e6';
+            ctx.lineWidth = 1.5;
+            for (let i = -1; i <= 1; i++) {
+                ctx.beginPath();
+                ctx.moveTo(zombie.x + i * 7 - 2, hy + 2);
+                ctx.lineTo(zombie.x + i * 7 - 2, hy + 12);
+                ctx.stroke();
+            }
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.35)';
+            ctx.fillRect(zombie.x - 14, hy + 4, 28, 3);
         } else if (data.hat === 'flag') {
             this.drawFlag(ctx, zombie, bob);
         }
 
         if (!zombie.dying) {
-            const barW = 30;
-            const hpPct = zombie.hp / zombie.maxHp;
-            ctx.fillStyle = 'rgba(0,0,0,0.5)';
-            ctx.fillRect(zombie.x - barW / 2, zombie.y - 65 + bob, barW, 5);
-            ctx.fillStyle = hpPct > 0.5 ? '#52b788' : hpPct > 0.25 ? '#ffd60a' : '#e63946';
-            ctx.fillRect(zombie.x - barW / 2, zombie.y - 65 + bob, barW * hpPct, 5);
+            const barW = zombie.type === 'allstar' ? 36 : 30;
+            const barY = zombie.type === 'allstar' ? 70 : 65;
+            this.drawZombieHealthBar(ctx, zombie.x, zombie.y - barY + bob, zombie, barW, 5);
         }
 
         ctx.restore();
@@ -2420,9 +3138,14 @@ class PvZGame {
         const x = this.lawnX + col * this.cellW;
         const y = this.lawnY + row * this.cellH;
         const isWater = this.isWaterCell(row, col);
-        const occupied = this.plants.some((p) => p.row === row && p.col === col && p.hp > 0);
+        const hasCrater = this.hasCraterAt(row, col);
         const data = PLANT_TYPES[this.selectedPlant];
-        const invalid = occupied || isWater;
+        const invalid = !this.selectedPlant || !this.canPlacePlant(row, col, this.selectedPlant);
+        const requiredCarrier = this.getRequiredCarrier(row, col);
+        const needsCarrier = requiredCarrier
+            && this.selectedPlant !== requiredCarrier
+            && !this.hasCarrierAt(row, col, requiredCarrier);
+        const carrierHint = requiredCarrier === 'lilypad' ? '🪷' : '🏺';
 
         const pulse = 0.3 + Math.sin(this.time * 6) * 0.1;
         ctx.fillStyle = invalid ? `rgba(230, 57, 70, ${pulse + 0.1})` : `rgba(255, 214, 10, ${pulse})`;
@@ -2441,11 +3164,23 @@ class PvZGame {
             ctx.globalAlpha = 0.7;
             ctx.fillText(data.icon, x + this.cellW / 2, y + this.cellH / 2);
             ctx.globalAlpha = 1;
-        } else if (isWater) {
+        } else if (needsCarrier) {
+            ctx.font = 'bold 14px Fredoka, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillStyle = requiredCarrier === 'lilypad'
+                ? 'rgba(202, 240, 248, 0.8)'
+                : 'rgba(255, 214, 10, 0.85)';
+            ctx.fillText(carrierHint, x + this.cellW / 2, y + this.cellH / 2);
+        } else if (isWater && this.selectedPlant === 'lilypad') {
             ctx.font = 'bold 14px Fredoka, sans-serif';
             ctx.textAlign = 'center';
             ctx.fillStyle = 'rgba(202, 240, 248, 0.8)';
             ctx.fillText('🌊', x + this.cellW / 2, y + this.cellH / 2);
+        } else if (hasCrater) {
+            ctx.font = 'bold 14px Fredoka, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillStyle = 'rgba(90, 24, 154, 0.8)';
+            ctx.fillText('🕳️', x + this.cellW / 2, y + this.cellH / 2);
         }
         ctx.globalAlpha = 1;
     }
