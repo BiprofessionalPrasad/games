@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Elsacorn & Unicorn — Magical Rainbow Race</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(180deg, #87ceeb 0%, #b8e4ff 45%, #e8c4ff 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
+      min-height: 100dvh;
+      position: relative;
+    }
+
+    /* Cotton candy clouds */
+    .cloud {
+      position: fixed;
+      border-radius: 50%;
+      opacity: 0.85;
+      pointer-events: none;
+      z-index: 0;
+      animation: floatCloud 18s ease-in-out infinite;
+    }
+    .cloud::before, .cloud::after {
+      content: '';
+      position: absolute;
+      border-radius: 50%;
+      background: inherit;
+    }
+    .cloud-1 {
+      width: 120px; height: 50px;
+      background: linear-gradient(135deg, #ffb6e6, #d8a8ff);
+      top: 8%; left: 5%;
+      animation-duration: 22s;
+    }
+    .cloud-1::before { width: 60px; height: 60px; top: -30px; left: 15px; }
+    .cloud-1::after { width: 80px; height: 55px; top: -20px; right: 10px; }
+    .cloud-2 {
+      width: 140px; height: 55px;
+      background: linear-gradient(135deg, #ffc8f0, #c9a0ff);
+      top: 15%; right: 8%;
+      animation-duration: 26s;
+      animation-delay: -5s;
+    }
+    .cloud-2::before { width: 70px; height: 65px; top: -35px; left: 20px; }
+    .cloud-2::after { width: 90px; height: 60px; top: -25px; right: 5px; }
+    .cloud-3 {
+      width: 100px; height: 42px;
+      background: linear-gradient(135deg, #ffd4f5, #e0b8ff);
+      top: 5%; left: 45%;
+      animation-duration: 20s;
+      animation-delay: -10s;
+    }
+    .cloud-3::before { width: 50px; height: 50px; top: -25px; left: 10px; }
+    .cloud-3::after { width: 65px; height: 45px; top: -18px; right: 8px; }
+
+    @keyframes floatCloud {
+      0%, 100% { transform: translateX(0) translateY(0); }
+      50% { transform: translateX(25px) translateY(-8px); }
+    }
+
+    /* Lollipop trees */
+    .lollipop-tree {
+      position: fixed;
+      pointer-events: none;
+      z-index: 1;
+    }
+    .lollipop-tree .stick {
+      width: 8px;
+      height: 55px;
+      background: linear-gradient(90deg, #f5e6d3, #e8d4b8);
+      border-radius: 4px;
+      margin: 0 auto;
+    }
+    .lollipop-tree .candy {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      margin: 0 auto -4px;
+      position: relative;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .lollipop-tree .candy::after {
+      content: '';
+      position: absolute;
+      inset: 6px;
+      border-radius: 50%;
+      background: repeating-conic-gradient(
+        from 0deg,
+        rgba(255,255,255,0.5) 0deg 15deg,
+        transparent 15deg 30deg
+      );
+    }
+    .tree-left { bottom: 12%; left: 2%; transform: scale(0.9); }
+    .tree-right { bottom: 18%; right: 3%; transform: scale(1.1); }
+    .tree-left .candy { background: conic-gradient(#ff6b9d, #ffd93d, #6bcb77, #4d96ff, #ff6b9d); }
+    .tree-right .candy { background: conic-gradient(#c77dff, #ff9ecd, #7ee8fa, #ffd93d, #c77dff); }
+
+    /* Dual-toned grass */
+    .grass-field {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 22%;
+      z-index: 0;
+      pointer-events: none;
+    }
+    .grass-field::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        90deg,
+        #ffb3d9 0px, #ffb3d9 18px,
+        #a8d8ff 18px, #a8d8ff 36px
+      );
+      opacity: 0.55;
+    }
+    .grass-field::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 30px;
+      background: linear-gradient(180deg, transparent, rgba(168,216,255,0.3));
+    }
+
+    #game-root {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 1400px;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      padding: 6px 10px 8px;
+      gap: 4px;
+    }
+
+    header {
+      text-align: center;
+      flex-shrink: 0;
+    }
+    header h1 {
+      font-size: clamp(1rem, 3vw, 1.4rem);
+      background: linear-gradient(90deg, #ff6b9d, #c77dff, #4d96ff, #6bcb77, #ffd93d);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 2px 4px rgba(255,255,255,0.6));
+      letter-spacing: 0.5px;
+    }
+
+    #turn-indicator {
+      font-size: clamp(0.9rem, 2.8vw, 1.1rem);
+      font-weight: 700;
+      color: #5a3d8a;
+      text-shadow: 0 1px 3px rgba(255,255,255,0.8);
+      min-height: 1.4em;
+      padding: 2px 0;
+    }
+    #turn-indicator.elsacorn { color: #2b7cb8; }
+    #turn-indicator.unicorn { color: #9b4dca; }
+
+    /* Menu overlay */
+    #menu-screen, #win-screen {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: rgba(135, 206, 235, 0.75);
+      backdrop-filter: blur(6px);
+      padding: 24px;
+      gap: 20px;
+    }
+    #win-screen { display: none; }
+
+    .menu-card {
+      background: linear-gradient(145deg, rgba(255,255,255,0.95), rgba(255,230,250,0.9));
+      border-radius: 24px;
+      padding: 28px 32px;
+      box-shadow: 0 12px 40px rgba(155, 77, 202, 0.25);
+      text-align: center;
+      max-width: 400px;
+      width: 100%;
+      border: 3px solid rgba(255, 182, 230, 0.6);
+    }
+    .menu-card h2 {
+      font-size: clamp(1.4rem, 5vw, 1.9rem);
+      background: linear-gradient(90deg, #ff6b9d, #c77dff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 8px;
+    }
+    .menu-card p {
+      color: #6b5b8a;
+      margin-bottom: 20px;
+      font-size: 0.95rem;
+    }
+
+    .mode-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .mode-btn, .action-btn {
+      min-height: 52px;
+      padding: 14px 24px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      border: none;
+      border-radius: 16px;
+      cursor: pointer;
+      touch-action: manipulation;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .mode-btn:active, .action-btn:active { transform: scale(0.97); }
+    .mode-btn {
+      background: linear-gradient(135deg, #e8d4ff, #ffd4f5);
+      color: #5a3d8a;
+      box-shadow: 0 4px 14px rgba(199, 125, 255, 0.3);
+    }
+    .mode-btn:hover { box-shadow: 0 6px 20px rgba(199, 125, 255, 0.45); }
+    .action-btn {
+      background: linear-gradient(135deg, #ff9ecd, #c77dff);
+      color: white;
+      box-shadow: 0 4px 16px rgba(199, 125, 255, 0.4);
+      margin-top: 8px;
+    }
+
+    /* Board area */
+    #board-area {
+      flex: 1 1 auto;
+      position: relative;
+      min-height: 58vh;
+      min-height: 58dvh;
+      overflow: hidden;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.25);
+      box-shadow: inset 0 0 30px rgba(255, 182, 230, 0.2);
+    }
+
+    #board-svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .board-tile {
+      stroke: rgba(255,255,255,0.7);
+      stroke-width: 2;
+    }
+
+    .tile-label {
+      font-size: 12px;
+      font-weight: 700;
+      fill: rgba(255,255,255,0.95);
+      text-anchor: middle;
+      dominant-baseline: central;
+      pointer-events: none;
+    }
+
+    /* Tokens */
+    .token {
+      position: absolute;
+      width: 72px;
+      height: 72px;
+      transform: translate(-50%, -50%);
+      transition: left 0.35s cubic-bezier(0.34, 1.2, 0.64, 1),
+                  top 0.35s cubic-bezier(0.34, 1.2, 0.64, 1);
+      z-index: 10;
+      pointer-events: none;
+      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.25));
+    }
+    .token svg { width: 100%; height: 100%; }
+
+    #particle-canvas {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 15;
+    }
+
+    /* Spinner panel */
+    #spinner-panel {
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 0 4px;
+    }
+
+    .spinner-container {
+      position: relative;
+      width: min(160px, 32vw);
+      height: min(160px, 32vw);
+      perspective: 600px;
+    }
+
+    .spinner-wheel {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      position: relative;
+      transform-style: preserve-3d;
+      box-shadow:
+        0 8px 24px rgba(0,0,0,0.2),
+        inset 0 -6px 16px rgba(0,0,0,0.15),
+        inset 0 6px 16px rgba(255,255,255,0.4);
+      transition: transform 3s cubic-bezier(0.17, 0.67, 0.12, 0.99);
+    }
+
+    .spinner-wheel::before {
+      content: '';
+      position: absolute;
+      inset: -4px;
+      border-radius: 50%;
+      background: conic-gradient(
+        #ff6b9d, #ffd93d, #6bcb77, #4d96ff, #c77dff, #ff9ecd, #ff6b9d
+      );
+      z-index: -1;
+      filter: blur(2px);
+    }
+
+    .wheel-segment {
+      position: absolute;
+      width: 50%;
+      height: 50%;
+      left: 50%;
+      top: 0;
+      transform-origin: 0% 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      clip-path: polygon(0 100%, 100% 0, 0 0);
+    }
+
+    .wheel-segment span {
+      position: absolute;
+      font-size: clamp(1.1rem, 4vw, 1.5rem);
+      font-weight: 800;
+      color: white;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+      transform: rotate(30deg) translateY(-28%);
+    }
+
+    .seg-1 { transform: rotate(0deg);   background: #ff6b9d; }
+    .seg-2 { transform: rotate(60deg);  background: #ffd93d; }
+    .seg-3 { transform: rotate(120deg); background: #6bcb77; }
+    .seg-4 { transform: rotate(180deg); background: #4d96ff; }
+    .seg-5 { transform: rotate(240deg); background: #c77dff; }
+    .seg-6 { transform: rotate(300deg); background: #ff9ecd; }
+
+    .seg-1 span { transform: rotate(30deg) translate(-15%, -55%); }
+    .seg-2 span { transform: rotate(30deg) translate(-15%, -55%); }
+    .seg-3 span { transform: rotate(30deg) translate(-15%, -55%); }
+    .seg-4 span { transform: rotate(30deg) translate(-15%, -55%); }
+    .seg-5 span { transform: rotate(30deg) translate(-15%, -55%); }
+    .seg-6 span { transform: rotate(30deg) translate(-15%, -55%); }
+
+    .spinner-pointer {
+      position: absolute;
+      top: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 14px solid transparent;
+      border-right: 14px solid transparent;
+      border-top: 28px solid #ffd93d;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+      z-index: 5;
+    }
+
+    .spinner-center {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 28%;
+      height: 28%;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #fff, #e8d4ff);
+      box-shadow: inset 0 2px 6px rgba(0,0,0,0.15);
+      z-index: 4;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+    }
+
+    #spin-btn {
+      min-width: 160px;
+      min-height: 56px;
+      font-size: 1.25rem;
+      font-weight: 800;
+      letter-spacing: 2px;
+      border: none;
+      border-radius: 20px;
+      background: linear-gradient(135deg, #ff6b9d, #c77dff, #4d96ff);
+      color: white;
+      cursor: pointer;
+      touch-action: manipulation;
+      box-shadow: 0 6px 20px rgba(199, 125, 255, 0.45);
+      transition: transform 0.15s, opacity 0.2s;
+    }
+    #spin-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+    #spin-btn:not(:disabled):active { transform: scale(0.96); }
+
+    #spin-result {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #5a3d8a;
+      min-height: 1.4em;
+    }
+
+    .winner-emoji { font-size: 3rem; margin-bottom: 8px; }
+
+    #confetti-canvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 200;
+    }
+
+    @media (max-height: 600px) {
+      #game-root { padding: 4px 8px; gap: 2px; }
+      #board-area { min-height: 50vh; min-height: 50dvh; }
+      .spinner-container { width: min(130px, 28vw); height: min(130px, 28vw); }
+      .token { width: 58px; height: 58px; }
+      #spin-btn { min-height: 48px; font-size: 1.1rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="cloud cloud-1"></div>
+  <div class="cloud cloud-2"></div>
+  <div class="cloud cloud-3"></div>
+
+  <div class="lollipop-tree tree-left">
+    <div class="candy"></div>
+    <div class="stick"></div>
+  </div>
+  <div class="lollipop-tree tree-right">
+    <div class="candy"></div>
+    <div class="stick"></div>
+  </div>
+  <div class="grass-field"></div>
+
+  <div id="menu-screen">
+    <div class="menu-card">
+      <h2>✨ Magical Rainbow Race ✨</h2>
+      <p>Race your Elsacorn or Unicorn to the Rainbow Castle!</p>
+      <div class="mode-buttons">
+        <button class="mode-btn" id="btn-2p">👥 2 Players</button>
+        <button class="mode-btn" id="btn-cpu">🤖 Play vs Computer</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="win-screen">
+    <div class="menu-card">
+      <div class="winner-emoji" id="winner-emoji">🏰</div>
+      <h2 id="winner-text">Elsacorn Wins!</h2>
+      <p id="winner-sub">Reached the Rainbow Castle!</p>
+      <button class="action-btn" id="play-again-btn">🌈 Play Again</button>
+    </div>
+  </div>
+
+  <canvas id="confetti-canvas"></canvas>
+
+  <div id="game-root">
+    <header>
+      <h1>Elsacorn &amp; Unicorn</h1>
+      <div id="turn-indicator">Choose a game mode to begin!</div>
+    </header>
+
+    <div id="board-area">
+      <svg id="board-svg" viewBox="0 0 800 500" preserveAspectRatio="xMidYMid meet"></svg>
+      <div id="token-elsacorn" class="token" aria-hidden="true">
+        <svg viewBox="0 0 80 64">
+          <defs>
+            <linearGradient id="elsa-body" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#a8e6ff"/>
+              <stop offset="50%" stop-color="#d4f1ff"/>
+              <stop offset="100%" stop-color="#b8e0ff"/>
+            </linearGradient>
+            <linearGradient id="elsa-mane" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#e0f7ff"/>
+              <stop offset="100%" stop-color="#ffffff"/>
+            </linearGradient>
+            <linearGradient id="gold-horn-elsa" x1="0%" y1="100%" x2="0%" y2="0%">
+              <stop offset="0%" stop-color="#b8860b"/>
+              <stop offset="40%" stop-color="#ffd700"/>
+              <stop offset="100%" stop-color="#fffacd"/>
+            </linearGradient>
+          </defs>
+          <!-- tail -->
+          <path d="M8 34 Q0 30 2 22 Q4 14 10 20 Q14 26 12 32 Z" fill="url(#elsa-mane)" stroke="#8ecae6" stroke-width="0.6"/>
+          <!-- back legs -->
+          <path d="M20 44 L18 60 M28 44 L26 60" stroke="#7eb8d8" stroke-width="3.5" stroke-linecap="round"/>
+          <path d="M20 44 L18 60 M28 44 L26 60" stroke="#a8e6ff" stroke-width="2" stroke-linecap="round"/>
+          <!-- body -->
+          <path d="M12 38 Q10 30 16 24 Q26 18 40 20 Q52 22 56 30 Q58 38 50 42 Q36 46 22 44 Q14 44 12 38 Z" fill="url(#elsa-body)" stroke="#8ecae6" stroke-width="0.7"/>
+          <!-- front legs -->
+          <path d="M46 42 L44 60 M54 40 L52 60" stroke="#7eb8d8" stroke-width="3.5" stroke-linecap="round"/>
+          <path d="M46 42 L44 60 M54 40 L52 60" stroke="#a8e6ff" stroke-width="2" stroke-linecap="round"/>
+          <!-- neck -->
+          <path d="M48 30 Q50 24 48 18 Q46 14 50 12" fill="none" stroke="#8ecae6" stroke-width="5" stroke-linecap="round"/>
+          <path d="M48 30 Q50 24 48 18 Q46 14 50 12" fill="none" stroke="url(#elsa-body)" stroke-width="4" stroke-linecap="round"/>
+          <!-- mane -->
+          <path d="M46 16 Q42 8 46 4 Q50 8 52 14 Q54 20 50 24 Q48 22 46 16 Z" fill="url(#elsa-mane)" stroke="#8ecae6" stroke-width="0.5"/>
+          <path d="M44 20 Q40 14 44 10 Q48 14 48 20" fill="url(#elsa-mane)" stroke="#8ecae6" stroke-width="0.4"/>
+          <!-- head -->
+          <path d="M48 16 Q54 12 62 14 Q72 16 74 22 Q76 28 70 32 Q64 36 56 34 Q50 32 48 26 Q46 20 48 16 Z" fill="url(#elsa-body)" stroke="#8ecae6" stroke-width="0.7"/>
+          <!-- muzzle -->
+          <path d="M66 26 Q74 26 76 28 Q74 32 68 32 Q64 32 66 26 Z" fill="#d4f1ff" stroke="#8ecae6" stroke-width="0.6"/>
+          <!-- ear -->
+          <path d="M52 12 L54 4 L58 13 Z" fill="url(#elsa-mane)" stroke="#8ecae6" stroke-width="0.5"/>
+          <!-- eye -->
+          <ellipse cx="60" cy="22" rx="2.2" ry="2.8" fill="#2b7cb8"/>
+          <circle cx="61" cy="21" r="0.9" fill="#ffffff"/>
+          <!-- nostril -->
+          <ellipse cx="73" cy="29" rx="1.2" ry="0.8" fill="#8ecae6"/>
+          <!-- big golden horn -->
+          <path d="M52 10 Q48 -6 56 -14 Q66 -8 62 8 Q58 14 52 10 Z" fill="url(#gold-horn-elsa)" stroke="#b8860b" stroke-width="1"/>
+          <path d="M54 4 Q52 -4 58 -10" fill="none" stroke="#fffacd" stroke-width="1.2" opacity="0.8"/>
+          <circle cx="57" cy="-11" r="2" fill="#fffacd" opacity="0.9"/>
+        </svg>
+      </div>
+      <div id="token-unicorn" class="token" aria-hidden="true">
+        <svg viewBox="0 0 80 64">
+          <defs>
+            <linearGradient id="uni-body" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#ffe0f5"/>
+              <stop offset="100%" stop-color="#ffd4f5"/>
+            </linearGradient>
+            <linearGradient id="gold-horn-uni" x1="0%" y1="100%" x2="0%" y2="0%">
+              <stop offset="0%" stop-color="#b8860b"/>
+              <stop offset="40%" stop-color="#ffd700"/>
+              <stop offset="100%" stop-color="#fffacd"/>
+            </linearGradient>
+          </defs>
+          <!-- tail -->
+          <path d="M8 34 Q0 28 3 18 Q6 10 12 18 Q16 26 14 34 Q12 38 8 34 Z" fill="#c77dff" stroke="#9b4dca" stroke-width="0.6"/>
+          <path d="M6 30 Q2 24 6 18" fill="none" stroke="#ff9ecd" stroke-width="1.5" stroke-linecap="round"/>
+          <!-- back legs -->
+          <path d="M20 44 L18 60 M28 44 L26 60" stroke="#e8a0c8" stroke-width="3.5" stroke-linecap="round"/>
+          <path d="M20 44 L18 60 M28 44 L26 60" stroke="#ffe0f5" stroke-width="2" stroke-linecap="round"/>
+          <!-- body -->
+          <path d="M12 38 Q10 30 16 24 Q26 18 40 20 Q52 22 56 30 Q58 38 50 42 Q36 46 22 44 Q14 44 12 38 Z" fill="url(#uni-body)" stroke="#e8a0c8" stroke-width="0.7"/>
+          <!-- front legs -->
+          <path d="M46 42 L44 60 M54 40 L52 60" stroke="#e8a0c8" stroke-width="3.5" stroke-linecap="round"/>
+          <path d="M46 42 L44 60 M54 40 L52 60" stroke="#ffe0f5" stroke-width="2" stroke-linecap="round"/>
+          <!-- neck -->
+          <path d="M48 30 Q50 24 48 18 Q46 14 50 12" fill="none" stroke="#e8a0c8" stroke-width="5" stroke-linecap="round"/>
+          <path d="M48 30 Q50 24 48 18 Q46 14 50 12" fill="none" stroke="url(#uni-body)" stroke-width="4" stroke-linecap="round"/>
+          <!-- rainbow mane -->
+          <path d="M46 16 Q42 8 46 4 Q50 8 52 14 Q54 20 50 24 Q48 22 46 16 Z" fill="#ff9ecd"/>
+          <path d="M44 20 Q40 12 44 8 Q48 12 48 18" fill="#c77dff"/>
+          <path d="M46 14 Q44 10 46 6 Q48 10 48 14" fill="#ffd93d"/>
+          <!-- head -->
+          <path d="M48 16 Q54 12 62 14 Q72 16 74 22 Q76 28 70 32 Q64 36 56 34 Q50 32 48 26 Q46 20 48 16 Z" fill="url(#uni-body)" stroke="#e8a0c8" stroke-width="0.7"/>
+          <!-- muzzle -->
+          <path d="M66 26 Q74 26 76 28 Q74 32 68 32 Q64 32 66 26 Z" fill="#fff0f8" stroke="#e8a0c8" stroke-width="0.6"/>
+          <!-- ear -->
+          <path d="M52 12 L54 4 L58 13 Z" fill="#ff9ecd" stroke="#9b4dca" stroke-width="0.5"/>
+          <!-- eye -->
+          <ellipse cx="60" cy="22" rx="2.2" ry="2.8" fill="#9b4dca"/>
+          <circle cx="61" cy="21" r="0.9" fill="#ffffff"/>
+          <!-- nostril -->
+          <ellipse cx="73" cy="29" rx="1.2" ry="0.8" fill="#e8a0c8"/>
+          <!-- big golden horn -->
+          <path d="M52 10 Q48 -6 56 -14 Q66 -8 62 8 Q58 14 52 10 Z" fill="url(#gold-horn-uni)" stroke="#b8860b" stroke-width="1"/>
+          <path d="M54 4 Q52 -4 58 -10" fill="none" stroke="#fffacd" stroke-width="1.2" opacity="0.8"/>
+          <circle cx="57" cy="-11" r="2" fill="#fffacd" opacity="0.9"/>
+        </svg>
+      </div>
+      <canvas id="particle-canvas"></canvas>
+    </div>
+
+    <div id="spinner-panel">
+      <div class="spinner-container">
+        <div class="spinner-pointer"></div>
+        <div class="spinner-wheel" id="spinner-wheel">
+          <div class="wheel-segment seg-1"><span>1</span></div>
+          <div class="wheel-segment seg-2"><span>2</span></div>
+          <div class="wheel-segment seg-3"><span>3</span></div>
+          <div class="wheel-segment seg-4"><span>4</span></div>
+          <div class="wheel-segment seg-5"><span>5</span></div>
+          <div class="wheel-segment seg-6"><span>6</span></div>
+          <div class="spinner-center">✨</div>
+        </div>
+      </div>
+      <div id="spin-result"></div>
+      <button id="spin-btn" disabled>SPIN</button>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      const TILE_COUNT = 26;
+      const TILE_COLORS = [
+        '#ff6b9d', '#ffd93d', '#6bcb77', '#4d96ff', '#c77dff', '#ff9ecd',
+        '#ffb347', '#77dd77', '#aec6cf', '#fdfd96', '#cfcfc4', '#b39eb5',
+        '#ff6961', '#cb99c9', '#fdfd96', '#77b5fe', '#f49ac2', '#c23b22',
+        '#836953', '#03c03c', '#ff6b9d', '#c77dff', '#4d96ff', '#ffd93d'
+      ];
+
+      const boardPath = buildBoardPath(TILE_COUNT);
+
+      let gameMode = null;
+      let currentPlayer = 0;
+      let positions = [0, 0];
+      let isSpinning = false;
+      let isMoving = false;
+      let gameActive = false;
+      let wheelRotation = 0;
+
+      const menuScreen = document.getElementById('menu-screen');
+      const winScreen = document.getElementById('win-screen');
+      const turnIndicator = document.getElementById('turn-indicator');
+      const boardSvg = document.getElementById('board-svg');
+      const boardArea = document.getElementById('board-area');
+      const tokenElsacorn = document.getElementById('token-elsacorn');
+      const tokenUnicorn = document.getElementById('token-unicorn');
+      const spinnerWheel = document.getElementById('spinner-wheel');
+      const spinBtn = document.getElementById('spin-btn');
+      const spinResult = document.getElementById('spin-result');
+      const particleCanvas = document.getElementById('particle-canvas');
+      const confettiCanvas = document.getElementById('confetti-canvas');
+      const pCtx = particleCanvas.getContext('2d');
+      const cCtx = confettiCanvas.getContext('2d');
+
+      let particles = [];
+      let confetti = [];
+      let animFrame = null;
+
+      function buildBoardPath(count) {
+        const points = [];
+        const w = 800, h = 500;
+        const margin = 38;
+        const cols = 5;
+        const rows = Math.ceil((count + 1) / cols);
+        const cellW = (w - margin * 2) / (cols - 1);
+        const cellH = (h - margin * 2) / (rows - 1);
+
+        let idx = 0;
+        for (let row = 0; row < rows && idx <= count; row++) {
+          const leftToRight = row % 2 === 0;
+          for (let col = 0; col < cols && idx <= count; col++) {
+            const c = leftToRight ? col : cols - 1 - col;
+            points.push({
+              x: margin + c * cellW,
+              y: margin + row * cellH,
+              index: idx
+            });
+            idx++;
+          }
+        }
+        return points;
+      }
+
+      function renderBoard() {
+        boardSvg.innerHTML = '';
+        const ns = 'http://www.w3.org/2000/svg';
+
+        const pathD = boardPath.map((p, i) => (i === 0 ? 'M' : 'L') + p.x + ',' + p.y).join(' ');
+        const track = document.createElementNS(ns, 'path');
+        track.setAttribute('d', pathD);
+        track.setAttribute('fill', 'none');
+        track.setAttribute('stroke', 'rgba(255,255,255,0.5)');
+        track.setAttribute('stroke-width', '42');
+        track.setAttribute('stroke-linecap', 'round');
+        track.setAttribute('stroke-linejoin', 'round');
+        boardSvg.appendChild(track);
+
+        const trackInner = document.createElementNS(ns, 'path');
+        trackInner.setAttribute('d', pathD);
+        trackInner.setAttribute('fill', 'none');
+        trackInner.setAttribute('stroke', 'rgba(199,125,255,0.25)');
+        trackInner.setAttribute('stroke-width', '30');
+        trackInner.setAttribute('stroke-linecap', 'round');
+        trackInner.setAttribute('stroke-linejoin', 'round');
+        boardSvg.appendChild(trackInner);
+
+        boardPath.forEach((p, i) => {
+          const g = document.createElementNS(ns, 'g');
+          const circle = document.createElementNS(ns, 'circle');
+          const radius = i === 0 || i === TILE_COUNT ? 38 : 32;
+          let fill;
+          if (i === 0) fill = 'url(#startGrad)';
+          else if (i === TILE_COUNT) fill = 'url(#castleGrad)';
+          else fill = TILE_COLORS[(i - 1) % TILE_COLORS.length];
+
+          circle.setAttribute('cx', p.x);
+          circle.setAttribute('cy', p.y);
+          circle.setAttribute('r', radius);
+          circle.setAttribute('fill', fill);
+          circle.setAttribute('class', 'board-tile');
+          g.appendChild(circle);
+
+          const label = document.createElementNS(ns, 'text');
+          label.setAttribute('x', p.x);
+          label.setAttribute('y', p.y);
+          label.setAttribute('class', 'tile-label');
+          if (i === 0) label.textContent = 'START';
+          else if (i === TILE_COUNT) label.textContent = '🏰';
+          else label.textContent = i;
+          g.appendChild(label);
+
+          if (i === TILE_COUNT) {
+            const castle = document.createElementNS(ns, 'text');
+            castle.setAttribute('x', p.x);
+            castle.setAttribute('y', p.y + 18);
+            castle.setAttribute('class', 'tile-label');
+            castle.setAttribute('font-size', '9');
+            castle.textContent = 'CASTLE';
+            g.appendChild(castle);
+          }
+
+          boardSvg.appendChild(g);
+        });
+
+        const defs = document.createElementNS(ns, 'defs');
+        defs.innerHTML = `
+          <linearGradient id="startGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#6bcb77"/>
+            <stop offset="100%" stop-color="#4d96ff"/>
+          </linearGradient>
+          <linearGradient id="castleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#ffd93d"/>
+            <stop offset="33%" stop-color="#ff6b9d"/>
+            <stop offset="66%" stop-color="#c77dff"/>
+            <stop offset="100%" stop-color="#4d96ff"/>
+          </linearGradient>
+        `;
+        boardSvg.insertBefore(defs, boardSvg.firstChild);
+      }
+
+      function resizeCanvases() {
+        const rect = boardArea.getBoundingClientRect();
+        particleCanvas.width = rect.width;
+        particleCanvas.height = rect.height;
+        confettiCanvas.width = window.innerWidth;
+        confettiCanvas.height = window.innerHeight;
+        positionTokens(false);
+      }
+
+      function svgToScreen(svgX, svgY) {
+        const rect = boardArea.getBoundingClientRect();
+        const vb = boardSvg.viewBox.baseVal;
+        const scale = Math.min(rect.width / vb.width, rect.height / vb.height);
+        const offsetX = (rect.width - vb.width * scale) / 2;
+        const offsetY = (rect.height - vb.height * scale) / 2;
+        return {
+          x: offsetX + svgX * scale,
+          y: offsetY + svgY * scale
+        };
+      }
+
+      function positionTokens(animate) {
+        const tokens = [tokenElsacorn, tokenUnicorn];
+        tokens.forEach((el, player) => {
+          const pos = boardPath[Math.min(positions[player], TILE_COUNT)];
+          const screen = svgToScreen(pos.x, pos.y);
+          const offsetX = player === 0 ? -22 : 22;
+          const offsetY = player === 0 ? -16 : 16;
+          if (animate) {
+            el.style.left = (screen.x + offsetX) + 'px';
+            el.style.top = (screen.y + offsetY) + 'px';
+          } else {
+            el.style.transition = 'none';
+            el.style.left = (screen.x + offsetX) + 'px';
+            el.style.top = (screen.y + offsetY) + 'px';
+            requestAnimationFrame(() => { el.style.transition = ''; });
+          }
+        });
+      }
+
+      function updateTurnText() {
+        if (!gameActive) return;
+        const names = [gameMode === 'cpu' ? 'Computer' : 'Elsacorn', 'Unicorn'];
+        const classes = ['elsacorn', 'unicorn'];
+        turnIndicator.textContent = names[currentPlayer] + "'s Turn!";
+        turnIndicator.className = classes[currentPlayer];
+      }
+
+      function startGame(mode) {
+        gameMode = mode;
+        gameActive = true;
+        currentPlayer = 1;
+        positions = [0, 0];
+        isSpinning = false;
+        isMoving = false;
+        menuScreen.style.display = 'none';
+        winScreen.style.display = 'none';
+        spinResult.textContent = '';
+        spinBtn.disabled = false;
+        renderBoard();
+        resizeCanvases();
+        positionTokens(false);
+        updateTurnText();
+      }
+
+      function getSpinResult() {
+        if (gameMode === 'cpu') {
+          if (currentPlayer === 0) return Math.floor(Math.random() * 3) + 1;
+          return Math.floor(Math.random() * 3) + 4;
+        }
+        return Math.floor(Math.random() * 6) + 1;
+      }
+
+      function spinWheel(result) {
+        return new Promise((resolve) => {
+          isSpinning = true;
+          spinBtn.disabled = true;
+          const segmentAngle = 60;
+          const targetAngle = 360 - ((result - 1) * segmentAngle + segmentAngle / 2);
+          const extraSpins = 5 + Math.floor(Math.random() * 3);
+          wheelRotation += extraSpins * 360 + targetAngle - (wheelRotation % 360);
+          if (wheelRotation % 360 > targetAngle) wheelRotation += 360;
+          spinnerWheel.style.transform = 'rotate(' + wheelRotation + 'deg)';
+
+          setTimeout(() => {
+            isSpinning = false;
+            spinResult.textContent = '✨ Rolled a ' + result + '!';
+            resolve();
+          }, 3100);
+        });
+      }
+
+      function spawnStarParticle(x, y, hue) {
+        for (let i = 0; i < 4; i++) {
+          particles.push({
+            x, y,
+            vx: (Math.random() - 0.5) * 3,
+            vy: (Math.random() - 0.5) * 3 - 1,
+            life: 1,
+            size: 3 + Math.random() * 4,
+            hue: hue + Math.random() * 40,
+            type: Math.random() > 0.5 ? 'star' : 'circle'
+          });
+        }
+      }
+
+      function drawStar(ctx, x, y, size, color) {
+        ctx.save();
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        for (let i = 0; i < 5; i++) {
+          const angle = (i * 4 * Math.PI) / 5 - Math.PI / 2;
+          const px = x + Math.cos(angle) * size;
+          const py = y + Math.sin(angle) * size;
+          if (i === 0) ctx.moveTo(px, py);
+          else ctx.lineTo(px, py);
+        }
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+      }
+
+      function animateParticles() {
+        pCtx.clearRect(0, 0, particleCanvas.width, particleCanvas.height);
+        particles = particles.filter(p => {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vy += 0.05;
+          p.life -= 0.03;
+          if (p.life <= 0) return false;
+          const alpha = p.life;
+          const color = 'hsla(' + p.hue + ', 90%, 70%, ' + alpha + ')';
+          if (p.type === 'star') drawStar(pCtx, p.x, p.y, p.size * p.life, color);
+          else {
+            pCtx.beginPath();
+            pCtx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
+            pCtx.fillStyle = color;
+            pCtx.fill();
+          }
+          return true;
+        });
+
+        cCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+        confetti = confetti.filter(c => {
+          c.x += c.vx;
+          c.y += c.vy;
+          c.vy += 0.15;
+          c.rotation += c.rotSpeed;
+          c.life -= 0.008;
+          if (c.life <= 0 || c.y > confettiCanvas.height) return false;
+          cCtx.save();
+          cCtx.translate(c.x, c.y);
+          cCtx.rotate(c.rotation);
+          cCtx.globalAlpha = Math.min(1, c.life * 2);
+          cCtx.fillStyle = c.color;
+          cCtx.fillRect(-c.w / 2, -c.h / 2, c.w, c.h);
+          cCtx.restore();
+          return true;
+        });
+
+        if (particles.length || confetti.length) {
+          animFrame = requestAnimationFrame(animateParticles);
+        } else {
+          animFrame = null;
+        }
+      }
+
+      function ensureAnimLoop() {
+        if (!animFrame) animFrame = requestAnimationFrame(animateParticles);
+      }
+
+      function moveToken(player, steps) {
+        return new Promise((resolve) => {
+          isMoving = true;
+          spinBtn.disabled = true;
+          const hue = player === 0 ? 200 : 300;
+          let step = 0;
+
+          function moveOneStep() {
+            if (step >= steps) {
+              isMoving = false;
+              if (!checkWin()) {
+                currentPlayer = 1 - currentPlayer;
+                updateTurnText();
+                if (gameMode === 'cpu' && currentPlayer === 0) {
+                  spinBtn.disabled = true;
+                  setTimeout(computerTurn, 1200);
+                } else {
+                  spinBtn.disabled = false;
+                }
+              }
+              resolve();
+              return;
+            }
+
+            const from = positions[player];
+            if (from < TILE_COUNT) {
+              positions[player] = from + 1;
+              positionTokens(true);
+              const pos = boardPath[positions[player]];
+              const screen = svgToScreen(pos.x, pos.y);
+              const offsetX = player === 0 ? -22 : 22;
+              const offsetY = player === 0 ? -16 : 16;
+              spawnStarParticle(screen.x + offsetX, screen.y + offsetY, hue);
+              ensureAnimLoop();
+            }
+            step++;
+            if (positions[player] >= TILE_COUNT) {
+              isMoving = false;
+              checkWin();
+              resolve();
+              return;
+            }
+            setTimeout(moveOneStep, 380);
+          }
+
+          moveOneStep();
+        });
+      }
+
+      function checkWin() {
+        const winner = positions.findIndex(p => p >= TILE_COUNT);
+        if (winner === -1) return false;
+
+        const name = winner === 0 ? (gameMode === 'cpu' ? 'Computer' : 'Elsacorn') : 'Unicorn';
+        const emoji = winner === 0 ? '❄️🦄' : '🦄✨';
+        document.getElementById('winner-emoji').textContent = emoji;
+        document.getElementById('winner-text').textContent = name + ' Wins!';
+        document.getElementById('winner-sub').textContent = 'Reached the Rainbow Castle!';
+        winScreen.style.display = 'flex';
+        gameActive = false;
+        spinBtn.disabled = true;
+        turnIndicator.textContent = name + ' reached the castle!';
+        turnIndicator.className = '';
+        launchConfetti();
+        return true;
+      }
+
+      function launchConfetti() {
+        const colors = ['#ff6b9d', '#ffd93d', '#6bcb77', '#4d96ff', '#c77dff', '#ff9ecd'];
+        for (let i = 0; i < 150; i++) {
+          confetti.push({
+            x: Math.random() * confettiCanvas.width,
+            y: -20 - Math.random() * 100,
+            vx: (Math.random() - 0.5) * 4,
+            vy: 2 + Math.random() * 4,
+            w: 6 + Math.random() * 8,
+            h: 4 + Math.random() * 6,
+            color: colors[Math.floor(Math.random() * colors.length)],
+            rotation: Math.random() * Math.PI * 2,
+            rotSpeed: (Math.random() - 0.5) * 0.2,
+            life: 1
+          });
+        }
+        ensureAnimLoop();
+      }
+
+      async function handleSpin() {
+        if (!gameActive || isSpinning || isMoving) return;
+        const result = getSpinResult();
+        await spinWheel(result);
+        await moveToken(currentPlayer, result);
+      }
+
+      function handleHumanSpin() {
+        if (gameMode === 'cpu' && currentPlayer !== 1) return;
+        handleSpin();
+      }
+
+      async function computerTurn() {
+        if (!gameActive || currentPlayer !== 0 || gameMode !== 'cpu') return;
+        turnIndicator.textContent = 'Computer is spinning...';
+        turnIndicator.className = 'elsacorn';
+        await new Promise(r => setTimeout(r, 800));
+        await handleSpin();
+      }
+
+      document.getElementById('btn-2p').addEventListener('click', () => startGame('2p'));
+      document.getElementById('btn-cpu').addEventListener('click', () => startGame('cpu'));
+      document.getElementById('play-again-btn').addEventListener('click', () => {
+        winScreen.style.display = 'none';
+        confetti = [];
+        cCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+        menuScreen.style.display = 'flex';
+        turnIndicator.textContent = 'Choose a game mode to begin!';
+        turnIndicator.className = '';
+        spinBtn.disabled = true;
+        gameActive = false;
+      });
+
+      spinBtn.addEventListener('click', handleHumanSpin);
+      window.addEventListener('resize', resizeCanvases);
+
+      renderBoard();
+      resizeCanvases();
+    })();
+  </script>
+</body>
+</html>
