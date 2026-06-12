@@ -1,1 +1,57 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+.test-venv/
+
+# IDE / editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker / compose local
+docker-compose.override.yml
+
+# Env files (never commit secrets/tokens)
 .env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+
+# Misc
+*.tmp
+*.bak
+patch_readme.py
+__pycache__/
+*.pyc

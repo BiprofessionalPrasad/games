@@ -126,3 +126,73 @@ The local curated list has been expanded to ~85 high-quality affirmations, quote
 Rebuild with docker compose up -d --build to get the updates.
 
 **Note on README top sections:** The live sources now work without X (ZenQuotes + Quotable + Good News RSS). The X parts are now clearly marked as optional/advanced.
+
+## Free Hosting as a Website
+
+Yes! You can host this as a public website for **free** (with some limitations on free tiers).
+
+### Recommended: Full app (live quotes + API) on Render.com (easiest for Docker)
+
+1. Push your code to a **public GitHub repo** (or private):
+   `powershell
+   git init
+   git add .
+   git commit -m "Initial daily-positive app"
+   git branch -M main
+   git remote add origin https://github.com/YOUR_USERNAME/daily-positive.git
+   git push -u origin main
+   `
+
+2. Go to https://render.com and sign up with GitHub (free).
+
+3. Click **"New +"** → **"Web Service"**.
+
+4. Connect your GitHub repo → select the daily-positive repo.
+
+5. Render should auto-detect the ender.yaml (or Dockerfile).
+   - **Environment**: Docker
+   - **Region**: choose closest
+   - Leave everything else default.
+
+6. (Optional) In the dashboard, add environment variable if you have an X Bearer Token:
+   - X_BEARER_TOKEN = your token
+
+7. Click **"Create Web Service"**.
+
+Render will build using your Dockerfile and give you a free URL like:
+https://daily-positive-xxxx.onrender.com
+
+**Free tier notes**:
+- App sleeps after 15 minutes of no traffic (first visit after sleep takes 10-30s to wake).
+- Enough for personal / small shared use.
+- No credit card required.
+
+### Even simpler (static only, no backend needed)
+
+If you just want the beautiful button + the expanded local list (still very good):
+
+- Deploy only index.html (and the JS fallbacks) to:
+  - **GitHub Pages** (free, from the same repo)
+  - **Netlify** (drag & drop the index.html or connect repo — instant)
+  - **Vercel**
+
+The "Give me" button will work perfectly using the local curated list. Live sources (ZenQuotes etc.) won't be available without the backend, but the experience is still excellent.
+
+To deploy static quickly:
+`powershell
+# If using Netlify CLI (optional)
+npm install -g netlify-cli
+netlify deploy --prod --dir .
+# or just drag the whole folder (or just index.html) to https://app.netlify.com/drop
+`
+
+### Other free options
+- **Railway.app** — very similar to Render, generous free starter.
+- **Fly.io** — free limited VMs.
+- **PythonAnywhere** — good for pure Python (upload files or use Git).
+
+After deploying, update the "Positivity delivered in Docker" footer in static/index.html (and root index.html) if you want to change it to your site name.
+
+Rebuild locally with docker compose up -d --build to test before pushing.
+
+Enjoy sharing the positivity! 🌱

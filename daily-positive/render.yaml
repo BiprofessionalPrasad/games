@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: daily-positive
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    envVars:
+      # No secrets required for the free live sources (ZenQuotes, Quotable, Good News RSS).
+      # Add X_BEARER_TOKEN here in the Render dashboard if you have one for extra X content.
+      - key: X_BEARER_TOKEN
+        sync: false   # set manually in dashboard if desired
+    healthCheckPath: /api/health
+    autoDeploy: true
+    # Free tier will sleep after ~15 min of inactivity and wake on first request (cold start ~10-30s).
