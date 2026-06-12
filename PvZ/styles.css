@@ -50,7 +50,8 @@ body::before {
     display: block;
 }
 
-#menuScreen {
+#menuScreen,
+#plantSelectScreen {
     text-align: center;
     background: rgba(0, 0, 0, 0.55);
     backdrop-filter: blur(12px);
@@ -65,6 +66,97 @@ body::before {
     max-height: calc(100vh - 40px);
     overflow-y: auto;
     animation: menuFadeIn 0.6s ease;
+}
+
+#plantSelectScreen h1 {
+    font-size: 1.9rem;
+    font-weight: 700;
+    color: #b7e4c7;
+    text-shadow:
+        2px 2px 4px rgba(0, 0, 0, 0.5),
+        0 0 30px rgba(149, 213, 178, 0.4);
+    margin-bottom: 8px;
+}
+
+.plant-select-count {
+    color: #ffd60a;
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 16px;
+}
+
+.plant-select-count.full {
+    color: #ff6b6b;
+}
+
+.plant-select-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-bottom: 24px;
+    max-height: min(420px, 52vh);
+    overflow-y: auto;
+    padding-right: 4px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(149, 213, 178, 0.45) transparent;
+}
+
+.plant-select-grid::-webkit-scrollbar {
+    width: 6px;
+}
+
+.plant-select-grid::-webkit-scrollbar-thumb {
+    background: rgba(149, 213, 178, 0.45);
+    border-radius: 4px;
+}
+
+.plant-select-grid .plant-card {
+    width: auto;
+    height: 88px;
+    cursor: pointer;
+}
+
+.plant-select-grid .plant-card.picked {
+    border-color: #ffd60a;
+    box-shadow:
+        0 0 16px rgba(255, 214, 10, 0.7),
+        inset 0 0 12px rgba(255, 214, 10, 0.15);
+    transform: scale(1.04);
+}
+
+.plant-select-grid .plant-card.picked::after {
+    content: '✓';
+    position: absolute;
+    top: 4px;
+    right: 6px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #ffd60a;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+
+.plant-select-grid .plant-card.at-limit:not(.picked) {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.plant-select-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+
+.plant-select-actions .primary-btn,
+.plant-select-actions .secondary-btn {
+    flex: 1;
+    max-width: 200px;
+}
+
+.plant-select-actions .primary-btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
 }
 
 .menu-play-btn {
@@ -618,15 +710,19 @@ body::before {
 }
 
 .overlay {
-    position: absolute;
+    position: fixed;
     inset: 0;
     background: rgba(0, 0, 0, 0.8);
     backdrop-filter: blur(4px);
     display: flex;
     justify-content: center;
     align-items: center;
-    border-radius: 8px;
+    z-index: 100;
     animation: overlayIn 0.3s ease;
+}
+
+body.game-paused {
+    overflow: hidden;
 }
 
 @keyframes overlayIn {
@@ -711,14 +807,18 @@ body::before {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 280px;
+    display: flex;
+    flex-direction: column;
+    width: 210px;
+    max-height: min(380px, 72vh);
     background: linear-gradient(135deg, rgba(30, 30, 45, 0.97), rgba(20, 20, 35, 0.97));
     border: 2px solid #7b6cf6;
-    border-radius: 16px;
-    padding: 20px;
+    border-radius: 12px;
+    padding: 10px 12px;
     z-index: 25;
     box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6);
     animation: contentPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    overflow: hidden;
 }
 
 .admin-panel.hidden {
@@ -729,19 +829,38 @@ body::before {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 8px;
+    flex-shrink: 0;
+    margin-bottom: 6px;
 }
 
 .admin-header h3 {
-    font-size: 1.2rem;
+    font-size: 0.95rem;
     color: #b8b0ff;
     margin: 0;
 }
 
+.admin-body {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding-right: 2px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(123, 108, 246, 0.5) transparent;
+}
+
+.admin-body::-webkit-scrollbar {
+    width: 5px;
+}
+
+.admin-body::-webkit-scrollbar-thumb {
+    background: rgba(123, 108, 246, 0.45);
+    border-radius: 4px;
+}
+
 .admin-hint {
-    font-size: 0.78rem;
+    font-size: 0.68rem;
     color: #9ca3af;
-    margin-bottom: 16px;
+    margin-bottom: 8px;
     text-align: center;
 }
 
@@ -757,21 +876,22 @@ body::before {
 .admin-buttons {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 4px;
 }
 
 .admin-btn {
     background: rgba(123, 108, 246, 0.25);
-    border: 2px solid #7b6cf6;
+    border: 1.5px solid #7b6cf6;
     color: #e8e4ff;
-    padding: 10px 14px;
-    font-size: 0.9rem;
+    padding: 5px 8px;
+    font-size: 0.72rem;
     font-family: 'Fredoka', sans-serif;
     font-weight: 600;
-    border-radius: 10px;
+    border-radius: 7px;
     cursor: pointer;
     transition: all 0.15s;
     text-align: left;
+    line-height: 1.25;
 }
 
 .admin-btn:hover {
@@ -788,4 +908,15 @@ body::before {
     background: rgba(82, 183, 136, 0.45);
     border-color: #52b788;
     color: #fff;
+}
+
+.admin-btn-hypno {
+    background: rgba(255, 77, 141, 0.2);
+    border-color: #ff4d8d;
+    color: #ffe0ef;
+}
+
+.admin-btn-hypno:hover {
+    background: rgba(255, 77, 141, 0.38);
+    border-color: #ff8fab;
 }
