@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plants vs Zombies</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="gameContainer">
+        <div id="menuScreen" class="screen active">
+            <h1><span class="title-icon">🌻</span> Plants vs Zombies <span class="title-icon">🧟</span></h1>
+            <p class="subtitle">Defend your lawn from the zombie horde!</p>
+            <div class="menu-section">
+                <h2>How to Play</h2>
+                <ul class="instructions">
+                    <li>Collect <span class="sun-icon">☀</span> sun to buy plants</li>
+                    <li>Click a plant card, then click a grid cell to plant</li>
+                    <li>Peashooters shoot zombies · Sunflowers make sun</li>
+                    <li>Wall-nuts block zombies · Cherry Bombs explode</li>
+                    <li>Snow Peas slow zombies with icy projectiles</li>
+                    <li>Don't let zombies reach your house!</li>
+                </ul>
+            </div>
+            <button id="startBtn" class="primary-btn">Start Game</button>
+        </div>
+
+        <div id="gameScreen" class="screen">
+            <canvas id="gameCanvas"></canvas>
+            <div id="hud">
+                <div id="sunCounter">
+                    <span class="sun-icon">☀</span>
+                    <span id="sunAmount">150</span>
+                </div>
+                <div id="waveInfo">Wave <span id="waveNum">1</span></div>
+                <div id="zombiesLeft"><span id="zombieCount">0</span> incoming</div>
+                <div id="scoreDisplay">Score: <span id="scoreAmount">0</span></div>
+                <div id="hudControls">
+                    <button id="muteBtn" title="Toggle sound">🔊</button>
+                    <button id="pauseBtn" title="Pause (P)">⏸</button>
+                </div>
+            </div>
+            <div id="plantBar"></div>
+            <div id="waveBanner">Wave 1</div>
+            <div id="gameOverOverlay" class="overlay hidden">
+                <div class="overlay-content" id="gameOverContent">
+                    <h2 id="gameOverTitle">Game Over</h2>
+                    <p id="gameOverMessage">The zombies ate your brains!</p>
+                    <div class="overlay-stats">
+                        <div class="stat-item">
+                            <div class="stat-value" id="finalScore">0</div>
+                            <div class="stat-label">Score</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="finalWave">0</div>
+                            <div class="stat-label">Waves</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="finalKills">0</div>
+                            <div class="stat-label">Zombies</div>
+                        </div>
+                    </div>
+                    <button id="restartBtn" class="primary-btn">Play Again</button>
+                </div>
+            </div>
+            <div id="pauseOverlay" class="overlay hidden">
+                <div class="overlay-content">
+                    <h2>Paused</h2>
+                    <p>Press P or click Resume to continue</p>
+                    <button id="resumeBtn" class="primary-btn">Resume</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>
