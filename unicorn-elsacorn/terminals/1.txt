@@ -1,0 +1,45 @@
+---
+pid: 1104
+cwd: "C:\Tools\game\unicorn-elsacorn"
+command: "python -m http.server 8080"
+started_at: 2026-06-12T16:13:37.224Z
+running_for_ms: 965007   
+---
+::ffff:127.0.0.1 - - [12/Jun/2026 11:13:45] "GET / HTTP/1.1" 200 -
+::ffff:192.168.0.5 - - [12/Jun/2026 11:14:27] "GET / HTTP/1.1" 200 -
+::ffff:192.168.0.5 - - [12/Jun/2026 11:14:27] code 404, message File not found
+::ffff:192.168.0.5 - - [12/Jun/2026 11:14:27] "GET /favicon.ico HTTP/1.1" 404 -
+::ffff:192.168.0.164 - - [12/Jun/2026 11:14:44] "GET / HTTP/1.1" 200 -
+::ffff:192.168.0.164 - - [12/Jun/2026 11:14:44] code 404, message File not found
+::ffff:192.168.0.164 - - [12/Jun/2026 11:14:44] "GET /favicon.ico HTTP/1.1" 404 -
+::ffff:192.168.0.180 - - [12/Jun/2026 11:16:14] "GET / HTTP/1.1" 200 -
+::ffff:192.168.0.180 - - [12/Jun/2026 11:16:14] code 404, message File not found
+::ffff:192.168.0.180 - - [12/Jun/2026 11:16:14] "GET /favicon.ico HTTP/1.1" 404 -
+----------------------------------------
+Exception occurred during processing of request from ('::ffff:192.168.0.164', 51615, 0, 0)
+Traceback (most recent call last):
+  File "C:\Users\prasa\AppData\Roaming\uv\python\cpython-3.13.5-windows-x86_64-none\Lib\socketserver.py", line 697, in process_request_thread
+    self.finish_request(request, client_address)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\prasa\AppData\Roaming\uv\python\cpython-3.13.5-windows-x86_64-none\Lib\http\server.py", line 1320, in finish_request
+    self.RequestHandlerClass(request, client_address, self,
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                             directory=args.directory)
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\prasa\AppData\Roaming\uv\python\cpython-3.13.5-windows-x86_64-none\Lib\http\server.py", line 672, in __init__
+    super().__init__(*args, **kwargs)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\prasa\AppData\Roaming\uv\python\cpython-3.13.5-windows-x86_64-none\Lib\socketserver.py", line 766, in __init__
+    self.handle()
+    ~~~~~~~~~~~^^
+  File "C:\Users\prasa\AppData\Roaming\uv\python\cpython-3.13.5-windows-x86_64-none\Lib\http\server.py", line 436, in handle
+    self.handle_one_request()
+    ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\prasa\AppData\Roaming\uv\python\cpython-3.13.5-windows-x86_64-none\Lib\http\server.py", line 404, in handle_one_request
+    self.raw_requestline = self.rfile.readline(65537)
+                           ~~~~~~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Users\prasa\AppData\Roaming\uv\python\cpython-3.13.5-windows-x86_64-none\Lib\socket.py", line 719, in readinto
+    return self._sock.recv_into(b)
+           ~~~~~~~~~~~~~~~~~~~~^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+----------------------------------------
