@@ -11,18 +11,25 @@
         <div id="menuScreen" class="screen active">
             <h1><span class="title-icon">🌻</span> Plants vs Zombies <span class="title-icon">🧟</span></h1>
             <p class="subtitle">Defend your lawn from the zombie horde!</p>
-            <div class="menu-section">
+            <div class="menu-section level-section">
+                <h2>Choose Level</h2>
+                <div id="levelGrid" class="level-grid"></div>
+            </div>
+            <button id="startBtn" class="primary-btn menu-play-btn">Play <span id="selectedLevelName">Front Yard</span></button>
+            <div class="menu-section instructions-section">
                 <h2>How to Play</h2>
                 <ul class="instructions">
-                    <li>Collect <span class="sun-icon">☀</span> sun to buy plants</li>
+                    <li>Hover over <span class="sun-icon">☀</span> sun to auto-collect it</li>
                     <li>Click a plant card, then click a grid cell to plant</li>
                     <li>Peashooters shoot zombies · Sunflowers make sun</li>
                     <li>Wall-nuts block zombies · Cherry Bombs explode</li>
+                    <li>Potato Mines bury underground, arm in 7s, then detonate on contact</li>
                     <li>Snow Peas slow zombies with icy projectiles</li>
+                    <li>Click <strong>Upgrade</strong>, then click a plant to power it up (max level 3)</li>
+                    <li>A <strong>Flag Zombie</strong> marches in first — when it raises the flag, the wave begins!</li>
                     <li>Don't let zombies reach your house!</li>
                 </ul>
             </div>
-            <button id="startBtn" class="primary-btn">Start Game</button>
         </div>
 
         <div id="gameScreen" class="screen">
@@ -32,15 +39,29 @@
                     <span class="sun-icon">☀</span>
                     <span id="sunAmount">150</span>
                 </div>
+                <div id="levelBadge"></div>
                 <div id="waveInfo">Wave <span id="waveNum">1</span></div>
                 <div id="zombiesLeft"><span id="zombieCount">0</span> incoming</div>
                 <div id="scoreDisplay">Score: <span id="scoreAmount">0</span></div>
                 <div id="hudControls">
+                    <button id="upgradeModeBtn" title="Upgrade plants (U)">⬆️ Upgrade</button>
                     <button id="muteBtn" title="Toggle sound">🔊</button>
                     <button id="pauseBtn" title="Pause (P)">⏸</button>
                 </div>
             </div>
             <div id="plantBar"></div>
+            <div id="upgradePanel" class="upgrade-panel hidden">
+                <button id="closeUpgradeBtn" class="close-btn" title="Close">×</button>
+                <div class="upgrade-header">
+                    <span id="upgradePlantIcon" class="upgrade-icon"></span>
+                    <div>
+                        <div id="upgradePlantName" class="upgrade-name"></div>
+                        <div id="upgradePlantLevel" class="upgrade-level"></div>
+                    </div>
+                </div>
+                <p id="upgradeDescription" class="upgrade-desc"></p>
+                <button id="confirmUpgradeBtn" class="primary-btn upgrade-btn">Upgrade</button>
+            </div>
             <div id="waveBanner">Wave 1</div>
             <div id="gameOverOverlay" class="overlay hidden">
                 <div class="overlay-content" id="gameOverContent">
@@ -61,6 +82,7 @@
                         </div>
                     </div>
                     <button id="restartBtn" class="primary-btn">Play Again</button>
+                    <button id="menuBtn" class="secondary-btn menu-back-btn">Change Level</button>
                 </div>
             </div>
             <div id="pauseOverlay" class="overlay hidden">
@@ -68,6 +90,21 @@
                     <h2>Paused</h2>
                     <p>Press P or click Resume to continue</p>
                     <button id="resumeBtn" class="primary-btn">Resume</button>
+                </div>
+            </div>
+            <div id="adminPanel" class="admin-panel hidden">
+                <div class="admin-header">
+                    <h3>Admin Panel</h3>
+                    <button id="closeAdminBtn" class="close-btn" title="Close (G)">×</button>
+                </div>
+                <p class="admin-hint">Press <kbd>G</kbd> to toggle</p>
+                <div class="admin-buttons">
+                    <button id="adminGiveSunBtn" class="admin-btn">Give Sun (+200)</button>
+                    <button id="adminSpawnZombieBtn" class="admin-btn">Spawn Zombie</button>
+                    <button id="adminSpawnConeBtn" class="admin-btn">Spawn Conehead</button>
+                    <button id="adminSpawnBucketBtn" class="admin-btn">Spawn Buckethead</button>
+                    <button id="adminSpawnGargBtn" class="admin-btn">Spawn Gargantuar</button>
+                    <button id="adminForceWaveBtn" class="admin-btn">Start Wave Assault</button>
                 </div>
             </div>
         </div>

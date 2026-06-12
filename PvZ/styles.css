@@ -14,9 +14,11 @@ body {
     min-height: 100vh;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
+    padding: 20px 16px 32px;
     color: #fff;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 @keyframes bgShift {
@@ -53,13 +55,100 @@ body::before {
     background: rgba(0, 0, 0, 0.55);
     backdrop-filter: blur(12px);
     border-radius: 20px;
-    padding: 44px 54px;
+    padding: 32px 28px 28px;
     border: 3px solid #95d5b2;
     box-shadow:
         0 8px 32px rgba(0, 0, 0, 0.5),
         inset 0 1px 0 rgba(255, 255, 255, 0.1);
-    max-width: 520px;
+    max-width: 560px;
+    width: 100%;
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
     animation: menuFadeIn 0.6s ease;
+}
+
+.menu-play-btn {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.instructions-section {
+    margin-bottom: 0;
+}
+
+.instructions-section .instructions li {
+    padding: 4px 0;
+    font-size: 0.88rem;
+}
+
+.level-section {
+    margin-bottom: 20px;
+}
+
+.level-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+.level-card {
+    background: rgba(45, 106, 79, 0.45);
+    border: 2px solid rgba(149, 213, 178, 0.35);
+    border-radius: 12px;
+    padding: 12px 10px;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: center;
+}
+
+.level-card:hover {
+    background: rgba(64, 145, 108, 0.5);
+    border-color: #95d5b2;
+    transform: translateY(-2px);
+}
+
+.level-card.selected {
+    border-color: #ffd60a;
+    background: rgba(255, 214, 10, 0.12);
+    box-shadow: 0 0 16px rgba(255, 214, 10, 0.35);
+}
+
+.level-card .level-icon {
+    font-size: 1.8rem;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.level-card .level-title {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #b7e4c7;
+}
+
+.level-card .level-desc {
+    font-size: 0.68rem;
+    color: #95d5b2;
+    margin-top: 4px;
+    line-height: 1.3;
+}
+
+#levelBadge {
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(6px);
+    border-radius: 14px;
+    padding: 6px 14px;
+    font-size: 0.9rem;
+    border: 1px solid rgba(149, 213, 178, 0.2);
+    display: none;
+}
+
+#levelBadge.visible {
+    display: block;
+}
+
+.menu-back-btn {
+    margin-top: 12px;
+    width: 100%;
 }
 
 @keyframes menuFadeIn {
@@ -68,7 +157,7 @@ body::before {
 }
 
 #menuScreen h1 {
-    font-size: 2.6rem;
+    font-size: 2.2rem;
     font-weight: 700;
     color: #b7e4c7;
     text-shadow:
@@ -264,21 +353,121 @@ body::before {
     gap: 8px;
 }
 
-#pauseBtn, #muteBtn {
+#pauseBtn, #muteBtn, #upgradeModeBtn {
     background: rgba(0, 0, 0, 0.6);
     border: 2px solid #40916c;
     border-radius: 10px;
     padding: 6px 12px;
-    font-size: 1.1rem;
+    font-size: 0.9rem;
+    font-family: 'Fredoka', sans-serif;
     cursor: pointer;
     transition: all 0.15s;
     color: #fff;
 }
 
-#pauseBtn:hover, #muteBtn:hover {
+#upgradeModeBtn {
+    font-weight: 600;
+}
+
+#upgradeModeBtn.active {
+    background: rgba(255, 214, 10, 0.25);
+    border-color: #ffd60a;
+    box-shadow: 0 0 12px rgba(255, 214, 10, 0.4);
+    color: #ffd60a;
+}
+
+#pauseBtn:hover, #muteBtn:hover, #upgradeModeBtn:hover {
     background: rgba(64, 145, 108, 0.5);
     border-color: #95d5b2;
     transform: scale(1.08);
+}
+
+#upgradeModeBtn.active:hover {
+    background: rgba(255, 214, 10, 0.35);
+    border-color: #ffee32;
+}
+
+.upgrade-panel {
+    position: absolute;
+    top: 60px;
+    right: 12px;
+    width: 220px;
+    background: rgba(30, 50, 35, 0.95);
+    backdrop-filter: blur(10px);
+    border: 2px solid #95d5b2;
+    border-radius: 14px;
+    padding: 16px;
+    z-index: 15;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.5);
+    animation: contentPop 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.upgrade-panel.hidden {
+    display: none;
+}
+
+.upgrade-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.upgrade-icon {
+    font-size: 2.2rem;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
+}
+
+.upgrade-name {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #b7e4c7;
+}
+
+.upgrade-level {
+    font-size: 0.85rem;
+    color: #ffd60a;
+    margin-top: 2px;
+}
+
+.upgrade-desc {
+    font-size: 0.82rem;
+    color: #d8f3dc;
+    line-height: 1.45;
+    margin-bottom: 14px;
+    min-height: 48px;
+}
+
+.upgrade-btn {
+    width: 100%;
+    padding: 10px 16px;
+    font-size: 1rem;
+}
+
+.upgrade-btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.close-btn {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    background: none;
+    border: none;
+    color: #95d5b2;
+    font-size: 1.4rem;
+    cursor: pointer;
+    line-height: 1;
+    padding: 2px 6px;
+    border-radius: 4px;
+    transition: color 0.15s, background 0.15s;
+}
+
+.close-btn:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.1);
 }
 
 #plantBar {
@@ -375,6 +564,17 @@ body::before {
     color: #ffd60a;
     font-weight: 700;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.shovel-card .card-name {
+    margin-top: 6px;
+}
+
+.shovel-card.selected {
+    border-color: #e85d04;
+    box-shadow:
+        0 0 16px rgba(232, 93, 4, 0.6),
+        inset 0 0 12px rgba(232, 93, 4, 0.15);
 }
 
 .plant-card .cooldown-overlay {
@@ -492,4 +692,82 @@ body::before {
 .stat-label {
     font-size: 0.8rem;
     color: #95d5b2;
+}
+
+.admin-panel {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 280px;
+    background: linear-gradient(135deg, rgba(30, 30, 45, 0.97), rgba(20, 20, 35, 0.97));
+    border: 2px solid #7b6cf6;
+    border-radius: 16px;
+    padding: 20px;
+    z-index: 25;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6);
+    animation: contentPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.admin-panel.hidden {
+    display: none;
+}
+
+.admin-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.admin-header h3 {
+    font-size: 1.2rem;
+    color: #b8b0ff;
+    margin: 0;
+}
+
+.admin-hint {
+    font-size: 0.78rem;
+    color: #9ca3af;
+    margin-bottom: 16px;
+    text-align: center;
+}
+
+.admin-hint kbd {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    padding: 1px 6px;
+    font-family: inherit;
+    color: #d8f3dc;
+}
+
+.admin-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.admin-btn {
+    background: rgba(123, 108, 246, 0.25);
+    border: 2px solid #7b6cf6;
+    color: #e8e4ff;
+    padding: 10px 14px;
+    font-size: 0.9rem;
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 600;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: left;
+}
+
+.admin-btn:hover {
+    background: rgba(123, 108, 246, 0.45);
+    border-color: #a89cf8;
+    transform: translateX(4px);
+}
+
+.admin-btn:active {
+    transform: scale(0.98);
 }
