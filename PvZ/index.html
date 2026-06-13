@@ -23,10 +23,10 @@
                     <li>Click a plant card, then click a grid cell to plant</li>
                     <li>Peashooters shoot zombies · Sunflowers make sun</li>
                     <li><strong>Twin Sunflower</strong> (150☀) — place on a Sunflower for double sun production</li>
-                    <li><strong>Puff-shroom</strong> (0☀) — free short-range spores; <strong>Sun-shroom</strong> (25☀) — grows to produce more sun</li>
-                    <li>Mushrooms are awake on <strong>Night</strong> levels; they sleep during the day</li>
+                    <li><strong>Puff-shroom</strong> (0☀) — free short-range spores; <strong>Shroom Pult</strong> (0☀) — free puff-shroom that lobs spores the full lane; <strong>Scaredy Shroom</strong> (25☀) — full-range spores but ducks underground when zombies get close; <strong>Sun-shroom</strong> (25☀) — grows to produce more sun</li>
+                    <li>Mushrooms are awake on <strong>Night</strong> and <strong>Foggy Pool</strong> levels; they sleep during the day</li>
                     <li><strong>Coffee Bean</strong> (75☀) — place on a sleeping mushroom to wake it on day/pool/roof levels</li>
-                    <li><strong>Hypno-shroom</strong> (75☀) — hypnotizes a zombie that eats it; it then fights for you (not Gargantuars)</li>
+                    <li><strong>Hypno-shroom</strong> (75☀) — when awake, hypnotizes the zombie that eats it; it then fights for you (Gargantuars and Giga-gargantuars are immune). Wake it with Coffee Bean before zombies arrive on day/pool/roof levels</li>
                     <li><strong>Gatling Pea</strong> (400☀) — place on a Peashooter for rapid-fire peas</li>
                     <li><strong>Torchwood</strong> (175☀) — peas that pass through become fire peas (2× damage)</li>
                     <li>Wall-nuts block zombies · <strong>Tall-nut</strong> (125☀) is a taller, tougher wall (upgradeable)</li>
@@ -39,8 +39,13 @@
                     <li><strong>Doom Shroom</strong> (5000☀) — wipes all zombies, leaves a 2-min crater</li>
                     <li><strong>Boom Shroom</strong> (125☀) — sleeps during day; wake with Coffee Bean to detonate and wipe all non-boss zombies (bosses take 1 instant-kill hit)</li>
                     <li><strong>Lily Pad</strong> (25☀, Pool only) — place on water, then plant on top</li>
+                    <li><strong>Sea-shroom</strong> (0☀, Pool only) — free short-range spores; place directly in water</li>
                     <li><strong>Tangle Kelp</strong> (25☀, Pool only) — place in water; drags one zombie under (not Gargantuars)</li>
+                    <li><strong>Spikeweed</strong> (100☀, Pool only) — damages zombies that walk over it; pops one All-Star helmet then breaks</li>
+                    <li><strong>Spikerock</strong> (125☀) — place on any lane, or on Spikeweed to upgrade it; tougher spikes that pop 9 All-Star helmets</li>
                     <li>On pool levels, only basic zombies swim — they wear ducky tubes in the water rows</li>
+                    <li><strong>Foggy Pool</strong> — nighttime backyard pool with no sky sun; fog hides zombies and creeps one column closer each wave</li>
+                    <li><strong>Plantern</strong> (25☀) — clears fog in the tiles around it; <strong>Blover</strong> (100☀) — blows away all fog for 8 seconds</li>
                     <li><strong>Flower Pot</strong> (25☀, Roof only) — required before planting on roof tiles</li>
                     <li><strong>Roof levels</strong> — the slope blocks Peashooters &amp; Snow Peas; use <strong>Cabbage-pult</strong> &amp; <strong>Kernel-pult</strong> to lob over it</li>
                     <li><strong>Kernel-pult</strong> — lobs kernels; butter hits stun zombies</li>
@@ -52,6 +57,7 @@
                     <li><strong>Gargantuars</strong> smash plants — at half health they throw an <strong>Imp</strong> ahead of them</li>
                     <li><strong>Giga-gargantuar</strong> (wave 12+) — even tougher, throws an Imp at half health too</li>
                     <li>Every <strong>20 waves</strong>, <strong>Dr. Zomboss</strong> appears — defeat him to advance!</li>
+                    <li><strong>Dr ZomBOSS FIGHT</strong> — night roof level where Dr. Zomboss spawns every wave's zombies!</li>
                     <li>Don't let zombies reach your house!</li>
                 </ul>
             </div>
@@ -80,7 +86,7 @@
                 <div id="zombiesLeft"><span id="zombieCount">0</span> incoming</div>
                 <div id="scoreDisplay">Score: <span id="scoreAmount">0</span></div>
                 <div id="hudControls">
-                    <button id="upgradeModeBtn" title="Upgrade plants (U)">⬆️ Upgrade</button>
+                    <button id="upgradeModeBtn" title="Upgrade mode — F upgrades hovered plant">⬆️ Upgrade</button>
                     <button id="muteBtn" title="Toggle sound">🔊</button>
                     <button id="pauseBtn" title="Pause (P)">⏸</button>
                 </div>
@@ -139,6 +145,11 @@
                 </div>
                 <div class="admin-body">
                 <p class="admin-hint">Press <kbd>G</kbd> to toggle</p>
+                <div class="admin-wave-setter">
+                    <label for="adminWaveInput">Wave</label>
+                    <input id="adminWaveInput" type="number" min="1" step="1" value="1" />
+                    <button id="adminSetWaveBtn" class="admin-btn">Set Wave</button>
+                </div>
                 <div class="admin-buttons">
                     <button id="adminToggleInfiniteSunBtn" class="admin-btn">Infinite Sun: OFF</button>
                     <button id="adminToggleZombieSpawningBtn" class="admin-btn">Zombie Spawning: ON</button>
@@ -149,6 +160,7 @@
                     <button id="adminSpawnGargBtn" class="admin-btn">Spawn Gargantuar</button>
                     <button id="adminSpawnGigaGargBtn" class="admin-btn">Spawn Giga-garg</button>
                     <button id="adminSpawnImpBtn" class="admin-btn">Spawn Imp</button>
+                    <button id="adminSpawnFlagBtn" class="admin-btn">Spawn Flag Zombie</button>
                     <button id="adminSpawnHypnoZombieBtn" class="admin-btn admin-btn-hypno">Hypno Zombie</button>
                     <button id="adminSpawnHypnoConeBtn" class="admin-btn admin-btn-hypno">Hypno Conehead</button>
                     <button id="adminSpawnHypnoBucketBtn" class="admin-btn admin-btn-hypno">Hypno Buckethead</button>
@@ -156,10 +168,12 @@
                     <button id="adminSpawnHypnoGargBtn" class="admin-btn admin-btn-hypno">Hypno Gargantuar</button>
                     <button id="adminSpawnHypnoGigaGargBtn" class="admin-btn admin-btn-hypno">Hypno Giga-garg</button>
                     <button id="adminSpawnHypnoImpBtn" class="admin-btn admin-btn-hypno">Hypno Imp</button>
+                    <button id="adminSpawnHypnoFlagBtn" class="admin-btn admin-btn-hypno">Hypno Flag Zombie</button>
                     <button id="adminSpawnHypnoZombossBtn" class="admin-btn admin-btn-hypno">Hypno Zomboss</button>
                     <button id="adminSpawnZombossBtn" class="admin-btn">Spawn Dr. Zomboss</button>
                     <button id="adminForceWaveBtn" class="admin-btn">Spawn Wave</button>
                     <button id="adminToggleCooldownsBtn" class="admin-btn">Cooldowns: ON</button>
+                    <button id="adminToggleUpgradeLimitsBtn" class="admin-btn">Upgrade Limits: ON</button>
                     <button id="adminToggleDoomCratersBtn" class="admin-btn">Doom Craters: ON</button>
                 </div>
                 </div>
