@@ -1,0 +1,1214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <title>GasoMini — Play &amp; Learn</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+
+    html, body {
+      margin: 0; padding: 0;
+      width: 100%; height: 100%;
+      overflow: hidden;
+      overscroll-behavior: none;
+      touch-action: manipulation;
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: linear-gradient(135deg, #ffeef8 0%, #e8f4ff 50%, #fff5e6 100%);
+    }
+
+    /* ── Nav ── */
+    #top-nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      height: clamp(48px, 8vh, 60px);
+      display: flex; align-items: center; gap: 12px;
+      padding: 0 clamp(12px, 3vw, 24px);
+      background: rgba(255,255,255,0.85);
+      backdrop-filter: blur(8px);
+      border-bottom: 2px solid rgba(200,180,220,0.3);
+    }
+
+    .nav-btn {
+      width: clamp(40px, 8vw, 48px);
+      height: clamp(40px, 8vw, 48px);
+      border: none; border-radius: 14px;
+      background: linear-gradient(135deg, #ffd6e8, #d4f0ff);
+      cursor: pointer; touch-action: manipulation;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      transition: transform 0.15s;
+    }
+    .nav-btn:active { transform: scale(0.92); }
+    .nav-btn svg { width: 55%; height: 55%; }
+
+    #nav-title {
+      font-size: clamp(16px, 3vw, 22px);
+      font-weight: 700;
+      color: #5a4a6a;
+      flex: 1;
+    }
+
+    /* ── App shell ── */
+    #app {
+      position: fixed;
+      top: clamp(48px, 8vh, 60px);
+      left: 0; right: 0; bottom: 0;
+      overflow: hidden;
+    }
+
+    .module {
+      display: none;
+      width: 100%; height: 100%;
+      overflow: hidden;
+    }
+    .module.active { display: flex; }
+
+    /* ── Hub ── */
+    #module-hub {
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(16px, 3vh, 32px);
+      padding: clamp(12px, 3vw, 32px);
+      overflow-y: auto;
+    }
+
+    .hub-section { width: 100%; max-width: 900px; text-align: center; }
+
+    .hub-label {
+      display: flex; align-items: center; justify-content: center;
+      gap: 10px; margin-bottom: clamp(10px, 2vh, 18px);
+      font-size: clamp(14px, 2.5vw, 18px);
+      color: #7a6a8a; font-weight: 600;
+    }
+
+    .age-badge {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: clamp(36px, 7vw, 48px); height: clamp(36px, 7vw, 48px);
+      border-radius: 50%; font-size: clamp(18px, 4vw, 26px); font-weight: 800; color: white;
+    }
+    .age-badge.age-3 { background: linear-gradient(135deg, #ff9ec5, #ffb8d0); }
+    .age-badge.age-7 { background: linear-gradient(135deg, #6eb5ff, #4a9eff); }
+
+    .hub-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(clamp(130px, 28vw, 180px), 1fr));
+      gap: clamp(10px, 2vw, 18px);
+    }
+
+    .hub-card {
+      border: none; border-radius: 20px;
+      padding: clamp(14px, 3vw, 22px);
+      background: white;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+      cursor: pointer; touch-action: manipulation;
+      transition: transform 0.2s, box-shadow 0.2s;
+      display: flex; flex-direction: column;
+      align-items: center; gap: 8px;
+    }
+    .hub-card:active { transform: scale(0.95); box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .hub-card-icon { width: clamp(56px, 12vw, 80px); height: clamp(56px, 12vw, 80px); }
+    .hub-card-title {
+      font-size: clamp(13px, 2.5vw, 17px);
+      font-weight: 700; color: #4a3a5a;
+    }
+    .hub-card-sub { font-size: clamp(11px, 2vw, 14px); color: #9a8aaa; }
+
+    .hub-card--big { max-width: 280px; margin: 0 auto; }
+
+    /* ── Preschool split screen ── */
+    #game-root {
+      width: 100%; height: 100%;
+      display: flex; flex-direction: row; overflow: hidden;
+    }
+    @media (orientation: portrait) { #game-root { flex-direction: column; } }
+
+    .panel {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      position: relative; min-width: 0; min-height: 0;
+      padding: clamp(8px, 2vw, 24px);
+    }
+    .panel-feeding {
+      background: linear-gradient(160deg, #ffe8f0 0%, #ffd6e8 100%);
+      border-right: 4px dashed rgba(255,150,180,0.35);
+    }
+    .panel-shapes { background: linear-gradient(160deg, #e0f5ff 0%, #d4f0e8 100%); }
+    @media (orientation: portrait) {
+      .panel-feeding { border-right: none; border-bottom: 4px dashed rgba(255,150,180,0.35); }
+    }
+
+    /* ── 7yo module layout ── */
+    .module-inner {
+      flex: 1; width: 100%; height: 100%;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: clamp(12px, 3vw, 28px);
+      gap: clamp(12px, 2.5vh, 24px);
+    }
+
+    .math-equation {
+      font-size: clamp(36px, 8vw, 64px);
+      font-weight: 800; color: #3a5a8a;
+      letter-spacing: 2px;
+    }
+
+    .drop-target {
+      width: clamp(80px, 16vw, 120px);
+      height: clamp(80px, 16vw, 120px);
+      border: 5px dashed rgba(100,140,200,0.5);
+      border-radius: 16px;
+      background: rgba(255,255,255,0.5);
+      display: flex; align-items: center; justify-content: center;
+      font-size: clamp(36px, 7vw, 56px);
+      font-weight: 800; color: #3a5a8a;
+      transition: background 0.2s, border-color 0.2s, transform 0.2s;
+    }
+    .drop-target.highlight {
+      border-color: #6eb5ff;
+      background: rgba(180,220,255,0.5);
+      animation: pulse-glow 0.6s ease-in-out infinite;
+    }
+    .drop-target.filled {
+      border-style: solid;
+      border-color: #5cd68a;
+      background: rgba(180,255,210,0.5);
+    }
+
+    .choices-tray, .letter-tray, .pattern-tray {
+      display: flex; gap: clamp(10px, 2.5vw, 20px);
+      flex-wrap: wrap; justify-content: center;
+      position: relative;
+      min-height: clamp(80px, 16vh, 120px);
+      width: 100%;
+    }
+
+    .tile-home {
+      width: clamp(68px, 13vw, 100px);
+      height: clamp(68px, 13vw, 100px);
+      position: relative; flex-shrink: 0;
+    }
+
+    .num-tile, .letter-tile {
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: clamp(28px, 6vw, 44px);
+      font-weight: 800;
+      border-radius: 16px;
+      color: white;
+    }
+    .num-tile { background: linear-gradient(135deg, #6eb5ff, #4a8fd9); }
+    .letter-tile { background: linear-gradient(135deg, #b88cff, #9b6fe0); }
+
+    .letter-slots {
+      display: flex; gap: clamp(8px, 2vw, 14px);
+    }
+    .letter-slot {
+      width: clamp(56px, 11vw, 80px);
+      height: clamp(56px, 11vw, 80px);
+      border: 4px dashed rgba(150,120,200,0.45);
+      border-radius: 14px;
+      background: rgba(255,255,255,0.45);
+      display: flex; align-items: center; justify-content: center;
+      font-size: clamp(28px, 6vw, 40px);
+      font-weight: 800; color: #6a4aaa;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .letter-slot.highlight { border-color: #b88cff; background: rgba(220,200,255,0.5); }
+    .letter-slot.filled { border-style: solid; border-color: #9b6fe0; background: rgba(210,190,255,0.4); }
+
+    #word-picture {
+      width: clamp(100px, 20vw, 160px);
+      height: clamp(100px, 20vw, 160px);
+    }
+
+    /* ── Memory ── */
+    .memory-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: clamp(8px, 1.5vw, 14px);
+      max-width: min(90vw, 560px);
+      width: 100%;
+    }
+
+    .mem-card {
+      aspect-ratio: 1;
+      border: none; border-radius: 14px;
+      cursor: pointer; touch-action: manipulation;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+      background: transparent;
+      padding: 0;
+    }
+    .mem-card.flipped { transform: rotateY(180deg); }
+    .mem-card.matched { opacity: 0.5; pointer-events: none; }
+
+    .mem-face {
+      position: absolute; inset: 0;
+      border-radius: 14px;
+      backface-visibility: hidden;
+      display: flex; align-items: center; justify-content: center;
+      font-size: clamp(24px, 5vw, 36px);
+      box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+    }
+    .mem-back {
+      background: linear-gradient(135deg, #ffd6e8, #d4f0ff);
+    }
+    .mem-back svg { width: 50%; height: 50%; opacity: 0.6; }
+    .mem-front {
+      transform: rotateY(180deg);
+      background: white;
+    }
+
+    /* ── Pattern ── */
+    .pattern-row {
+      display: flex; gap: clamp(8px, 2vw, 16px);
+      align-items: center; flex-wrap: wrap; justify-content: center;
+    }
+    .pattern-item {
+      width: clamp(52px, 10vw, 72px);
+      height: clamp(52px, 10vw, 72px);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .pattern-item svg { width: 100%; height: 100%; }
+    .pattern-question {
+      width: clamp(52px, 10vw, 72px);
+      height: clamp(52px, 10vw, 72px);
+      border: 4px dashed rgba(100,160,200,0.5);
+      border-radius: 12px;
+      background: rgba(255,255,255,0.4);
+      display: flex; align-items: center; justify-content: center;
+      font-size: clamp(24px, 5vw, 36px); color: #7ab8da;
+    }
+
+    .shape-chip svg { width: 100%; height: 100%; display: block; }
+
+    /* ── Shared drag ── */
+    .draggable {
+      position: fixed; cursor: grab; touch-action: none; z-index: 20;
+      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.15));
+      transition: filter 0.2s, transform 0.15s;
+      will-change: transform; pointer-events: auto;
+    }
+    .draggable svg, .draggable .num-tile, .draggable .letter-tile, .draggable .shape-chip {
+      pointer-events: none;
+    }
+    .draggable:active, .draggable.dragging {
+      cursor: grabbing; z-index: 50;
+      filter: drop-shadow(0 8px 16px rgba(0,0,0,0.25));
+      transition: filter 0.1s;
+      transform: scale(1.18) !important;
+    }
+    .draggable.snap-back { transition: transform 0.45s cubic-bezier(0.34,1.56,0.64,1); }
+
+    .drop-zone { position: absolute; border-radius: 50%; pointer-events: none; }
+    .drop-zone.highlight { animation: pulse-glow 0.6s ease-in-out infinite; }
+
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(255,200,100,0.6); }
+      50% { box-shadow: 0 0 24px 8px rgba(255,200,100,0.8); }
+    }
+
+    .shape-slot {
+      width: clamp(72px, 14vw, 120px); height: clamp(72px, 14vw, 120px);
+      display: flex; align-items: center; justify-content: center;
+      border: 5px dashed rgba(100,140,180,0.5); border-radius: 12px;
+      background: rgba(255,255,255,0.45);
+      transition: transform 0.3s, background 0.3s, border-color 0.3s;
+    }
+    .shape-slot.matched {
+      border-style: solid; border-color: rgba(80,200,120,0.7);
+      background: rgba(180,255,200,0.5);
+      animation: slot-pop 0.5s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    @keyframes slot-pop {
+      0% { transform: scale(1); } 40% { transform: scale(1.15); } 100% { transform: scale(1); }
+    }
+    .shape-slot svg { width: 70%; height: 70%; opacity: 0.35; }
+
+    .animal-wrap {
+      position: relative;
+      width: clamp(160px, 32vw, 280px);
+      height: clamp(180px, 36vw, 300px);
+    }
+    .animal-wrap.chewing .animal-body { animation: chew-bounce 0.5s ease-in-out 3; }
+    .animal-wrap.chewing .animal-jaw { animation: jaw-chomp 0.25s ease-in-out 6; }
+    @keyframes chew-bounce {
+      0%, 100% { transform: scale(1) rotate(0deg); }
+      25% { transform: scale(1.05,0.95) rotate(-2deg); }
+      75% { transform: scale(1.05,0.95) rotate(2deg); }
+    }
+    @keyframes jaw-chomp { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(12px); } }
+    .animal-body { transform-origin: center bottom; }
+    .animal-jaw { transform-origin: center top; }
+    .animal-wrap:not(.chewing) .animal-body { animation: idle-breathe 3s ease-in-out infinite; }
+    @keyframes idle-breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.02,0.98); } }
+
+    .food-tray, .shape-tray {
+      display: flex; gap: clamp(12px, 3vw, 28px);
+      justify-content: center; align-items: center; flex-wrap: wrap;
+      margin-top: clamp(8px, 2vh, 20px);
+      position: relative; width: 100%;
+      min-height: clamp(90px, 18vh, 140px);
+    }
+    .food-home, .shape-home {
+      width: clamp(72px, 14vw, 110px); height: clamp(72px, 14vw, 110px);
+      position: relative; flex-shrink: 0;
+    }
+    .slots-row {
+      display: flex; gap: clamp(10px, 2.5vw, 24px);
+      justify-content: center; align-items: center;
+      margin-bottom: clamp(12px, 3vh, 28px);
+    }
+
+    .particle {
+      position: fixed; pointer-events: none; z-index: 1000;
+      border-radius: 50%; animation: particle-fly 0.8s ease-out forwards;
+    }
+    @keyframes particle-fly {
+      0% { opacity: 1; transform: translate(0,0) scale(1); }
+      100% { opacity: 0; transform: translate(var(--tx),var(--ty)) scale(0); }
+    }
+    .sparkle {
+      position: fixed; pointer-events: none; z-index: 1000;
+      font-size: clamp(16px, 3vw, 28px);
+      animation: sparkle-pop 0.7s ease-out forwards;
+    }
+    @keyframes sparkle-pop {
+      0% { opacity: 1; transform: translate(-50%,-50%) scale(0) rotate(0deg); }
+      50% { opacity: 1; transform: translate(-50%,-50%) scale(1.3) rotate(20deg); }
+      100% { opacity: 0; transform: translate(-50%,-80%) scale(0.5) rotate(45deg); }
+    }
+    .happy-eyes .eye-pupil { animation: happy-blink 0.3s ease; }
+    @keyframes happy-blink { 0%, 100% { transform: scaleY(1); } 50% { transform: scaleY(0.1); } }
+
+    .mouth-glow {
+      position: absolute; border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,220,150,0.5) 0%, transparent 70%);
+      opacity: 0; transition: opacity 0.2s; pointer-events: none;
+    }
+    .mouth-glow.active { opacity: 1; }
+
+    .wiggle-wrong { animation: wiggle 0.45s ease-in-out; }
+    @keyframes wiggle {
+      0%, 100% { transform: translateX(0) rotate(0deg); }
+      20% { transform: translateX(-8px) rotate(-5deg); }
+      40% { transform: translateX(8px) rotate(5deg); }
+      60% { transform: translateX(-6px) rotate(-3deg); }
+      80% { transform: translateX(6px) rotate(3deg); }
+    }
+  </style>
+</head>
+<body>
+
+<nav id="top-nav">
+  <button id="btn-home" class="nav-btn" aria-label="Home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="#5a4a6a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M3 10.5L12 3l9 7.5"/><path d="M5 9.5V20h14V9.5"/><path d="M9 20v-6h6v6"/>
+    </svg>
+  </button>
+  <span id="nav-title">Pick a Game</span>
+</nav>
+
+<div id="app">
+
+  <!-- HUB -->
+  <section id="module-hub" class="module active">
+    <div class="hub-section">
+      <div class="hub-label"><span class="age-badge age-3">3</span><span>Little Explorer</span></div>
+      <button class="hub-card hub-card--big" data-module="module-preschool" data-title="Animal &amp; Shapes">
+        <svg class="hub-card-icon" viewBox="0 0 100 100" aria-hidden="true">
+          <ellipse cx="35" cy="40" rx="22" ry="20" fill="#d4a574"/>
+          <circle cx="28" cy="36" r="4" fill="#3d2914"/><circle cx="42" cy="36" r="4" fill="#3d2914"/>
+          <ellipse cx="35" cy="48" rx="8" ry="6" fill="#8b5e3c"/>
+          <circle cx="72" cy="65" r="18" fill="#ff6b8a" opacity="0.7"/>
+          <rect x="58" y="58" width="22" height="22" rx="3" fill="#5b9bd5" opacity="0.7"/>
+          <polygon points="82,50 96,78 68,78" fill="#ffd166" opacity="0.7"/>
+        </svg>
+        <span class="hub-card-title">Animal &amp; Shapes</span>
+        <span class="hub-card-sub">Feed &amp; sort — no reading!</span>
+      </button>
+    </div>
+    <div class="hub-section">
+      <div class="hub-label"><span class="age-badge age-7">7</span><span>Big Kid Zone</span></div>
+      <div class="hub-grid">
+        <button class="hub-card" data-module="module-math" data-title="Math Quest">
+          <svg class="hub-card-icon" viewBox="0 0 100 100" aria-hidden="true">
+            <rect x="10" y="10" width="80" height="80" rx="16" fill="#e8f4ff"/>
+            <text x="50" y="58" text-anchor="middle" font-size="36" font-weight="800" fill="#3a5a8a">7+3</text>
+          </svg>
+          <span class="hub-card-title">Math Quest</span>
+          <span class="hub-card-sub">Drag the answer</span>
+        </button>
+        <button class="hub-card" data-module="module-words" data-title="Word Builder">
+          <svg class="hub-card-icon" viewBox="0 0 100 100" aria-hidden="true">
+            <rect x="8" y="30" width="22" height="28" rx="6" fill="#b88cff"/>
+            <rect x="38" y="30" width="22" height="28" rx="6" fill="#9b6fe0"/>
+            <rect x="68" y="30" width="22" height="28" rx="6" fill="#7b4fc8"/>
+            <text x="19" y="50" font-size="16" font-weight="800" fill="white">C</text>
+            <text x="49" y="50" font-size="16" font-weight="800" fill="white">A</text>
+            <text x="79" y="50" font-size="16" font-weight="800" fill="white">T</text>
+          </svg>
+          <span class="hub-card-title">Word Builder</span>
+          <span class="hub-card-sub">Spell the picture</span>
+        </button>
+        <button class="hub-card" data-module="module-memory" data-title="Memory Match">
+          <svg class="hub-card-icon" viewBox="0 0 100 100" aria-hidden="true">
+            <rect x="8" y="12" width="36" height="44" rx="8" fill="#ffd6e8"/>
+            <rect x="54" y="12" width="36" height="44" rx="8" fill="#d4f0ff"/>
+            <rect x="8" y="58" width="36" height="34" rx="8" fill="#d4f0ff"/>
+            <rect x="54" y="58" width="36" height="34" rx="8" fill="#ffe8c8"/>
+            <text x="26" y="42" font-size="22" text-anchor="middle">🐱</text>
+            <text x="72" y="42" font-size="22" text-anchor="middle">?</text>
+          </svg>
+          <span class="hub-card-title">Memory Match</span>
+          <span class="hub-card-sub">Find the pairs</span>
+        </button>
+        <button class="hub-card" data-module="module-pattern" data-title="Pattern Puzzle">
+          <svg class="hub-card-icon" viewBox="0 0 100 100" aria-hidden="true">
+            <circle cx="20" cy="50" r="14" fill="#ff6b8a"/>
+            <rect x="38" y="36" width="28" height="28" rx="4" fill="#5b9bd5"/>
+            <circle cx="78" cy="50" r="14" fill="#ff6b8a"/>
+            <text x="50" y="88" text-anchor="middle" font-size="20" fill="#7a8aaa">?</text>
+          </svg>
+          <span class="hub-card-title">Pattern Puzzle</span>
+          <span class="hub-card-sub">What comes next?</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRESCHOOL -->
+  <section id="module-preschool" class="module">
+    <div id="game-root">
+      <section class="panel panel-feeding" id="feeding-panel">
+        <div class="animal-wrap" id="animal">
+          <svg class="animal-body w-full h-full" viewBox="0 0 200 220" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <ellipse cx="55" cy="55" rx="28" ry="32" fill="#c4956a"/>
+            <ellipse cx="55" cy="55" rx="16" ry="20" fill="#f0c9a8"/>
+            <ellipse cx="145" cy="55" rx="28" ry="32" fill="#c4956a"/>
+            <ellipse cx="145" cy="55" rx="16" ry="20" fill="#f0c9a8"/>
+            <ellipse cx="100" cy="110" rx="75" ry="70" fill="#d4a574"/>
+            <ellipse cx="55" cy="125" rx="18" ry="14" fill="#f5b8b0" opacity="0.7"/>
+            <ellipse cx="145" cy="125" rx="18" ry="14" fill="#f5b8b0" opacity="0.7"/>
+            <g class="eyes">
+              <ellipse cx="72" cy="100" rx="16" ry="18" fill="white"/>
+              <circle class="eye-pupil" cx="76" cy="102" r="8" fill="#3d2914"/>
+              <circle cx="79" cy="99" r="3" fill="white"/>
+              <ellipse cx="128" cy="100" rx="16" ry="18" fill="white"/>
+              <circle class="eye-pupil" cx="132" cy="102" r="8" fill="#3d2914"/>
+              <circle cx="135" cy="99" r="3" fill="white"/>
+            </g>
+            <ellipse cx="100" cy="118" rx="12" ry="9" fill="#8b5e3c"/>
+            <path d="M 70 130 Q 100 145 130 130" fill="none" stroke="#8b5e3c" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+          <svg class="animal-jaw absolute bottom-0 left-0 w-full" style="height:35%;" viewBox="0 0 200 80" aria-hidden="true">
+            <path d="M 55 5 Q 100 55 145 5 L 145 75 Q 100 65 55 75 Z" fill="#c4956a"/>
+            <path d="M 70 15 Q 100 40 130 15" fill="#e8a0a0" opacity="0.6"/>
+          </svg>
+          <div class="mouth-glow" id="mouth-glow" style="left:28%;top:52%;width:44%;height:22%;"></div>
+          <div class="drop-zone" id="mouth-zone" style="left:30%;top:54%;width:40%;height:20%;"></div>
+        </div>
+        <div class="food-tray" id="food-tray">
+          <div class="food-home"><div class="draggable food-item" data-type="food" data-id="apple" style="width:100%;height:100%;">
+            <svg viewBox="0 0 80 80" width="100%" height="100%" aria-hidden="true">
+              <circle cx="40" cy="44" r="28" fill="#e74c3c"/>
+              <ellipse cx="40" cy="18" rx="8" ry="12" fill="#5cb85c"/>
+            </svg>
+          </div></div>
+          <div class="food-home"><div class="draggable food-item" data-type="food" data-id="fish" style="width:100%;height:100%;">
+            <svg viewBox="0 0 80 80" width="100%" height="100%" aria-hidden="true">
+              <ellipse cx="38" cy="40" rx="26" ry="18" fill="#f39c12"/>
+              <polygon points="10,40 28,28 28,52" fill="#e67e22"/>
+              <circle cx="50" cy="36" r="5" fill="white"/><circle cx="51" cy="36" r="2.5" fill="#2c3e50"/>
+            </svg>
+          </div></div>
+          <div class="food-home"><div class="draggable food-item" data-type="food" data-id="cookie" style="width:100%;height:100%;">
+            <svg viewBox="0 0 80 80" width="100%" height="100%" aria-hidden="true">
+              <circle cx="40" cy="40" r="30" fill="#c68642"/>
+              <circle cx="28" cy="30" r="5" fill="#5d3a1a"/><circle cx="50" cy="28" r="4" fill="#5d3a1a"/>
+            </svg>
+          </div></div>
+        </div>
+      </section>
+      <section class="panel panel-shapes" id="shapes-panel">
+        <div class="slots-row">
+          <div class="shape-slot" data-shape="circle"><svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="24" fill="none" stroke="#7eb8da" stroke-width="4"/></svg></div>
+          <div class="shape-slot" data-shape="square"><svg viewBox="0 0 60 60"><rect x="8" y="8" width="44" height="44" rx="4" fill="none" stroke="#7eb8da" stroke-width="4"/></svg></div>
+          <div class="shape-slot" data-shape="triangle"><svg viewBox="0 0 60 60"><polygon points="30,8 52,52 8,52" fill="none" stroke="#7eb8da" stroke-width="4" stroke-linejoin="round"/></svg></div>
+        </div>
+        <div class="shape-tray">
+          <div class="shape-home"><div class="draggable shape-piece" data-type="shape" data-match="circle" style="width:100%;height:100%;"><svg viewBox="0 0 80 80" width="100%" height="100%"><circle cx="40" cy="40" r="30" fill="#ff6b8a"/></svg></div></div>
+          <div class="shape-home"><div class="draggable shape-piece" data-type="shape" data-match="square" style="width:100%;height:100%;"><svg viewBox="0 0 80 80" width="100%" height="100%"><rect x="12" y="12" width="56" height="56" rx="6" fill="#5b9bd5"/></svg></div></div>
+          <div class="shape-home"><div class="draggable shape-piece" data-type="shape" data-match="triangle" style="width:100%;height:100%;"><svg viewBox="0 0 80 80" width="100%" height="100%"><polygon points="40,10 68,68 12,68" fill="#ffd166"/></svg></div></div>
+        </div>
+      </section>
+    </div>
+  </section>
+
+  <!-- MATH -->
+  <section id="module-math" class="module">
+    <div class="module-inner" style="background:linear-gradient(160deg,#e8f4ff,#d4e8ff);">
+      <div id="math-equation" class="math-equation"></div>
+      <div>=</div>
+      <div id="math-answer-zone" class="drop-target">?</div>
+      <div id="math-choices" class="choices-tray"></div>
+    </div>
+  </section>
+
+  <!-- WORDS -->
+  <section id="module-words" class="module">
+    <div class="module-inner" style="background:linear-gradient(160deg,#f0e8ff,#e8d8ff);">
+      <div id="word-picture"></div>
+      <div id="word-slots" class="letter-slots"></div>
+      <div id="word-tray" class="letter-tray"></div>
+    </div>
+  </section>
+
+  <!-- MEMORY -->
+  <section id="module-memory" class="module">
+    <div class="module-inner" style="background:linear-gradient(160deg,#fff5e6,#ffe8d4);">
+      <div id="memory-grid" class="memory-grid"></div>
+    </div>
+  </section>
+
+  <!-- PATTERN -->
+  <section id="module-pattern" class="module">
+    <div class="module-inner" style="background:linear-gradient(160deg,#e8fff0,#d4f5e0);">
+      <div id="pattern-row" class="pattern-row"></div>
+      <div id="pattern-slot" class="drop-target pattern-question">?</div>
+      <div id="pattern-choices" class="pattern-tray"></div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  let activeDrag = null;
+  const draggables = [];
+  const matchedShapes = new Set();
+  let currentModule = 'module-hub';
+
+  /* ── Safeguards ── */
+  document.addEventListener('gesturestart', e => e.preventDefault(), { passive: false });
+  document.addEventListener('gesturechange', e => e.preventDefault(), { passive: false });
+  document.addEventListener('gestureend', e => e.preventDefault(), { passive: false });
+  document.addEventListener('touchmove', e => { if (activeDrag) e.preventDefault(); }, { passive: false });
+  document.addEventListener('dblclick', e => e.preventDefault());
+  window.addEventListener('contextmenu', e => e.preventDefault());
+
+  /* ── Audio ── */
+  let audioCtx = null;
+  function playTone(freq, duration, type = 'sine', vol = 0.15) {
+    try {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = type; osc.frequency.value = freq;
+      gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+      osc.connect(gain); gain.connect(audioCtx.destination);
+      osc.start(); osc.stop(audioCtx.currentTime + duration);
+    } catch (_) {}
+  }
+  function playChomp() { playTone(180,0.12,'square',0.08); setTimeout(() => playTone(120,0.15,'square',0.06),80); }
+  function playMatch() { playTone(523,0.15); setTimeout(() => playTone(659,0.15),100); setTimeout(() => playTone(784,0.2),200); }
+  function playBoop() { playTone(220,0.2,'triangle',0.08); }
+  function resumeAudio() { if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume(); }
+
+  /* ── FX ── */
+  const SPARKLE_CHARS = ['✦','★','✧','♥','●'];
+  function burstParticles(x, y, colors, count = 14) {
+    for (let i = 0; i < count; i++) {
+      const p = document.createElement('div');
+      p.className = 'particle';
+      const size = 6 + Math.random() * 10;
+      const angle = (Math.PI * 2 * i) / count + Math.random() * 0.5;
+      const dist = 40 + Math.random() * 60;
+      p.style.cssText = `left:${x}px;top:${y}px;width:${size}px;height:${size}px;background:${colors[i%colors.length]};--tx:${Math.cos(angle)*dist}px;--ty:${Math.sin(angle)*dist}px;`;
+      document.body.appendChild(p);
+      p.addEventListener('animationend', () => p.remove());
+    }
+  }
+  function spawnSparkles(x, y, n = 4) {
+    for (let i = 0; i < n; i++) {
+      const s = document.createElement('div');
+      s.className = 'sparkle';
+      s.textContent = SPARKLE_CHARS[Math.floor(Math.random() * SPARKLE_CHARS.length)];
+      s.style.left = (x + (Math.random()-0.5)*40) + 'px';
+      s.style.top = (y + (Math.random()-0.5)*40) + 'px';
+      s.style.color = ['#ff6b8a','#ffd166','#5b9bd5','#98e4c9'][i%4];
+      document.body.appendChild(s);
+      s.addEventListener('animationend', () => s.remove());
+    }
+  }
+
+  /* ── Helpers ── */
+  function getPoint(e) {
+    if (e.touches?.length) return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+    if (e.changedTouches?.length) return { x: e.changedTouches[0].clientX, y: e.changedTouches[0].clientY };
+    return { x: e.clientX, y: e.clientY };
+  }
+  function centerIn(elRect) {
+    return { cx: elRect.left + elRect.width/2, cy: elRect.top + elRect.height/2 };
+  }
+  function hitRect(cx, cy, rect, pad = 0) {
+    return cx >= rect.left-pad && cx <= rect.right+pad && cy >= rect.top-pad && cy <= rect.bottom+pad;
+  }
+  function shuffle(arr) {
+    const a = [...arr];
+    for (let i = a.length-1; i > 0; i--) { const j = Math.floor(Math.random()*(i+1)); [a[i],a[j]] = [a[j],a[i]]; }
+    return a;
+  }
+
+  function placeAtHome(el, home) {
+    if (!home) return;
+    const r = home.getBoundingClientRect();
+    if (r.width < 2) return;
+    const size = Math.min(r.width, r.height);
+    el.style.position = 'fixed';
+    el.style.width = size + 'px';
+    el.style.height = size + 'px';
+    el.style.left = (r.left + (r.width-size)/2) + 'px';
+    el.style.top = (r.top + (r.height-size)/2) + 'px';
+    el.style.transform = 'scale(1)';
+    el.style.zIndex = '20';
+  }
+
+  function snapBack(el, home, instant) {
+    el.classList.add('snap-back');
+    if (instant) el.classList.remove('snap-back');
+    requestAnimationFrame(() => {
+      if (!instant) el.classList.add('snap-back');
+      placeAtHome(el, home);
+      setTimeout(() => { el.style.transform = 'scale(1)'; el.classList.remove('snap-back'); }, instant ? 50 : 450);
+    });
+  }
+
+  function clearDragHighlights() {
+    document.getElementById('mouth-glow')?.classList.remove('active');
+    document.getElementById('mouth-zone')?.classList.remove('highlight');
+    document.getElementById('math-answer-zone')?.classList.remove('highlight');
+    document.getElementById('pattern-slot')?.classList.remove('highlight');
+    document.querySelectorAll('.letter-slot.empty').forEach(s => s.classList.remove('highlight'));
+  }
+
+  function onDragStart(el) {
+    clearDragHighlights();
+    const t = el.dataset.type;
+    if (t === 'food') {
+      document.getElementById('mouth-glow')?.classList.add('active');
+      document.getElementById('mouth-zone')?.classList.add('highlight');
+    } else if (t === 'math-num') {
+      document.getElementById('math-answer-zone')?.classList.add('highlight');
+    } else if (t === 'letter') {
+      document.querySelectorAll('.letter-slot.empty').forEach(s => s.classList.add('highlight'));
+    } else if (t === 'pattern') {
+      document.getElementById('pattern-slot')?.classList.add('highlight');
+    }
+  }
+
+  /* ── Drag system ── */
+  function unregisterDraggable(el) {
+    const idx = draggables.findIndex(d => d.el === el);
+    if (idx >= 0) draggables.splice(idx, 1);
+    delete el.dataset.dragInit;
+  }
+
+  function registerDraggable(el) {
+    if (el.dataset.dragInit) return draggables.find(d => d.el === el);
+    el.dataset.dragInit = '1';
+    return initDraggable(el);
+  }
+
+  function initDraggable(el) {
+    const home = el.parentElement;
+    const state = { el, home, startX:0, startY:0, origLeft:0, origTop:0, pointerId:null, matched:false, bound:false };
+
+    function bindDragMove() {
+      if (state.bound) return;
+      state.bound = true;
+      const opts = { passive: false };
+      if (window.PointerEvent) {
+        window.addEventListener('pointermove', onMove, opts);
+        window.addEventListener('pointerup', onEnd, opts);
+        window.addEventListener('pointercancel', onEnd, opts);
+      } else {
+        window.addEventListener('touchmove', onMove, opts);
+        window.addEventListener('touchend', onEnd, opts);
+        window.addEventListener('touchcancel', onEnd, opts);
+        window.addEventListener('mousemove', onMove);
+        window.addEventListener('mouseup', onEnd);
+      }
+    }
+    function unbindDragMove() {
+      if (!state.bound) return;
+      state.bound = false;
+      if (window.PointerEvent) {
+        window.removeEventListener('pointermove', onMove);
+        window.removeEventListener('pointerup', onEnd);
+        window.removeEventListener('pointercancel', onEnd);
+      } else {
+        window.removeEventListener('touchmove', onMove);
+        window.removeEventListener('touchend', onEnd);
+        window.removeEventListener('touchcancel', onEnd);
+        window.removeEventListener('mousemove', onMove);
+        window.removeEventListener('mouseup', onEnd);
+      }
+    }
+
+    function onStart(e) {
+      if (state.matched) return;
+      if (e.type === 'mousedown' && e.button !== 0) return;
+      const pt = getPoint(e);
+      activeDrag = state;
+      state.pointerId = e.pointerId ?? 'touch';
+      state.startX = pt.x; state.startY = pt.y;
+      const rect = el.getBoundingClientRect();
+      state.origLeft = rect.left; state.origTop = rect.top;
+      el.classList.add('dragging');
+      el.classList.remove('snap-back');
+      el.style.position = 'fixed';
+      el.style.left = rect.left + 'px';
+      el.style.top = rect.top + 'px';
+      el.style.width = rect.width + 'px';
+      el.style.height = rect.height + 'px';
+      el.style.transform = 'scale(1.15)';
+      el.style.zIndex = '50';
+      bindDragMove();
+      onDragStart(el);
+      resumeAudio();
+      playTone(400, 0.05, 'sine', 0.05);
+      if (e.pointerId !== undefined && el.setPointerCapture) try { el.setPointerCapture(e.pointerId); } catch(_){}
+      e.preventDefault();
+    }
+
+    function onMove(e) {
+      if (activeDrag !== state) return;
+      if (e.pointerId !== undefined && state.pointerId !== 'touch' && e.pointerId !== state.pointerId) return;
+      const pt = getPoint(e);
+      el.style.left = (state.origLeft + pt.x - state.startX) + 'px';
+      el.style.top = (state.origTop + pt.y - state.startY) + 'px';
+      e.preventDefault();
+    }
+
+    function onEnd(e) {
+      if (activeDrag !== state) return;
+      if (e.pointerId !== undefined && state.pointerId !== 'touch' && e.pointerId !== state.pointerId) return;
+      activeDrag = null;
+      unbindDragMove();
+      el.classList.remove('dragging');
+      clearDragHighlights();
+      const elRect = el.getBoundingClientRect();
+      const handler = dropHandlers[el.dataset.type];
+      if (handler) handler(el, elRect, state, home);
+      else snapBack(el, home);
+      if (e.pointerId !== undefined && el.releasePointerCapture) try { el.releasePointerCapture(e.pointerId); } catch(_){}
+      e.preventDefault();
+    }
+
+    if (window.PointerEvent) el.addEventListener('pointerdown', onStart);
+    else { el.addEventListener('touchstart', onStart, {passive:false}); el.addEventListener('mousedown', onStart); }
+
+    draggables.push(state);
+    return state;
+  }
+
+  function layoutAll() {
+    draggables.forEach(({ el, home, matched }) => { if (!matched) placeAtHome(el, home); });
+  }
+
+  /* ── Preschool: food ── */
+  const animal = document.getElementById('animal');
+  const mouthZone = document.getElementById('mouth-zone');
+  const mouthGlow = document.getElementById('mouth-glow');
+
+  function handleFoodDrop(el, elRect, state, home) {
+    const { cx, cy } = centerIn(elRect);
+    const mouthRect = mouthZone.getBoundingClientRect();
+    if (hitRect(cx, cy, mouthRect)) {
+      playChomp();
+      animal.classList.add('chewing','happy-eyes');
+      burstParticles(cx, cy, ['#e74c3c','#f39c12','#c68642','#ff6b8a','#ffd166'], 18);
+      spawnSparkles(cx, cy, 5);
+      el.style.transform = 'scale(0)'; el.style.opacity = '0';
+      setTimeout(() => {
+        animal.classList.remove('chewing','happy-eyes');
+        el.style.opacity = '1'; el.style.transform = 'scale(1)';
+        snapBack(el, home, true);
+      }, 900);
+    } else snapBack(el, home);
+  }
+
+  /* ── Preschool: shapes ── */
+  function handleShapeDrop(el, elRect, state, home) {
+    const shapeId = el.dataset.match;
+    const slot = document.querySelector(`.shape-slot[data-shape="${shapeId}"]`);
+    if (!slot || matchedShapes.has(shapeId)) { snapBack(el, home); return; }
+    const { cx, cy } = centerIn(elRect);
+    const slotRect = slot.getBoundingClientRect();
+    if (hitRect(cx, cy, slotRect, 20)) {
+      matchedShapes.add(shapeId);
+      state.matched = true;
+      playMatch();
+      const size = Math.min(slotRect.width, slotRect.height) * 0.75;
+      const scx = slotRect.left + slotRect.width/2;
+      const scy = slotRect.top + slotRect.height/2;
+      el.classList.add('snap-back');
+      el.style.left = (scx-size/2)+'px'; el.style.top = (scy-size/2)+'px';
+      el.style.width = size+'px'; el.style.height = size+'px';
+      el.style.transform = 'scale(1)';
+      slot.classList.add('matched');
+      burstParticles(scx, scy, ['#ff6b8a','#5b9bd5','#ffd166','#98e4c9'], 16);
+      spawnSparkles(scx, scy, 4);
+      if (matchedShapes.size === 3) setTimeout(celebrateAllShapes, 600);
+    } else {
+      let wrong = false;
+      document.querySelectorAll('.shape-slot').forEach(s => {
+        if (s.dataset.shape !== shapeId && !matchedShapes.has(s.dataset.shape) && hitRect(cx,cy,s.getBoundingClientRect(),10)) wrong = true;
+      });
+      if (wrong) { el.classList.add('wiggle-wrong'); playBoop(); setTimeout(() => el.classList.remove('wiggle-wrong'), 450); }
+      snapBack(el, home);
+    }
+  }
+
+  function celebrateAllShapes() {
+    document.querySelectorAll('.shape-slot').forEach((slot, i) => {
+      setTimeout(() => {
+        const r = slot.getBoundingClientRect();
+        burstParticles(r.left+r.width/2, r.top+r.height/2, ['#ff6b8a','#5b9bd5','#ffd166','#98e4c9'], 12);
+        spawnSparkles(r.left+r.width/2, r.top+r.height/2, 3);
+      }, i*200);
+    });
+    playMatch(); setTimeout(playMatch, 400);
+    setTimeout(() => {
+      matchedShapes.clear();
+      document.querySelectorAll('.shape-slot').forEach(s => s.classList.remove('matched'));
+      document.querySelectorAll('.draggable[data-type="shape"]').forEach(el => {
+        const st = draggables.find(d => d.el === el);
+        if (st) { st.matched = false; el.style.opacity = '1'; snapBack(el, st.home, true); }
+      });
+    }, 2200);
+  }
+
+  /* ── Math module ── */
+  let mathAnswer = 0;
+
+  function buildMathRound() {
+    const a = Math.floor(Math.random()*9)+1;
+    const b = Math.floor(Math.random()*9)+1;
+    mathAnswer = a + b;
+    document.getElementById('math-equation').textContent = `${a} + ${b}`;
+    const zone = document.getElementById('math-answer-zone');
+    zone.textContent = '?';
+    zone.classList.remove('filled');
+    const choices = document.getElementById('math-choices');
+    choices.querySelectorAll('.draggable').forEach(unregisterDraggable);
+    choices.innerHTML = '';
+    const nums = shuffle([mathAnswer, mathAnswer+1, mathAnswer-1, mathAnswer+2].filter((n,i,a) => n > 0 && n < 20 && a.indexOf(n)===i).slice(0,4));
+    while (nums.length < 4) { const extra = mathAnswer + nums.length + 2; if (!nums.includes(extra)) nums.push(extra); }
+    shuffle(nums).slice(0,4).forEach(n => {
+      const home = document.createElement('div');
+      home.className = 'tile-home';
+      const tile = document.createElement('div');
+      tile.className = 'draggable';
+      tile.dataset.type = 'math-num';
+      tile.dataset.value = n;
+      tile.innerHTML = `<div class="num-tile">${n}</div>`;
+      home.appendChild(tile);
+      choices.appendChild(home);
+      registerDraggable(tile);
+    });
+    setTimeout(layoutAll, 50);
+  }
+
+  function handleMathDrop(el, elRect, state, home) {
+    const zone = document.getElementById('math-answer-zone');
+    const { cx, cy } = centerIn(elRect);
+    const val = parseInt(el.dataset.value, 10);
+    if (hitRect(cx, cy, zone.getBoundingClientRect(), 15)) {
+      if (val === mathAnswer) {
+        zone.textContent = val;
+        zone.classList.add('filled');
+        playMatch();
+        burstParticles(cx, cy, ['#6eb5ff','#98e4c9','#ffd166'], 16);
+        spawnSparkles(cx, cy, 4);
+        state.matched = true;
+        el.style.display = 'none';
+        setTimeout(buildMathRound, 1200);
+      } else {
+        el.classList.add('wiggle-wrong'); playBoop();
+        setTimeout(() => el.classList.remove('wiggle-wrong'), 450);
+        snapBack(el, home);
+      }
+    } else snapBack(el, home);
+  }
+
+  /* ── Words module ── */
+  const WORDS = [
+    { word:'CAT', pic:`<svg viewBox="0 0 100 100"><circle cx="50" cy="40" r="28" fill="#f39c12"/><polygon points="20,38 38,28 38,48" fill="#e67e22"/><circle cx="58" cy="36" r="4" fill="#2c3e50"/><path d="M35 55 Q50 65 65 55" fill="none" stroke="#c0392b" stroke-width="2"/><line x1="50" y1="68" x2="50" y2="85" stroke="#7f8c8d" stroke-width="3"/></svg>` },
+    { word:'DOG', pic:`<svg viewBox="0 0 100 100"><ellipse cx="50" cy="50" rx="30" ry="25" fill="#c4956a"/><ellipse cx="30" cy="30" rx="12" ry="18" fill="#a67c52"/><ellipse cx="70" cy="30" rx="12" ry="18" fill="#a67c52"/><circle cx="40" cy="45" r="4" fill="#3d2914"/><circle cx="60" cy="45" r="4" fill="#3d2914"/><ellipse cx="50" cy="58" rx="10" ry="7" fill="#8b5e3c"/></svg>` },
+    { word:'SUN', pic:`<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="22" fill="#ffd166"/><g stroke="#f39c12" stroke-width="3" stroke-linecap="round">${[0,45,90,135,180,225,270,315].map(a=>{const r=a*Math.PI/180;return`<line x1="${50+Math.cos(r)*28}" y1="${50+Math.sin(r)*28}" x2="${50+Math.cos(r)*38}" y2="${50+Math.sin(r)*38}"/>`}).join('')}</g></svg>` },
+    { word:'BUS', pic:`<svg viewBox="0 0 100 100"><rect x="15" y="30" width="70" height="40" rx="8" fill="#f1c40f"/><rect x="20" y="35" width="25" height="18" rx="3" fill="#aed6f1"/><rect x="55" y="35" width="25" height="18" rx="3" fill="#aed6f1"/><circle cx="30" cy="72" r="8" fill="#2c3e50"/><circle cx="70" cy="72" r="8" fill="#2c3e50"/></svg>` },
+  ];
+  let wordIdx = 0;
+  let wordFilled = 0;
+
+  function buildWordRound() {
+    const w = WORDS[wordIdx % WORDS.length];
+    wordIdx++;
+    wordFilled = 0;
+    document.getElementById('word-picture').innerHTML = w.pic;
+    const slots = document.getElementById('word-slots');
+    const tray = document.getElementById('word-tray');
+    tray.querySelectorAll('.draggable').forEach(unregisterDraggable);
+    slots.innerHTML = '';
+    tray.innerHTML = '';
+    w.word.split('').forEach((ch, i) => {
+      const slot = document.createElement('div');
+      slot.className = 'letter-slot empty';
+      slot.dataset.index = i;
+      slot.dataset.letter = ch;
+      slots.appendChild(slot);
+    });
+    const letters = shuffle(w.word.split('').concat(['X','Z','Q'].filter(c => !w.word.includes(c)).slice(0,1)));
+    shuffle([...w.word].concat(letters.filter(c => w.word.split('').indexOf(c)===-1 || letters.filter(x=>x===c).length>1))).slice(0, w.word.length+2).forEach(ch => {
+      const home = document.createElement('div');
+      home.className = 'tile-home';
+      const tile = document.createElement('div');
+      tile.className = 'draggable';
+      tile.dataset.type = 'letter';
+      tile.dataset.letter = ch;
+      tile.innerHTML = `<div class="letter-tile">${ch}</div>`;
+      home.appendChild(tile);
+      tray.appendChild(home);
+      registerDraggable(tile);
+    });
+    setTimeout(layoutAll, 50);
+  }
+
+  function handleLetterDrop(el, elRect, state, home) {
+    const { cx, cy } = centerIn(elRect);
+    const letter = el.dataset.letter;
+    let placed = false;
+    document.querySelectorAll('.letter-slot.empty').forEach(slot => {
+      if (placed) return;
+      if (hitRect(cx, cy, slot.getBoundingClientRect(), 12) && slot.dataset.letter === letter) {
+        slot.textContent = letter;
+        slot.classList.remove('empty');
+        slot.classList.add('filled');
+        playTone(500+wordFilled*50, 0.1);
+        wordFilled++;
+        state.matched = true;
+        el.style.display = 'none';
+        placed = true;
+        if (wordFilled === document.querySelectorAll('.letter-slot').length) {
+          playMatch();
+          const r = document.getElementById('word-slots').getBoundingClientRect();
+          burstParticles(r.left+r.width/2, r.top+r.height/2, ['#b88cff','#ffd166','#98e4c9'], 18);
+          setTimeout(buildWordRound, 1500);
+        }
+      } else if (hitRect(cx, cy, slot.getBoundingClientRect(), 12)) {
+        el.classList.add('wiggle-wrong'); playBoop();
+        setTimeout(() => el.classList.remove('wiggle-wrong'), 450);
+        placed = true;
+        snapBack(el, home);
+      }
+    });
+    if (!placed) snapBack(el, home);
+  }
+
+  /* ── Memory module ── */
+  const MEM_PAIRS = ['🐱','🐶','🐟','🍎','⭐','🌸'];
+  let memFlipped = [];
+  let memLock = false;
+
+  function buildMemory() {
+    const grid = document.getElementById('memory-grid');
+    grid.innerHTML = '';
+    memFlipped = []; memLock = false;
+    const pairs = shuffle([...MEM_PAIRS, ...MEM_PAIRS]);
+    pairs.forEach((emoji, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'mem-card';
+      btn.dataset.emoji = emoji;
+      btn.innerHTML = `
+        <div class="mem-face mem-back"><svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="14" fill="none" stroke="#c8a0d8" stroke-width="2"/><text x="20" y="25" text-anchor="middle" font-size="16" fill="#c8a0d8">?</text></svg></div>
+        <div class="mem-face mem-front">${emoji}</div>`;
+      btn.addEventListener('click', () => onMemClick(btn));
+      btn.addEventListener('pointerdown', e => { resumeAudio(); e.preventDefault(); });
+      grid.appendChild(btn);
+    });
+  }
+
+  function onMemClick(card) {
+    if (memLock || card.classList.contains('flipped') || card.classList.contains('matched')) return;
+    resumeAudio();
+    playTone(440, 0.06);
+    card.classList.add('flipped');
+    memFlipped.push(card);
+    if (memFlipped.length === 2) {
+      memLock = true;
+      const [a, b] = memFlipped;
+      if (a.dataset.emoji === b.dataset.emoji) {
+        setTimeout(() => {
+          a.classList.add('matched'); b.classList.add('matched');
+          playMatch();
+          const r = a.getBoundingClientRect();
+          burstParticles(r.left+r.width/2, r.top+r.height/2, ['#ffd166','#ff6b8a','#98e4c9'], 12);
+          memFlipped = []; memLock = false;
+          if (document.querySelectorAll('.mem-card:not(.matched)').length === 0) {
+            setTimeout(() => { playMatch(); setTimeout(buildMemory, 2000); }, 600);
+          }
+        }, 500);
+      } else {
+        setTimeout(() => {
+          a.classList.remove('flipped'); b.classList.remove('flipped');
+          playBoop(); memFlipped = []; memLock = false;
+        }, 900);
+      }
+    }
+  }
+
+  /* ── Pattern module ── */
+  const SHAPES = {
+    circle:  { fill:'#ff6b8a', svg:'<circle cx="30" cy="30" r="22"/>' },
+    square:  { fill:'#5b9bd5', svg:'<rect x="8" y="8" width="44" height="44" rx="5"/>' },
+    triangle:{ fill:'#ffd166', svg:'<polygon points="30,6 54,54 6,54"/>' },
+  };
+  let patternAnswer = '';
+
+  function shapeSvg(type) {
+    const s = SHAPES[type];
+    return `<svg viewBox="0 0 60 60" aria-hidden="true" fill="${s.fill}">${s.svg}</svg>`;
+  }
+
+  function buildPatternRound() {
+    const types = ['circle','square','triangle'];
+    const kind = Math.floor(Math.random()*3);
+    let seq, answer;
+    if (kind === 0) {
+      const a = types[Math.floor(Math.random()*3)];
+      const b = types.filter(t=>t!==a)[Math.floor(Math.random()*2)];
+      seq = [a,b,a,b]; answer = a;
+    } else if (kind === 1) {
+      const a = types[Math.floor(Math.random()*3)];
+      const b = types.filter(t=>t!==a)[0];
+      seq = [a,a,b,a,a]; answer = b;
+    } else {
+      const s = shuffle(types);
+      seq = [s[0],s[1],s[2],s[0]]; answer = s[1];
+    }
+    patternAnswer = answer;
+    const row = document.getElementById('pattern-row');
+    row.innerHTML = seq.map(t => `<div class="pattern-item">${shapeSvg(t)}</div>`).join('') +
+      '<div class="pattern-question">?</div>';
+    const slot = document.getElementById('pattern-slot');
+    slot.textContent = '?';
+    slot.classList.remove('filled');
+    const choices = document.getElementById('pattern-choices');
+    choices.querySelectorAll('.draggable').forEach(unregisterDraggable);
+    choices.innerHTML = '';
+    shuffle(types).forEach(t => {
+      const home = document.createElement('div');
+      home.className = 'tile-home';
+      const tile = document.createElement('div');
+      tile.className = 'draggable';
+      tile.dataset.type = 'pattern';
+      tile.dataset.shape = t;
+      tile.innerHTML = `<div class="shape-chip">${shapeSvg(t)}</div>`;
+      home.appendChild(tile);
+      choices.appendChild(home);
+      registerDraggable(tile);
+    });
+    setTimeout(layoutAll, 50);
+  }
+
+  function handlePatternDrop(el, elRect, state, home) {
+    const slot = document.getElementById('pattern-slot');
+    const { cx, cy } = centerIn(elRect);
+    if (hitRect(cx, cy, slot.getBoundingClientRect(), 15)) {
+      if (el.dataset.shape === patternAnswer) {
+        slot.innerHTML = shapeSvg(patternAnswer);
+        slot.classList.add('filled');
+        playMatch();
+        burstParticles(cx, cy, ['#5cd68a','#ffd166','#6eb5ff'], 16);
+        state.matched = true;
+        el.style.display = 'none';
+        setTimeout(buildPatternRound, 1400);
+      } else {
+        el.classList.add('wiggle-wrong'); playBoop();
+        setTimeout(() => el.classList.remove('wiggle-wrong'), 450);
+        snapBack(el, home);
+      }
+    } else snapBack(el, home);
+  }
+
+  /* ── Drop handler registry ── */
+  const dropHandlers = {
+    food: handleFoodDrop,
+    shape: handleShapeDrop,
+    'math-num': handleMathDrop,
+    letter: handleLetterDrop,
+    pattern: handlePatternDrop,
+  };
+
+  /* ── Navigation ── */
+  const MODULE_TITLES = {
+    'module-hub': 'Pick a Game',
+    'module-preschool': 'Animal & Shapes',
+    'module-math': 'Math Quest',
+    'module-words': 'Word Builder',
+    'module-memory': 'Memory Match',
+    'module-pattern': 'Pattern Puzzle',
+  };
+
+  function showModule(id) {
+    if (activeDrag) { activeDrag = null; clearDragHighlights(); }
+    currentModule = id;
+    document.querySelectorAll('.module').forEach(m => m.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    document.getElementById('nav-title').textContent = MODULE_TITLES[id] || '';
+    if (id === 'module-math') buildMathRound();
+    else if (id === 'module-words') buildWordRound();
+    else if (id === 'module-memory') buildMemory();
+    else if (id === 'module-pattern') buildPatternRound();
+    setTimeout(layoutAll, 80);
+    setTimeout(layoutAll, 300);
+  }
+
+  document.getElementById('btn-home').addEventListener('click', () => showModule('module-hub'));
+  document.querySelectorAll('.hub-card').forEach(card => {
+    card.addEventListener('click', () => showModule(card.dataset.module));
+  });
+
+  /* ── Init ── */
+  function init() {
+    document.querySelectorAll('#module-preschool .draggable').forEach(registerDraggable);
+    layoutAll();
+    window.addEventListener('resize', layoutAll);
+    window.addEventListener('orientationchange', () => setTimeout(layoutAll, 150));
+    setTimeout(layoutAll, 100);
+    setTimeout(layoutAll, 500);
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+})();
+</script>
+</body>
+</html>
