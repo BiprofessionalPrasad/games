@@ -4,7 +4,7 @@ import { join, extname, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
-const PORT = 5173;
+const PORT = Number(process.env.BLUEY_TESTBENCH_PORT) || 5173;
 
 const MIME = {
   ".html": "text/html; charset=utf-8",
@@ -57,4 +57,11 @@ createServer((req, res) => {
   }
 }).listen(PORT, () => {
   console.log(`Bluey testbench: http://localhost:${PORT}/testbench/`);
+}).on("error", (err) => {
+  if (err.code === "EADDRINUSE") {
+    console.error(`Port ${PORT} is already in use. Stop the other testbench server or set BLUEY_TESTBENCH_PORT.`);
+  } else {
+    console.error(err);
+  }
+  process.exit(1);
 });
