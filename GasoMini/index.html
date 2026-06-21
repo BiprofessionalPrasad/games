@@ -77,10 +77,11 @@
     #module-hub {
       flex-direction: column;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-start;
       gap: clamp(16px, 3vh, 32px);
-      padding: clamp(12px, 3vw, 32px);
+      padding: clamp(16px, 3vw, 32px) clamp(12px, 3vw, 32px) clamp(32px, 6vh, 64px);
       overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
     }
 
     .hub-section { width: 100%; max-width: 900px; text-align: center; }
@@ -99,6 +100,8 @@
     }
     .age-badge.age-3 { background: linear-gradient(135deg, #ff9ec5, #ffb8d0); }
     .age-badge.age-7 { background: linear-gradient(135deg, #6eb5ff, #4a9eff); }
+    .age-badge.age-art { background: linear-gradient(135deg, #ff9a6e, #ff6b9d); }
+    .age-badge.age-doc { background: linear-gradient(135deg, #5cd6b3, #3ab0d6); }
 
     .hub-grid {
       display: grid;
@@ -408,6 +411,235 @@
       60% { transform: translateX(-6px) rotate(-3deg); }
       80% { transform: translateX(6px) rotate(3deg); }
     }
+
+    /* ── Art & Doctor shared ── */
+    .module-hint {
+      font-size: clamp(13px, 2.5vw, 17px);
+      color: #6a7a8a; font-weight: 600; text-align: center;
+    }
+    .color-blob {
+      width: 100%; height: 100%; border-radius: 50%;
+      border: 4px solid rgba(255,255,255,0.8);
+      box-shadow: inset 0 -4px 8px rgba(0,0,0,0.15);
+    }
+    .paint-canvas, .stamp-canvas, .sym-canvas {
+      border-radius: 16px; background: white;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      touch-action: none; cursor: crosshair;
+      max-width: min(90vw, 520px); width: 100%;
+    }
+    .paint-canvas { height: clamp(180px, 38vh, 320px); }
+    .stamp-canvas { height: clamp(160px, 32vh, 260px); }
+    .sym-wrap { display: flex; gap: 4px; max-width: min(92vw, 540px); width: 100%; }
+    .sym-canvas { flex: 1; height: clamp(160px, 34vh, 280px); }
+    .sym-divider { width: 4px; background: repeating-linear-gradient(180deg,#ddd 0,#ddd 8px,transparent 8px,transparent 16px); }
+
+    .palette-row, .stamp-row {
+      display: flex; gap: clamp(8px, 2vw, 14px); flex-wrap: wrap; justify-content: center;
+    }
+    .color-btn, .stamp-btn, .action-btn {
+      width: clamp(44px, 9vw, 56px); height: clamp(44px, 9vw, 56px);
+      border: 3px solid white; border-radius: 14px;
+      cursor: pointer; touch-action: manipulation;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+      font-size: clamp(20px, 4vw, 28px);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .color-btn.active, .stamp-btn.active { outline: 3px solid #333; transform: scale(1.08); }
+    .action-btn {
+      background: linear-gradient(135deg,#ffd6e8,#d4f0ff);
+      font-weight: 800; color: #5a4a6a; width: auto; padding: 0 16px;
+      font-size: clamp(13px, 2.5vw, 16px);
+    }
+
+    .sticker-scene {
+      position: relative;
+      width: clamp(260px, 70vw, 480px);
+      height: clamp(180px, 38vh, 300px);
+      border-radius: 20px; overflow: hidden;
+      background: linear-gradient(180deg,#87ceeb 0%,#87ceeb 55%,#90c67a 55%,#6ab04c 100%);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+    }
+    .sticker-scene svg.scene-bg { width: 100%; height: 100%; position: absolute; inset: 0; }
+    .sticker-placed {
+      position: absolute; pointer-events: none;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+      animation: slot-pop 0.4s cubic-bezier(0.34,1.56,0.64,1);
+    }
+
+    .mixer-zone {
+      width: clamp(100px, 20vw, 140px); height: clamp(100px, 20vw, 140px);
+      border-radius: 50%; border: 5px dashed rgba(180,120,200,0.5);
+      background: rgba(255,255,255,0.5);
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.3s, border-color 0.3s;
+    }
+    .mixer-zone .color-blob { width: 70%; height: 70%; }
+    .mixer-slots { display: flex; gap: clamp(12px, 3vw, 24px); }
+
+    .rainbow-slots { display: flex; gap: clamp(4px, 1vw, 8px); flex-wrap: wrap; justify-content: center; max-width: 600px; }
+    .rainbow-slot {
+      width: clamp(40px, 8vw, 56px); height: clamp(48px, 9vw, 64px);
+      border: 3px dashed rgba(150,150,180,0.4); border-radius: 8px 8px 20px 20px;
+      background: rgba(255,255,255,0.35);
+    }
+    .rainbow-slot.filled { border-style: solid; border-color: #5cd68a; }
+
+    .mosaic-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: clamp(4px, 1vw, 8px);
+      max-width: min(80vw, 320px);
+    }
+    .mosaic-cell {
+      aspect-ratio: 1; border-radius: 8px;
+      border: 2px dashed rgba(150,150,180,0.35);
+      background: rgba(255,255,255,0.4);
+    }
+    .mosaic-cell.filled { border-style: solid; border-color: #9b8aaa; }
+
+    .patient-area { position: relative; width: clamp(200px, 40vw, 300px); height: clamp(220px, 44vh, 340px); }
+    .boo-boo {
+      position: absolute; width: clamp(36px, 7vw, 52px); height: clamp(36px, 7vw, 52px);
+      border-radius: 50%; background: rgba(255,80,80,0.55);
+      animation: pulse-glow 1.2s ease-in-out infinite;
+    }
+    .boo-boo.healed { background: transparent; animation: none; pointer-events: none; }
+    .tool-trays { display: flex; gap: clamp(10px, 2vw, 18px); flex-wrap: wrap; justify-content: center; }
+    .tool-tray {
+      width: clamp(72px, 14vw, 100px); height: clamp(72px, 14vw, 100px);
+      border: 4px dashed rgba(90,160,200,0.45); border-radius: 14px;
+      background: rgba(255,255,255,0.45);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      font-size: clamp(22px, 4vw, 30px); gap: 2px;
+    }
+    .tool-tray.filled { border-style: solid; border-color: #5cd6b3; background: rgba(180,255,230,0.4); }
+    .tool-tray-label { font-size: clamp(9px, 1.8vw, 11px); color: #5a8a9a; font-weight: 700; }
+
+    .xray-body { width: clamp(160px, 32vw, 240px); height: clamp(240px, 48vh, 360px); position: relative; }
+    .xray-zone {
+      position: absolute; border: 3px dashed rgba(100,200,255,0.5);
+      border-radius: 10px; background: rgba(0,40,80,0.15);
+    }
+    .symptom-row { display: flex; gap: clamp(12px, 3vw, 24px); flex-wrap: wrap; justify-content: center; }
+    .symptom-card {
+      width: clamp(80px, 16vw, 110px); height: clamp(80px, 16vw, 110px);
+      border: 4px dashed rgba(200,120,120,0.45); border-radius: 16px;
+      background: rgba(255,255,255,0.5);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      font-size: clamp(28px, 5vw, 40px); gap: 4px;
+    }
+    .symptom-card.filled { border-color: #5cd6b3; border-style: solid; background: rgba(200,255,240,0.5); }
+    .symptom-label { font-size: clamp(10px, 2vw, 12px); color: #8a6a6a; font-weight: 700; }
+
+    .temp-zone, .forehead-zone {
+      width: clamp(90px, 18vw, 120px); height: clamp(90px, 18vw, 120px);
+      border-radius: 50%; border: 4px dashed rgba(100,180,220,0.5);
+      display: flex; align-items: center; justify-content: center;
+      font-size: clamp(28px, 5vw, 40px); font-weight: 800; color: #3a7a9a;
+      background: rgba(255,255,255,0.45);
+    }
+    .wound-area {
+      width: clamp(120px, 24vw, 160px); height: clamp(120px, 24vw, 160px);
+      border-radius: 50%; position: relative;
+      background: rgba(180,120,80,0.35);
+      border: 4px dashed rgba(200,100,80,0.5);
+      transition: background 0.3s;
+    }
+    .wound-area.clean { background: rgba(255,200,180,0.4); border-color: #5cd6b3; }
+
+    .heart-game-area {
+      width: clamp(200px, 40vw, 280px); height: clamp(200px, 40vw, 280px);
+      border-radius: 50%; border: 5px solid rgba(255,150,150,0.4);
+      background: rgba(255,255,255,0.5);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; touch-action: manipulation;
+      transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+    }
+    .heart-game-area.tap-now {
+      background: rgba(180,255,200,0.7);
+      box-shadow: 0 0 30px rgba(92,214,155,0.8);
+      animation: pulse-glow 0.5s ease-in-out infinite;
+    }
+    .heart-icon { font-size: clamp(64px, 14vw, 96px); }
+    .score-pips { display: flex; gap: 8px; }
+    .score-pip {
+      width: clamp(16px, 3vw, 22px); height: clamp(16px, 3vw, 22px);
+      border-radius: 50%; background: #ddd;
+    }
+    .score-pip.on { background: #5cd6b3; }
+
+    /* ── Animal Hospital Ward ── */
+    .ward-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(clamp(100px, 22vw, 140px), 1fr));
+      gap: clamp(10px, 2vw, 16px);
+      max-width: min(96vw, 720px);
+      width: 100%;
+    }
+    .patient-card {
+      border: none; border-radius: 18px;
+      padding: clamp(10px, 2vw, 14px);
+      background: white;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+      cursor: pointer; touch-action: manipulation;
+      display: flex; flex-direction: column; align-items: center; gap: 6px;
+      transition: transform 0.15s, opacity 0.2s;
+    }
+    .patient-card:active { transform: scale(0.96); }
+    .patient-card.healed { opacity: 0.55; background: #e8fff5; }
+    .patient-card-icon { font-size: clamp(36px, 8vw, 52px); line-height: 1; }
+    .patient-card-name { font-size: clamp(12px, 2.4vw, 15px); font-weight: 800; color: #4a5a6a; }
+    .patient-card-ailment { font-size: clamp(10px, 2vw, 12px); color: #9a6a7a; font-weight: 600; }
+    .treat-view { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: clamp(10px, 2vh, 18px); padding: clamp(10px, 2vw, 20px); }
+    .treat-view.hidden { display: none !important; }
+    .ward-view.hidden { display: none !important; }
+    .ailment-banner {
+      font-size: clamp(14px, 3vw, 18px); font-weight: 700; color: #c45a7a;
+      background: rgba(255,255,255,0.7); padding: 8px 16px; border-radius: 12px;
+    }
+    .patient-zone {
+      position: absolute;
+      border: 3px dashed rgba(255,120,120,0.55);
+      border-radius: 12px;
+      background: rgba(255,200,200,0.25);
+      transition: background 0.3s, border-color 0.3s;
+    }
+    .patient-zone.highlight { border-color: #5cd6b3; background: rgba(180,255,220,0.45); animation: pulse-glow 0.8s ease-in-out infinite; }
+    .patient-zone.healed { border-color: #5cd6b3; border-style: solid; background: rgba(200,255,230,0.35); pointer-events: none; }
+    .patient-zone .zone-emoji { font-size: clamp(18px, 4vw, 28px); }
+    .disposal-zone {
+      width: clamp(80px, 16vw, 110px); height: clamp(80px, 16vw, 110px);
+      border: 4px dashed rgba(150,150,180,0.5); border-radius: 14px;
+      background: rgba(255,255,255,0.5);
+      display: flex; align-items: center; justify-content: center;
+      font-size: clamp(24px, 5vw, 32px);
+    }
+    .disposal-zone.highlight { border-color: #6eb5ff; background: rgba(200,230,255,0.5); }
+    .belly-item {
+      position: absolute; font-size: clamp(16px, 3.5vw, 24px);
+      filter: drop-shadow(0 2px 3px rgba(0,0,0,0.2));
+    }
+    .hub-card--hospital { grid-column: 1 / -1; max-width: 400px; margin: 0 auto; width: 100%; background: linear-gradient(135deg,#e8fff5,#e8f4ff); }
+    .hub-card--feed { grid-column: 1 / -1; max-width: 400px; margin: 0 auto; width: 100%; background: linear-gradient(135deg,#fff5e8,#ffe8d4); }
+    .feed-zoo-view.hidden { display: none !important; }
+    .feed-card.fed { opacity: 0.55; background: #fff8e8; }
+    #feed-animal-wrap.chewing { animation: chew-bounce 0.5s ease-in-out 3; transform-origin: center bottom; }
+    #feed-animal-wrap.happy-eyes .eyes circle.eye-pupil { transform: scaleY(0.15); }
+    .hidden { display: none !important; }
+
+    .worm-tappable { cursor: pointer; touch-action: manipulation; }
+    .worm-tappable.wiggling { animation: worm-wiggle 0.35s ease-in-out 4; }
+    @keyframes worm-wiggle {
+      0%, 100% { transform: rotate(0deg) scale(1); }
+      25% { transform: rotate(-3deg) scale(1.02); }
+      75% { transform: rotate(3deg) scale(1.02); }
+    }
+    .worm-knot { transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.34,1.56,0.64,1); }
+    .worm-knot.untied { opacity: 0; transform: scale(0) rotate(180deg); }
+    .worm-rope-knotted { transition: opacity 0.6s ease; }
+    .worm-rope-knotted.untied { opacity: 0; }
+    .worm-rope-straight { opacity: 0; transition: opacity 0.6s ease 0.3s; }
+    .worm-rope-straight.show { opacity: 1; }
   </style>
 </head>
 <body>
@@ -438,6 +670,11 @@
         </svg>
         <span class="hub-card-title">Animal &amp; Shapes</span>
         <span class="hub-card-sub">Feed &amp; sort — no reading!</span>
+      </button>
+      <button class="hub-card hub-card--feed" data-module="module-feed-zoo" data-title="Feed All Animals">
+        <span class="hub-card-icon" style="font-size:52px;line-height:1">🍽️</span>
+        <span class="hub-card-title">Feed All Animals</span>
+        <span class="hub-card-sub">Elephant, horse, kitty, owl &amp; more!</span>
       </button>
     </div>
     <div class="hub-section">
@@ -485,6 +722,35 @@
           <span class="hub-card-title">Pattern Puzzle</span>
           <span class="hub-card-sub">What comes next?</span>
         </button>
+      </div>
+    </div>
+    <div class="hub-section">
+      <div class="hub-label"><span class="age-badge age-art">🎨</span><span>Art Studio — 7 games</span></div>
+      <div class="hub-grid">
+        <button class="hub-card" data-module="module-art-mix" data-title="Color Mix"><span class="hub-card-icon" style="font-size:48px;line-height:1">🎨</span><span class="hub-card-title">Color Mix</span><span class="hub-card-sub">Blend primaries</span></button>
+        <button class="hub-card" data-module="module-art-paint" data-title="Free Paint"><span class="hub-card-icon" style="font-size:48px;line-height:1">🖌️</span><span class="hub-card-title">Free Paint</span><span class="hub-card-sub">Draw anything</span></button>
+        <button class="hub-card" data-module="module-art-sticker" data-title="Sticker Scene"><span class="hub-card-icon" style="font-size:48px;line-height:1">⭐</span><span class="hub-card-title">Sticker Scene</span><span class="hub-card-sub">Decorate outdoors</span></button>
+        <button class="hub-card" data-module="module-art-rainbow" data-title="Rainbow Order"><span class="hub-card-icon" style="font-size:48px;line-height:1">🌈</span><span class="hub-card-title">Rainbow Order</span><span class="hub-card-sub">Sort the colors</span></button>
+        <button class="hub-card" data-module="module-art-mosaic" data-title="Mosaic Art"><span class="hub-card-icon" style="font-size:48px;line-height:1">🦋</span><span class="hub-card-title">Mosaic Art</span><span class="hub-card-sub">Fill the tiles</span></button>
+        <button class="hub-card" data-module="module-art-stamp" data-title="Pattern Stamp"><span class="hub-card-icon" style="font-size:48px;line-height:1">🌸</span><span class="hub-card-title">Pattern Stamp</span><span class="hub-card-sub">Tap to stamp</span></button>
+        <button class="hub-card" data-module="module-art-symmetry" data-title="Mirror Draw"><span class="hub-card-icon" style="font-size:48px;line-height:1">🪞</span><span class="hub-card-title">Mirror Draw</span><span class="hub-card-sub">Draw both sides</span></button>
+      </div>
+    </div>
+    <div class="hub-section">
+      <div class="hub-label"><span class="age-badge age-doc">🏥</span><span>Animal Hospital — 8 silly patients!</span></div>
+      <div class="hub-grid">
+        <button class="hub-card hub-card--hospital" data-module="module-doc-ward" data-title="Animal Hospital">
+          <span class="hub-card-icon" style="font-size:52px;line-height:1">🏥</span>
+          <span class="hub-card-title">Animal Hospital</span>
+          <span class="hub-card-sub">Elephant, worm, gator, axolotl &amp; more!</span>
+        </button>
+        <button class="hub-card" data-module="module-doc-bandage" data-title="Bandage Boo-Boo"><span class="hub-card-icon" style="font-size:48px;line-height:1">🩹</span><span class="hub-card-title">Bandage Boo-Boo</span><span class="hub-card-sub">Fix the ouchies</span></button>
+        <button class="hub-card" data-module="module-doc-temp" data-title="Temperature Check"><span class="hub-card-icon" style="font-size:48px;line-height:1">🌡️</span><span class="hub-card-title">Temperature</span><span class="hub-card-sub">Too hot or cold?</span></button>
+        <button class="hub-card" data-module="module-doc-medicine" data-title="Medicine Match"><span class="hub-card-icon" style="font-size:48px;line-height:1">💊</span><span class="hub-card-title">Medicine Match</span><span class="hub-card-sub">Help feel better</span></button>
+        <button class="hub-card" data-module="module-doc-tools" data-title="Tool Sort"><span class="hub-card-icon" style="font-size:48px;line-height:1">🩺</span><span class="hub-card-title">Tool Sort</span><span class="hub-card-sub">Sort the kit</span></button>
+        <button class="hub-card" data-module="module-doc-xray" data-title="X-Ray Puzzle"><span class="hub-card-icon" style="font-size:48px;line-height:1">🦴</span><span class="hub-card-title">X-Ray Puzzle</span><span class="hub-card-sub">Place the parts</span></button>
+        <button class="hub-card" data-module="module-doc-clean" data-title="Clean &amp; Cover"><span class="hub-card-icon" style="font-size:48px;line-height:1">🧼</span><span class="hub-card-title">Clean &amp; Cover</span><span class="hub-card-sub">Scrub then bandage</span></button>
+        <button class="hub-card" data-module="module-doc-heart" data-title="Heart Beat"><span class="hub-card-icon" style="font-size:48px;line-height:1">❤️</span><span class="hub-card-title">Heart Beat</span><span class="hub-card-sub">Tap the pulse</span></button>
       </div>
     </div>
   </section>
@@ -592,6 +858,59 @@
     </div>
   </section>
 
+  <!-- ART MODULES -->
+  <section id="module-art-mix" class="module"><div class="module-inner" style="background:linear-gradient(160deg,#fff0f5,#ffe8f0);"><p class="module-hint" id="art-mix-hint"></p><div class="mixer-slots" id="art-mix-slots"></div><div class="mixer-zone" id="art-mixer"><div class="color-blob" style="background:#eee"></div></div><div id="art-mix-tray" class="choices-tray"></div></div></section>
+  <section id="module-art-paint" class="module"><div class="module-inner" style="background:linear-gradient(160deg,#fff8e8,#ffe8d4);"><canvas id="paint-canvas" class="paint-canvas"></canvas><div class="palette-row" id="paint-palette"></div><button class="action-btn" id="paint-clear">Clear</button></div></section>
+  <section id="module-art-sticker" class="module"><div class="module-inner" style="background:linear-gradient(160deg,#e8f8ff,#d4f0ff);"><p class="module-hint">Drag stickers onto the scene!</p><div class="sticker-scene" id="sticker-scene"></div><div id="sticker-tray" class="choices-tray"></div></div></section>
+  <section id="module-art-rainbow" class="module"><div class="module-inner" style="background:linear-gradient(160deg,#f0f8ff,#e0f0ff);"><p class="module-hint">Put colors in rainbow order!</p><div class="rainbow-slots" id="rainbow-slots"></div><div id="rainbow-tray" class="choices-tray"></div></div></section>
+  <section id="module-art-mosaic" class="module"><div class="module-inner" style="background:linear-gradient(160deg,#f5f0ff,#ebe0ff);"><p class="module-hint">Complete the butterfly!</p><div class="mosaic-grid" id="mosaic-grid"></div><div id="mosaic-tray" class="choices-tray"></div></div></section>
+  <section id="module-art-stamp" class="module"><div class="module-inner" style="background:linear-gradient(160deg,#fff5f8,#ffe8f0);"><p class="module-hint">Pick a stamp, then tap the paper!</p><canvas id="stamp-canvas" class="stamp-canvas"></canvas><div class="stamp-row" id="stamp-palette"></div><button class="action-btn" id="stamp-clear">Clear</button></div></section>
+  <section id="module-art-symmetry" class="module"><div class="module-inner" style="background:linear-gradient(160deg,#f0fff5,#d8f5e8);"><p class="module-hint">Draw on the left — it mirrors!</p><div class="sym-wrap"><canvas id="sym-left" class="sym-canvas"></canvas><div class="sym-divider"></div><canvas id="sym-right" class="sym-canvas"></canvas></div><div class="palette-row" id="sym-palette"></div><button class="action-btn" id="sym-clear">Clear</button></div></section>
+
+  <!-- DOCTOR MODULES -->
+  <section id="module-doc-bandage" class="module"><div class="module-inner" style="background:linear-gradient(160deg,#e8fff5,#d4f5f0);"><p class="module-hint">Drag bandages onto the red spots!</p><div class="patient-area" id="bandage-patient"></div><div id="bandage-tray" class="choices-tray"></div></div></section>
+  <section id="module-doc-temp" class="module"><div class="module-inner" style="background:linear-gradient(160deg,#e8f4ff,#d4e8ff);"><p class="module-hint" id="temp-hint">Check the patient's temperature!</p><div class="patient-area" id="temp-patient"></div><div class="forehead-zone" id="temp-readout">?</div><div id="temp-tray" class="choices-tray"></div><div id="temp-fix-tray" class="choices-tray"></div></div></section>
+  <section id="module-doc-medicine" class="module"><div class="module-inner" style="background:linear-gradient(160deg,#fff5f0,#ffe8e0);"><p class="module-hint">Match medicine to each symptom!</p><div class="symptom-row" id="medicine-symptoms"></div><div id="medicine-tray" class="choices-tray"></div></div></section>
+  <section id="module-doc-tools" class="module"><div class="module-inner" style="background:linear-gradient(160deg,#f0f8ff,#dce8f8);"><p class="module-hint">Sort tools into the right tray!</p><div class="tool-trays" id="doc-tool-trays"></div><div id="doc-tools-tray" class="choices-tray"></div></div></section>
+  <section id="module-doc-xray" class="module"><div class="module-inner" style="background:linear-gradient(160deg,#1a2a3a,#2a4a5a);"><p class="module-hint" style="color:#a0c8e0">Place organs on the X-ray!</p><div class="xray-body" id="xray-body"></div><div id="xray-tray" class="choices-tray"></div></div></section>
+  <section id="module-doc-clean" class="module"><div class="module-inner" style="background:linear-gradient(160deg,#fff8f0,#ffe8d8);"><p class="module-hint" id="clean-hint">Scrub the wound, then bandage!</p><div class="wound-area" id="wound-area"></div><div id="clean-tray" class="choices-tray"></div></div></section>
+  <section id="module-doc-heart" class="module"><div class="module-inner" style="background:linear-gradient(160deg,#ffe8f0,#ffd6e8);"><p class="module-hint">Tap when the heart glows green!</p><button class="heart-game-area" id="heart-tap-zone"><span class="heart-icon">❤️</span></button><div class="score-pips" id="heart-score"></div></div></section>
+
+  <section id="module-feed-zoo" class="module">
+    <div class="module-inner" style="background:linear-gradient(160deg,#fff8ee,#ffe8d0);">
+      <div id="feed-zoo-view" class="feed-zoo-view ward-view">
+        <p class="module-hint">Tap an animal — drag food to their mouth!</p>
+        <div id="feed-zoo-grid" class="ward-grid"></div>
+      </div>
+      <div id="feed-view" class="treat-view hidden">
+        <button class="action-btn" id="feed-back-btn">← All Animals</button>
+        <div id="feed-hungry-banner" class="ailment-banner" style="color:#c47a3a"></div>
+        <div id="feed-animal-wrap" class="animal-wrap patient-area">
+          <div id="feed-animal-svg" class="w-full h-full"></div>
+          <div class="mouth-glow" id="feed-mouth-glow" style="left:28%;top:52%;width:44%;height:22%;"></div>
+          <div class="drop-zone" id="feed-mouth-zone" style="left:30%;top:54%;width:40%;height:20%;"></div>
+        </div>
+        <div id="feed-tray" class="choices-tray"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="module-doc-ward" class="module">
+    <div class="module-inner" style="background:linear-gradient(160deg,#e8fff8,#e0f4ff);">
+      <div id="ward-view" class="ward-view">
+        <p class="module-hint">Tap a patient to help them feel better!</p>
+        <div id="ward-grid" class="ward-grid"></div>
+      </div>
+      <div id="treat-view" class="treat-view hidden">
+        <button class="action-btn" id="ward-back-btn">← All Patients</button>
+        <div id="treat-ailment" class="ailment-banner"></div>
+        <div id="treat-patient" class="patient-area"></div>
+        <div id="disposal-bin" class="disposal-zone hidden">🗑️</div>
+        <div id="treat-tray" class="choices-tray"></div>
+      </div>
+    </div>
+  </section>
+
 </div>
 
 <script>
@@ -602,6 +921,7 @@
   const draggables = [];
   const matchedShapes = new Set();
   let currentModule = 'module-hub';
+  let heartTimer = null;
 
   /* ── Safeguards ── */
   document.addEventListener('gesturestart', e => e.preventDefault(), { passive: false });
@@ -704,7 +1024,11 @@
     document.getElementById('mouth-zone')?.classList.remove('highlight');
     document.getElementById('math-answer-zone')?.classList.remove('highlight');
     document.getElementById('pattern-slot')?.classList.remove('highlight');
-    document.querySelectorAll('.letter-slot.empty').forEach(s => s.classList.remove('highlight'));
+    document.getElementById('art-mixer')?.classList.remove('highlight');
+    document.querySelectorAll('.letter-slot.empty,.rainbow-slot:not(.filled),.mosaic-cell:not(.filled),.boo-boo:not(.healed),.tool-tray:not(.filled),.xray-zone:not(.filled),.symptom-card:not(.filled),.forehead-zone,.patient-zone:not(.healed)').forEach(s => s.classList.remove('highlight'));
+    document.getElementById('disposal-bin')?.classList.remove('highlight');
+    document.getElementById('feed-mouth-glow')?.classList.remove('active');
+    document.getElementById('feed-mouth-zone')?.classList.remove('highlight');
   }
 
   function onDragStart(el) {
@@ -713,13 +1037,51 @@
     if (t === 'food') {
       document.getElementById('mouth-glow')?.classList.add('active');
       document.getElementById('mouth-zone')?.classList.add('highlight');
-    } else if (t === 'math-num') {
-      document.getElementById('math-answer-zone')?.classList.add('highlight');
-    } else if (t === 'letter') {
-      document.querySelectorAll('.letter-slot.empty').forEach(s => s.classList.add('highlight'));
-    } else if (t === 'pattern') {
-      document.getElementById('pattern-slot')?.classList.add('highlight');
+    } else if (t === 'math-num') document.getElementById('math-answer-zone')?.classList.add('highlight');
+    else if (t === 'letter') document.querySelectorAll('.letter-slot.empty').forEach(s => s.classList.add('highlight'));
+    else if (t === 'pattern') document.getElementById('pattern-slot')?.classList.add('highlight');
+    else if (t === 'art-color') document.getElementById('art-mixer')?.classList.add('highlight');
+    else if (t === 'rainbow') document.querySelectorAll('.rainbow-slot:not(.filled)').forEach(s => s.classList.add('highlight'));
+    else if (t === 'mosaic') document.querySelectorAll('.mosaic-cell:not(.filled)').forEach(s => s.classList.add('highlight'));
+    else if (t === 'bandage') document.querySelectorAll('.boo-boo:not(.healed)').forEach(s => s.classList.add('highlight'));
+    else if (t === 'med-tool') document.querySelectorAll('.tool-tray:not(.filled),.symptom-card:not(.filled)').forEach(s => s.classList.add('highlight'));
+    else if (t === 'xray-part') document.querySelectorAll('.xray-zone:not(.filled)').forEach(s => s.classList.add('highlight'));
+    else if (t === 'thermo' || t === 'temp-fix') document.getElementById('temp-readout')?.classList.add('highlight');
+    else if (t === 'sponge' || t === 'wound-bandage') document.getElementById('wound-area')?.classList.add('highlight');
+    else if (t === 'sticker') document.getElementById('sticker-scene')?.classList.add('highlight');
+    else if (t === 'patient-cure') document.querySelectorAll('.patient-zone:not(.healed)').forEach(s => s.classList.add('highlight'));
+    else if (t === 'patient-pull') document.getElementById('disposal-bin')?.classList.add('highlight');
+    else if (t === 'feed-food') {
+      document.getElementById('feed-mouth-glow')?.classList.add('active');
+      document.getElementById('feed-mouth-zone')?.classList.add('highlight');
     }
+  }
+
+  function makeDragTile(parent, type, data, html) {
+    const home = document.createElement('div');
+    home.className = 'tile-home';
+    const tile = document.createElement('div');
+    tile.className = 'draggable';
+    tile.dataset.type = type;
+    Object.entries(data).forEach(([k,v]) => { tile.dataset[k] = v; });
+    tile.innerHTML = html;
+    home.appendChild(tile);
+    parent.appendChild(home);
+    registerDraggable(tile);
+    return tile;
+  }
+
+  function celebrateAt(rect, colors) {
+    const cx = rect.left + rect.width/2, cy = rect.top + rect.height/2;
+    playMatch();
+    burstParticles(cx, cy, colors || ['#ffd166','#ff6b8a','#98e4c9'], 14);
+    spawnSparkles(cx, cy, 3);
+  }
+
+  function wrongTile(el, home) {
+    el.classList.add('wiggle-wrong'); playBoop();
+    setTimeout(() => el.classList.remove('wiggle-wrong'), 450);
+    snapBack(el, home);
   }
 
   /* ── Drag system ── */
@@ -803,6 +1165,7 @@
       const pt = getPoint(e);
       el.style.left = (state.origLeft + pt.x - state.startX) + 'px';
       el.style.top = (state.origTop + pt.y - state.startY) + 'px';
+      if (el.dataset.type === 'sponge' && cleanPhase === 'scrub') handleSpongeMove(el, el.getBoundingClientRect());
       e.preventDefault();
     }
 
@@ -1158,6 +1521,1049 @@
     } else snapBack(el, home);
   }
 
+  /* ══════════════════════════════════════════
+     ART STUDIO — 7 modules
+     ══════════════════════════════════════════ */
+  const COLOR_MIX = {
+    orange: { need:['red','yellow'], hex:'#ff8c00', label:'orange' },
+    purple: { need:['red','blue'], hex:'#9b59b6', label:'purple' },
+    green:  { need:['blue','yellow'], hex:'#2ecc71', label:'green' },
+  };
+  const PRIMARIES = { red:'#e74c3c', yellow:'#f1c40f', blue:'#3498db' };
+  let mixTarget = '', mixAdded = [];
+
+  function buildArtMix() {
+    const keys = Object.keys(COLOR_MIX);
+    mixTarget = keys[Math.floor(Math.random()*keys.length)];
+    mixAdded = [];
+    document.getElementById('art-mix-hint').textContent = `Mix ${COLOR_MIX[mixTarget].label}!`;
+    const mixer = document.getElementById('art-mixer');
+    mixer.querySelector('.color-blob').style.background = '#eee';
+    mixer.classList.remove('filled');
+    const tray = document.getElementById('art-mix-tray');
+    tray.querySelectorAll('.draggable').forEach(unregisterDraggable);
+    tray.innerHTML = '';
+    shuffle(Object.keys(PRIMARIES)).forEach(c => {
+      makeDragTile(tray, 'art-color', { color:c },
+        `<div class="color-blob" style="background:${PRIMARIES[c]}"></div>`);
+    });
+    setTimeout(layoutAll, 50);
+  }
+
+  function handleArtColorDrop(el, elRect, state, home) {
+    const mixer = document.getElementById('art-mixer');
+    const { cx, cy } = centerIn(elRect);
+    if (!hitRect(cx, cy, mixer.getBoundingClientRect(), 20)) { snapBack(el, home); return; }
+    const c = el.dataset.color;
+    if (mixAdded.includes(c)) { wrongTile(el, home); return; }
+    mixAdded.push(c);
+    const blob = mixer.querySelector('.color-blob');
+    state.matched = true; el.style.display = 'none';
+    playTone(420 + mixAdded.length * 40, 0.08);
+    if (mixAdded.length === 1) {
+      blob.style.background = PRIMARIES[c];
+    } else {
+      const need = [...COLOR_MIX[mixTarget].need].sort().join(',');
+      const got = [...mixAdded].sort().join(',');
+      if (got === need) {
+        blob.style.background = COLOR_MIX[mixTarget].hex;
+        celebrateAt(mixer.getBoundingClientRect(), [COLOR_MIX[mixTarget].hex,'#ffd166']);
+        setTimeout(buildArtMix, 1500);
+      } else {
+        playBoop();
+        setTimeout(buildArtMix, 900);
+      }
+    }
+  }
+
+  let paintColor = '#e74c3c';
+  function initArtPaint() {
+    const canvas = document.getElementById('paint-canvas');
+    const ctx = canvas.getContext('2d');
+    const pal = document.getElementById('paint-palette');
+    pal.innerHTML = '';
+    ['#e74c3c','#f1c40f','#3498db','#2ecc71','#9b59b6','#ff6b8a','#2c3e50','#ffffff'].forEach((col,i) => {
+      const b = document.createElement('button');
+      b.className = 'color-btn' + (i===0?' active':'');
+      b.style.background = col;
+      b.addEventListener('click', () => { paintColor=col; pal.querySelectorAll('.color-btn').forEach(x=>x.classList.remove('active')); b.classList.add('active'); resumeAudio(); playTone(400+ i*30,0.05); });
+      pal.appendChild(b);
+    });
+    function resize() {
+      const r = canvas.getBoundingClientRect();
+      canvas.width = r.width; canvas.height = r.height;
+      ctx.fillStyle = '#fff'; ctx.fillRect(0,0,canvas.width,canvas.height);
+    }
+    resize();
+    let drawing = false;
+    function drawAt(e) {
+      const r = canvas.getBoundingClientRect();
+      const pt = getPoint(e);
+      const x = pt.x - r.left, y = pt.y - r.top;
+      ctx.fillStyle = paintColor;
+      ctx.beginPath(); ctx.arc(x, y, 10, 0, Math.PI*2); ctx.fill();
+    }
+    canvas.addEventListener('pointerdown', e => { drawing=true; resumeAudio(); drawAt(e); e.preventDefault(); });
+    canvas.addEventListener('pointermove', e => { if(drawing){ drawAt(e); e.preventDefault(); } });
+    canvas.addEventListener('pointerup', () => drawing=false);
+    document.getElementById('paint-clear').onclick = () => { ctx.fillStyle='#fff'; ctx.fillRect(0,0,canvas.width,canvas.height); playTone(300,0.08); };
+    window.addEventListener('resize', resize);
+  }
+
+  const STICKERS = [
+    { id:'sun', svg:'<circle cx="30" cy="30" r="18" fill="#ffd166"/><g stroke="#f39c12" stroke-width="2">'+[0,45,90,135,180,225,270,315].map(a=>{const r=a*Math.PI/180;return`<line x1="${30+Math.cos(r)*20}" y1="${30+Math.sin(r)*20}" x2="${30+Math.cos(r)*28}" y2="${30+Math.sin(r)*28}"/>`}).join('')+'</g>', w:60 },
+    { id:'cloud', svg:'<ellipse cx="25" cy="35" rx="18" ry="12" fill="white"/><ellipse cx="40" cy="32" rx="14" ry="10" fill="white"/><ellipse cx="32" cy="28" rx="12" ry="9" fill="white"/>', w:55 },
+    { id:'tree', svg:'<polygon points="30,8 50,40 10,40" fill="#27ae60"/><rect x="24" y="40" width="12" height="18" fill="#8b5e3c"/>', w:50 },
+    { id:'flower', svg:'<circle cx="30" cy="30" r="8" fill="#ffd166"/>'+ [0,72,144,216,288].map(a=>{const r=a*Math.PI/180;return`<ellipse cx="${30+Math.cos(r)*14}" cy="${30+Math.sin(r)*14}" rx="8" ry="12" fill="#ff6b8a" transform="rotate(${a} ${30+Math.cos(r)*14} ${30+Math.sin(r)*14})"/>`}).join(''), w:50 },
+    { id:'bird', svg:'<ellipse cx="30" cy="30" rx="16" ry="10" fill="#5b9bd5"/><polygon points="8,30 20,22 20,38" fill="#3a7ab8"/><circle cx="38" cy="26" r="3" fill="#2c3e50"/>', w:50 },
+  ];
+  let stickersPlaced = 0;
+
+  function buildArtSticker() {
+    stickersPlaced = 0;
+    const scene = document.getElementById('sticker-scene');
+    scene.innerHTML = '<svg class="scene-bg" viewBox="0 0 400 260"><rect width="400" height="150" fill="#87ceeb"/><ellipse cx="200" cy="200" rx="220" ry="80" fill="#6ab04c"/><ellipse cx="80" cy="170" rx="40" ry="50" fill="#27ae60"/><ellipse cx="320" cy="175" rx="35" ry="45" fill="#27ae60"/></svg>';
+    const tray = document.getElementById('sticker-tray');
+    tray.querySelectorAll('.draggable').forEach(unregisterDraggable);
+    tray.innerHTML = '';
+    STICKERS.forEach(s => {
+      makeDragTile(tray, 'sticker', { stickerId:s.id },
+        `<svg viewBox="0 0 60 60" width="100%" height="100%">${s.svg}</svg>`);
+    });
+    setTimeout(layoutAll, 50);
+  }
+
+  function handleStickerDrop(el, elRect, state, home) {
+    const scene = document.getElementById('sticker-scene');
+    const { cx, cy } = centerIn(elRect);
+    const sr = scene.getBoundingClientRect();
+    if (!hitRect(cx, cy, sr, 0)) { snapBack(el, home); return; }
+    const s = STICKERS.find(x => x.id === el.dataset.stickerId);
+    const placed = document.createElement('div');
+    placed.className = 'sticker-placed';
+    placed.style.cssText = `left:${cx-sr.left-s.w/2}px;top:${cy-sr.top-s.w/2}px;width:${s.w}px;height:${s.w}px;`;
+    placed.innerHTML = `<svg viewBox="0 0 60 60" width="100%" height="100%">${s.svg}</svg>`;
+    scene.appendChild(placed);
+    playTone(500+stickersPlaced*40, 0.1);
+    stickersPlaced++;
+    state.matched = true; el.style.display = 'none';
+    if (stickersPlaced >= STICKERS.length) {
+      celebrateAt(sr, ['#ffd166','#ff6b8a','#87ceeb']);
+      setTimeout(buildArtSticker, 2000);
+    }
+  }
+
+  const RAINBOW = ['red','orange','yellow','green','blue','indigo','violet'];
+  const RAINBOW_HEX = { red:'#e74c3c',orange:'#ff8c00',yellow:'#f1c40f',green:'#2ecc71',blue:'#3498db',indigo:'#6c5ce7',violet:'#a29bfe' };
+  let rainbowFilled = 0;
+
+  function buildArtRainbow() {
+    rainbowFilled = 0;
+    const slots = document.getElementById('rainbow-slots');
+    slots.innerHTML = RAINBOW.map((c,i) => `<div class="rainbow-slot" data-index="${i}" data-color="${c}"></div>`).join('');
+    const tray = document.getElementById('rainbow-tray');
+    tray.querySelectorAll('.draggable').forEach(unregisterDraggable);
+    tray.innerHTML = '';
+    shuffle(RAINBOW).forEach(c => {
+      makeDragTile(tray, 'rainbow', { color:c },
+        `<div class="color-blob" style="background:${RAINBOW_HEX[c]};border-radius:8px 8px 20px 20px"></div>`);
+    });
+    setTimeout(layoutAll, 50);
+  }
+
+  function handleRainbowDrop(el, elRect, state, home) {
+    const { cx, cy } = centerIn(elRect);
+    const c = el.dataset.color;
+    const idx = RAINBOW.indexOf(c);
+    const slot = document.querySelector(`.rainbow-slot[data-index="${idx}"]:not(.filled)`);
+    if (slot && hitRect(cx, cy, slot.getBoundingClientRect(), 12)) {
+      slot.style.background = RAINBOW_HEX[c];
+      slot.classList.add('filled');
+      rainbowFilled++;
+      playTone(400+idx*40, 0.1);
+      state.matched = true; el.style.display = 'none';
+      if (rainbowFilled === 7) { celebrateAt(slot.getBoundingClientRect(), Object.values(RAINBOW_HEX)); setTimeout(buildArtRainbow, 1800); }
+    } else wrongTile(el, home);
+  }
+
+  const MOSAIC = [
+    '#ff6b8a','#ff8c8c','#ffd166','#ffe08c','#5b9bd5','#7ec8e3',
+    '#ff6b8a','#ffb8c8','#ffd166','#fff0a0','#5b9bd5','#98d4f0',
+    '#e8a0c8','#ff6b8a','#ffd166','#c8e8ff',
+  ];
+  let mosaicFilled = 0;
+
+  function buildArtMosaic() {
+    mosaicFilled = 0;
+    const grid = document.getElementById('mosaic-grid');
+    grid.innerHTML = '';
+    const empty = shuffle([...Array(16).keys()]).slice(0, 6);
+    for (let i = 0; i < 16; i++) {
+      const cell = document.createElement('div');
+      cell.className = 'mosaic-cell' + (empty.includes(i) ? '' : ' filled');
+      cell.dataset.index = i;
+      if (!empty.includes(i)) cell.style.background = MOSAIC[i];
+      else cell.dataset.color = MOSAIC[i];
+      grid.appendChild(cell);
+    }
+    const tray = document.getElementById('mosaic-tray');
+    tray.querySelectorAll('.draggable').forEach(unregisterDraggable);
+    tray.innerHTML = '';
+    shuffle(empty).forEach(i => {
+      makeDragTile(tray, 'mosaic', { index:i, color:MOSAIC[i] },
+        `<div style="width:100%;height:100%;border-radius:8px;background:${MOSAIC[i]}"></div>`);
+    });
+    setTimeout(layoutAll, 50);
+  }
+
+  function handleMosaicDrop(el, elRect, state, home) {
+    const { cx, cy } = centerIn(elRect);
+    const idx = el.dataset.index;
+    const cell = document.querySelector(`.mosaic-cell[data-index="${idx}"]:not(.filled)`);
+    if (cell && hitRect(cx, cy, cell.getBoundingClientRect(), 10)) {
+      cell.style.background = el.dataset.color;
+      cell.classList.add('filled');
+      mosaicFilled++;
+      playTone(450+mosaicFilled*30, 0.08);
+      state.matched = true; el.style.display = 'none';
+      if (mosaicFilled === 6) { celebrateAt(cell.getBoundingClientRect(), ['#ff6b8a','#5b9bd5','#ffd166']); setTimeout(buildArtMosaic, 1800); }
+    } else wrongTile(el, home);
+  }
+
+  let stampPick = '🌸';
+  function initArtStamp() {
+    const canvas = document.getElementById('stamp-canvas');
+    const ctx = canvas.getContext('2d');
+    const stamps = ['🌸','⭐','🌈','🦋','❤️','🌻'];
+    const pal = document.getElementById('stamp-palette');
+    pal.innerHTML = '';
+    stamps.forEach((s,i) => {
+      const b = document.createElement('button');
+      b.className = 'stamp-btn' + (i===0?' active':'');
+      b.textContent = s;
+      b.addEventListener('click', () => { stampPick=s; pal.querySelectorAll('.stamp-btn').forEach(x=>x.classList.remove('active')); b.classList.add('active'); playTone(420+i*25,0.05); });
+      pal.appendChild(b);
+    });
+    function resize() {
+      const r = canvas.getBoundingClientRect();
+      canvas.width = r.width; canvas.height = r.height;
+      ctx.fillStyle='#fff'; ctx.fillRect(0,0,canvas.width,canvas.height);
+    }
+    resize();
+    canvas.addEventListener('pointerdown', e => {
+      const r = canvas.getBoundingClientRect();
+      const pt = getPoint(e);
+      const x = pt.x-r.left, y = pt.y-r.top;
+      ctx.font = '36px serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText(stampPick, x, y);
+      playTone(520, 0.06);
+      burstParticles(pt.x, pt.y, ['#ffd166','#ff6b8a'], 6);
+      e.preventDefault();
+    });
+    document.getElementById('stamp-clear').onclick = () => { resize(); playTone(300,0.08); };
+    window.addEventListener('resize', resize);
+  }
+
+  let symColor = '#e74c3c';
+  function initArtSymmetry() {
+    const left = document.getElementById('sym-left');
+    const right = document.getElementById('sym-right');
+    const lctx = left.getContext('2d');
+    const rctx = right.getContext('2d');
+    const pal = document.getElementById('sym-palette');
+    pal.innerHTML = '';
+    ['#e74c3c','#3498db','#2ecc71','#9b59b6','#2c3e50'].forEach((col,i) => {
+      const b = document.createElement('button');
+      b.className = 'color-btn' + (i===0?' active':'');
+      b.style.background = col;
+      b.addEventListener('click', () => { symColor=col; pal.querySelectorAll('.color-btn').forEach(x=>x.classList.remove('active')); b.classList.add('active'); });
+      pal.appendChild(b);
+    });
+    function resize() {
+      [left,right].forEach(c => { const r=c.getBoundingClientRect(); c.width=r.width; c.height=r.height; });
+      lctx.fillStyle='#fff'; lctx.fillRect(0,0,left.width,left.height);
+      rctx.fillStyle='#fff'; rctx.fillRect(0,0,right.width,right.height);
+    }
+    resize();
+    let drawing = false;
+    function drawSym(e) {
+      const r = left.getBoundingClientRect();
+      const pt = getPoint(e);
+      const x = pt.x-r.left, y = pt.y-r.top;
+      const mx = left.width - x;
+      [lctx,rctx].forEach((ctx,cx) => {
+        ctx.fillStyle = symColor;
+        ctx.beginPath();
+        ctx.arc(cx===0?x:mx, y, 8, 0, Math.PI*2);
+        ctx.fill();
+      });
+    }
+    left.addEventListener('pointerdown', e => { drawing=true; drawSym(e); e.preventDefault(); });
+    left.addEventListener('pointermove', e => { if(drawing){ drawSym(e); e.preventDefault(); } });
+    left.addEventListener('pointerup', () => drawing=false);
+    document.getElementById('sym-clear').onclick = resize;
+    window.addEventListener('resize', resize);
+  }
+
+  /* ══════════════════════════════════════════
+     DOCTOR & NURSE — 7 modules
+     ══════════════════════════════════════════ */
+  const TEDDY = `<svg viewBox="0 0 200 240" width="100%" height="100%"><ellipse cx="60" cy="55" rx="22" ry="26" fill="#c4956a"/><ellipse cx="140" cy="55" rx="22" ry="26" fill="#c4956a"/><ellipse cx="100" cy="120" rx="65" ry="60" fill="#d4a574"/><ellipse cx="70" cy="105" rx="12" ry="14" fill="white"/><circle cx="73" cy="107" r="6" fill="#3d2914"/><ellipse cx="130" cy="105" rx="12" ry="14" fill="white"/><circle cx="133" cy="107" r="6" fill="#3d2914"/><ellipse cx="100" cy="128" rx="10" ry="7" fill="#8b5e3c"/><ellipse cx="100" cy="200" rx="50" ry="35" fill="#c4956a"/></svg>`;
+  let bandageHealed = 0;
+
+  function buildDocBandage() {
+    bandageHealed = 0;
+    const p = document.getElementById('bandage-patient');
+    p.innerHTML = TEDDY + `<div class="boo-boo" data-id="0" style="left:35%;top:38%"></div><div class="boo-boo" data-id="1" style="left:55%;top:52%"></div><div class="boo-boo" data-id="2" style="left:42%;top:68%"></div>`;
+    const tray = document.getElementById('bandage-tray');
+    tray.querySelectorAll('.draggable').forEach(unregisterDraggable);
+    tray.innerHTML = '';
+    for (let i = 0; i < 3; i++) {
+      makeDragTile(tray, 'bandage', { bid:String(i) },
+        `<svg viewBox="0 0 60 60" width="100%" height="100%"><rect x="8" y="22" width="44" height="16" rx="4" fill="#f5f5f5" stroke="#ddd" stroke-width="2"/><rect x="22" y="14" width="16" height="32" rx="2" fill="#ffe8e8" stroke="#f0c0c0" stroke-width="1.5"/></svg>`);
+    }
+    setTimeout(layoutAll, 50);
+  }
+
+  function handleBandageDrop(el, elRect, state, home) {
+    const { cx, cy } = centerIn(elRect);
+    let hit = null;
+    document.querySelectorAll('.boo-boo:not(.healed)').forEach(b => {
+      if (hitRect(cx, cy, b.getBoundingClientRect(), 15)) hit = b;
+    });
+    if (hit) {
+      hit.classList.add('healed');
+      hit.innerHTML = '<span style="font-size:28px">🩹</span>';
+      bandageHealed++;
+      playTone(500+bandageHealed*50, 0.1);
+      state.matched = true; el.style.display = 'none';
+      if (bandageHealed === 3) { celebrateAt(hit.getBoundingClientRect(), ['#5cd6b3','#ffd166']); setTimeout(buildDocBandage, 1800); }
+    } else wrongTile(el, home);
+  }
+
+  let tempValue = 0, tempPhase = 'thermo';
+
+  function buildDocTemp() {
+    tempPhase = 'thermo';
+    tempValue = Math.random() < 0.5 ? Math.floor(Math.random()*3)+38 : Math.floor(Math.random()*3)+36;
+    document.getElementById('temp-hint').textContent = 'Drag thermometer to the forehead!';
+    document.getElementById('temp-readout').textContent = '?';
+    document.getElementById('temp-patient').innerHTML = TEDDY + `<div class="forehead-zone" id="forehead-zone" style="position:absolute;left:38%;top:22%;width:24%;height:14%;border-radius:50%;border:3px dashed rgba(100,180,220,0.4)"></div>`;
+    const tray = document.getElementById('temp-tray');
+    const fixTray = document.getElementById('temp-fix-tray');
+    tray.querySelectorAll('.draggable').forEach(unregisterDraggable);
+    fixTray.querySelectorAll('.draggable').forEach(unregisterDraggable);
+    tray.innerHTML = '';
+    fixTray.innerHTML = '';
+    makeDragTile(tray, 'thermo', {},
+      `<svg viewBox="0 0 60 80" width="100%" height="100%"><rect x="24" y="8" width="12" height="50" rx="6" fill="#e8e8e8" stroke="#ccc"/><circle cx="30" cy="68" r="14" fill="#e74c3c"/><rect x="27" y="20" width="6" height="35" fill="#e74c3c" rx="2"/></svg>`);
+    setTimeout(layoutAll, 50);
+  }
+
+  function handleThermoDrop(el, elRect, state, home) {
+    const forehead = document.getElementById('forehead-zone');
+    const { cx, cy } = centerIn(elRect);
+    if (!hitRect(cx, cy, forehead.getBoundingClientRect(), 10)) { snapBack(el, home); return; }
+    document.getElementById('temp-readout').textContent = tempValue + '°';
+    playTone(440, 0.1);
+    state.matched = true; el.style.display = 'none';
+    tempPhase = tempValue >= 38 ? 'hot' : 'cold';
+    document.getElementById('temp-hint').textContent = tempPhase==='hot' ? 'Too hot! Drag ice pack!' : 'Too chilly! Drag warm blanket!';
+    const fixTray = document.getElementById('temp-fix-tray');
+    const item = tempPhase==='hot'
+      ? { type:'temp-fix', fix:'ice', html:'<span style="font-size:40px">🧊</span>' }
+      : { type:'temp-fix', fix:'blanket', html:'<span style="font-size:40px">🛏️</span>' };
+    makeDragTile(fixTray, item.type, { fix:item.fix }, item.html);
+    setTimeout(layoutAll, 50);
+  }
+
+  function handleTempFixDrop(el, elRect, state, home) {
+    const forehead = document.getElementById('forehead-zone');
+    const { cx, cy } = centerIn(elRect);
+    if (hitRect(cx, cy, forehead.getBoundingClientRect(), 15)) {
+      document.getElementById('temp-readout').textContent = '37°';
+      celebrateAt(forehead.getBoundingClientRect(), ['#5cd6b3','#87ceeb']);
+      state.matched = true; el.style.display = 'none';
+      setTimeout(buildDocTemp, 1800);
+    } else wrongTile(el, home);
+  }
+
+  const MEDICINE = [
+    { symptom:'cough', icon:'🤧', label:'Cough', cure:'syrup', cureIcon:'🍯' },
+    { symptom:'fever', icon:'🤒', label:'Fever', cure:'ice', cureIcon:'🧊' },
+    { symptom:'cut', icon:'🩸', label:'Cut', cure:'bandage', cureIcon:'🩹' },
+  ];
+  let medFilled = 0;
+
+  function buildDocMedicine() {
+    medFilled = 0;
+    const row = document.getElementById('medicine-symptoms');
+    row.innerHTML = MEDICINE.map(m =>
+      `<div class="symptom-card" data-symptom="${m.symptom}"><span>${m.icon}</span><span class="symptom-label">${m.label}</span></div>`
+    ).join('');
+    const tray = document.getElementById('medicine-tray');
+    tray.querySelectorAll('.draggable').forEach(unregisterDraggable);
+    tray.innerHTML = '';
+    shuffle(MEDICINE).forEach(m => {
+      makeDragTile(tray, 'med-tool', { tool:m.cure, match:m.symptom },
+        `<span style="font-size:40px">${m.cureIcon}</span>`);
+    });
+    setTimeout(layoutAll, 50);
+  }
+
+  function handleMedicineDrop(el, elRect, state, home) {
+    const { cx, cy } = centerIn(elRect);
+    const card = document.querySelector(`.symptom-card[data-symptom="${el.dataset.match}"]:not(.filled)`);
+    if (card && hitRect(cx, cy, card.getBoundingClientRect(), 25)) {
+      card.classList.add('filled');
+      const icon = el.querySelector('span');
+      if (icon) card.querySelector('span').textContent = icon.textContent;
+      medFilled++;
+      playTone(480+medFilled*40, 0.1);
+      state.matched = true;
+      unregisterDraggable(el);
+      home.remove();
+      if (medFilled === 3) { celebrateAt(card.getBoundingClientRect(), ['#5cd6b3','#ffd166']); setTimeout(buildDocMedicine, 1800); }
+    } else wrongTile(el, home);
+  }
+
+  const DOC_TOOLS = [
+    { tool:'stethoscope', tray:'listen', icon:'🩺', label:'Listen' },
+    { tool:'syringe', tray:'shot', icon:'💉', label:'Shot' },
+    { tool:'bandage', tray:'cover', icon:'🩹', label:'Cover' },
+    { tool:'icepack', tray:'cool', icon:'🧊', label:'Cool' },
+  ];
+  let toolsSorted = 0;
+
+  function buildDocTools() {
+    toolsSorted = 0;
+    const trays = document.getElementById('doc-tool-trays');
+    trays.innerHTML = DOC_TOOLS.map(t =>
+      `<div class="tool-tray" data-tray="${t.tray}"><span>${t.icon}</span><span class="tool-tray-label">${t.label}</span></div>`
+    ).join('');
+    const tray = document.getElementById('doc-tools-tray');
+    tray.querySelectorAll('.draggable').forEach(unregisterDraggable);
+    tray.innerHTML = '';
+    shuffle(DOC_TOOLS).forEach(t => {
+      makeDragTile(tray, 'med-tool', { tool:t.tool, match:t.tray },
+        `<span style="font-size:40px">${t.icon}</span>`);
+    });
+    setTimeout(layoutAll, 50);
+  }
+
+  function handleToolSortDrop(el, elRect, state, home) {
+    const { cx, cy } = centerIn(elRect);
+    const tray = document.querySelector(`.tool-tray[data-tray="${el.dataset.match}"]:not(.filled)`);
+    if (tray && hitRect(cx, cy, tray.getBoundingClientRect(), 12)) {
+      tray.classList.add('filled');
+      toolsSorted++;
+      playTone(460+toolsSorted*35, 0.1);
+      state.matched = true;
+      unregisterDraggable(el);
+      home.remove();
+      if (toolsSorted === 4) { celebrateAt(tray.getBoundingClientRect(), ['#5cd6b3','#6eb5ff']); setTimeout(buildDocTools, 1800); }
+    } else wrongTile(el, home);
+  }
+
+  const XRAY_PARTS = [
+    { part:'heart', zone:'heart', style:'left:38%;top:32%;width:24%;height:20%', svg:'<path d="M30,20 C30,10 10,10 10,25 C10,40 30,55 30,55 C30,55 50,40 50,25 C50,10 30,10 30,20" fill="#e74c3c"/>' },
+    { part:'lung-l', zone:'lung-l', style:'left:22%;top:30%;width:18%;height:28%', svg:'<ellipse cx="30" cy="35" rx="18" ry="28" fill="#aed6f1" opacity="0.8"/>' },
+    { part:'bone', zone:'bone', style:'left:42%;top:62%;width:16%;height:30%', svg:'<rect x="22" y="5" width="16" height="55" rx="6" fill="#ecf0f1"/><circle cx="30" cy="12" r="8" fill="#ecf0f1"/><circle cx="30" cy="55" r="8" fill="#ecf0f1"/>' },
+  ];
+  let xrayFilled = 0;
+
+  function buildDocXray() {
+    xrayFilled = 0;
+    const body = document.getElementById('xray-body');
+    body.innerHTML = `<svg viewBox="0 0 120 200" width="100%" height="100%" style="opacity:0.35"><ellipse cx="60" cy="35" rx="28" ry="30" fill="#7f8c8d"/><rect x="35" y="65" width="50" height="80" rx="12" fill="#95a5a6"/><rect x="20" y="70" width="18" height="60" rx="8" fill="#95a5a6"/><rect x="82" y="70" width="18" height="60" rx="8" fill="#95a5a6"/></svg>` +
+      XRAY_PARTS.map(p => `<div class="xray-zone" data-zone="${p.zone}" style="${p.style}"></div>`).join('');
+    const tray = document.getElementById('xray-tray');
+    tray.querySelectorAll('.draggable').forEach(unregisterDraggable);
+    tray.innerHTML = '';
+    shuffle(XRAY_PARTS).forEach(p => {
+      makeDragTile(tray, 'xray-part', { part:p.part, match:p.zone },
+        `<svg viewBox="0 0 60 60" width="100%" height="100%">${p.svg}</svg>`);
+    });
+    setTimeout(layoutAll, 50);
+  }
+
+  function handleXrayDrop(el, elRect, state, home) {
+    const { cx, cy } = centerIn(elRect);
+    const zone = document.querySelector(`.xray-zone[data-zone="${el.dataset.match}"]:not(.filled)`);
+    if (zone && hitRect(cx, cy, zone.getBoundingClientRect(), 10)) {
+      zone.classList.add('filled');
+      zone.innerHTML = el.innerHTML;
+      xrayFilled++;
+      playTone(400+xrayFilled*50, 0.1);
+      state.matched = true;
+      unregisterDraggable(el);
+      home.remove();
+      if (xrayFilled === 3) { celebrateAt(zone.getBoundingClientRect(), ['#aed6f1','#e74c3c']); setTimeout(buildDocXray, 1800); }
+    } else wrongTile(el, home);
+  }
+
+  let cleanScrub = 0, cleanPhase = 'scrub';
+
+  function buildDocClean() {
+    cleanScrub = 0; cleanPhase = 'scrub';
+    document.getElementById('clean-hint').textContent = 'Drag sponge over the wound!';
+    const wound = document.getElementById('wound-area');
+    wound.classList.remove('clean');
+    wound.innerHTML = '<span style="font-size:48px;opacity:0.6">🤕</span>';
+    const tray = document.getElementById('clean-tray');
+    tray.querySelectorAll('.draggable').forEach(unregisterDraggable);
+    tray.innerHTML = '';
+    makeDragTile(tray, 'sponge', {},
+      `<svg viewBox="0 0 60 60" width="100%" height="100%"><rect x="10" y="15" width="40" height="35" rx="8" fill="#ffe08c" stroke="#f0c060"/><circle cx="20" cy="28" r="3" fill="#f0c060"/><circle cx="35" cy="32" r="3" fill="#f0c060"/><circle cx="28" cy="40" r="3" fill="#f0c060"/></svg>`);
+    setTimeout(layoutAll, 50);
+  }
+
+  function handleSpongeMove(el, elRect) {
+    if (cleanPhase !== 'scrub') return;
+    const wound = document.getElementById('wound-area');
+    const { cx, cy } = centerIn(elRect);
+    if (hitRect(cx, cy, wound.getBoundingClientRect(), 5)) {
+      cleanScrub++;
+      wound.style.background = `rgba(255,${180+cleanScrub*5},${160+cleanScrub*3},0.${Math.min(4+cleanScrub,9)})`;
+      if (cleanScrub > 8 && !wound.classList.contains('clean')) {
+        wound.classList.add('clean');
+        cleanPhase = 'bandage';
+        document.getElementById('clean-hint').textContent = 'Great! Now drag a bandage!';
+        playMatch();
+        const tray = document.getElementById('clean-tray');
+        tray.querySelectorAll('.draggable').forEach(unregisterDraggable);
+        tray.innerHTML = '';
+        makeDragTile(tray, 'wound-bandage', {},
+          `<svg viewBox="0 0 60 60" width="100%" height="100%"><rect x="8" y="22" width="44" height="16" rx="4" fill="#f5f5f5" stroke="#ddd" stroke-width="2"/><rect x="22" y="14" width="16" height="32" rx="2" fill="#ffe8e8"/></svg>`);
+        setTimeout(layoutAll, 50);
+      }
+    }
+  }
+
+  function handleSpongeDrop(el, elRect, state, home) {
+    handleSpongeMove(el, elRect);
+    snapBack(el, home);
+  }
+
+  function handleWoundBandageDrop(el, elRect, state, home) {
+    const wound = document.getElementById('wound-area');
+    const { cx, cy } = centerIn(elRect);
+    if (hitRect(cx, cy, wound.getBoundingClientRect(), 15)) {
+      wound.innerHTML = '<span style="font-size:48px">🩹</span>';
+      celebrateAt(wound.getBoundingClientRect(), ['#5cd6b3','#ffd166']);
+      state.matched = true; el.style.display = 'none';
+      setTimeout(buildDocClean, 1800);
+    } else wrongTile(el, home);
+  }
+
+  /* ══════════════════════════════════════════
+     FEED ALL ANIMALS — zoo feeding round
+     ══════════════════════════════════════════ */
+  const FEED_ANIMALS = [
+    {
+      id: 'elephant', emoji: '🐘', name: 'Ellie', hungry: 'Ellie is hungry!',
+      mouth: 'left:50%;top:32%;width:30%;height:20%',
+      svg: `<svg viewBox="0 0 200 220" width="100%" height="100%"><ellipse cx="100" cy="130" rx="70" ry="65" fill="#9a9a9a"/><ellipse cx="55" cy="95" rx="35" ry="40" fill="#8a8a8a"/><ellipse cx="70" cy="100" rx="8" ry="10" fill="#3d2914"/><ellipse cx="90" cy="98" rx="8" ry="10" fill="#3d2914"/><rect x="115" y="85" width="55" height="22" rx="10" fill="#7a7a7a" transform="rotate(15 115 85)"/></svg>`,
+      foods: [
+        { id: 'peanut', correct: true, html: '<span style="font-size:40px">🥜</span>' },
+        { id: 'fish', correct: false, html: '<span style="font-size:40px">🐟</span>' },
+      ],
+    },
+    {
+      id: 'worm', emoji: '🪱', name: 'Wiggles', hungry: 'Wiggles wants a leaf!',
+      mouth: 'left:4%;top:38%;width:22%;height:22%',
+      svg: `<svg viewBox="0 0 200 200" width="100%" height="100%"><path d="M 30 100 Q 55 55 85 95 Q 115 135 145 95 Q 160 80 170 100" fill="none" stroke="#e67e22" stroke-width="16" stroke-linecap="round"/><circle cx="28" cy="100" r="13" fill="#e67e22"/><circle cx="25" cy="97" r="3.5" fill="#2c3e50"/><circle cx="31" cy="97" r="3.5" fill="#2c3e50"/></svg>`,
+      foods: [
+        { id: 'leaf', correct: true, html: '<span style="font-size:40px">🍃</span>' },
+        { id: 'bone', correct: false, html: '<span style="font-size:40px">🦴</span>' },
+      ],
+    },
+    {
+      id: 'alligator', emoji: '🐊', name: 'Chompy', hungry: 'Chompy wants fish!',
+      mouth: 'left:18%;top:38%;width:28%;height:22%',
+      svg: `<svg viewBox="0 0 200 200" width="100%" height="100%"><ellipse cx="100" cy="110" rx="75" ry="50" fill="#27ae60"/><ellipse cx="55" cy="95" rx="10" ry="8" fill="#f1c40f"/><ellipse cx="75" cy="90" rx="10" ry="8" fill="#f1c40f"/><ellipse cx="95" cy="88" rx="10" ry="8" fill="#f1c40f"/><circle cx="45" cy="100" r="6" fill="#2c3e50"/></svg>`,
+      foods: [
+        { id: 'fish', correct: true, html: '<span style="font-size:40px">🐟</span>' },
+        { id: 'carrot', correct: false, html: '<span style="font-size:40px">🥕</span>' },
+      ],
+    },
+    {
+      id: 'axolotl', emoji: '🦎', name: 'Axel', hungry: 'Axel is peckish!',
+      mouth: 'left:36%;top:46%;width:28%;height:18%',
+      svg: `<svg viewBox="0 0 200 200" width="100%" height="100%"><ellipse cx="100" cy="115" rx="55" ry="45" fill="#f8bbd9"/><ellipse cx="45" cy="80" rx="28" ry="12" fill="#f48fb1"/><ellipse cx="155" cy="80" rx="28" ry="12" fill="#f48fb1"/><circle cx="80" cy="105" r="8" fill="#2c3e50"/><circle cx="120" cy="105" r="8" fill="#2c3e50"/></svg>`,
+      foods: [
+        { id: 'shrimp', correct: true, html: '<span style="font-size:40px">🦐</span>' },
+        { id: 'cookie', correct: false, html: '<span style="font-size:40px">🍪</span>' },
+      ],
+    },
+    {
+      id: 'horse', emoji: '🐴', name: 'Thunder', hungry: 'Thunder wants a carrot!',
+      mouth: 'left:34%;top:40%;width:28%;height:18%',
+      svg: `<svg viewBox="0 0 200 220" width="100%" height="100%"><ellipse cx="100" cy="80" rx="45" ry="40" fill="#a67c52"/><rect x="55" y="30" width="12" height="35" rx="4" fill="#8b6914"/><rect x="130" y="30" width="12" height="35" rx="4" fill="#8b6914"/><circle cx="88" cy="78" r="5" fill="#2c3e50"/><circle cx="112" cy="78" r="5" fill="#2c3e50"/><rect x="70" y="115" width="60" height="50" rx="10" fill="#a67c52"/><line x1="130" y1="165" x2="130" y2="210" stroke="#a67c52" stroke-width="10" stroke-linecap="round"/><line x1="70" y1="165" x2="70" y2="205" stroke="#a67c52" stroke-width="10" stroke-linecap="round"/></svg>`,
+      foods: [
+        { id: 'carrot', correct: true, html: '<span style="font-size:40px">🥕</span>' },
+        { id: 'fish', correct: false, html: '<span style="font-size:40px">🐟</span>' },
+      ],
+    },
+    {
+      id: 'dog', emoji: '🐕', name: 'Bingo', hungry: 'Bingo wants a bone!',
+      mouth: 'left:34%;top:40%;width:28%;height:18%',
+      svg: `<svg viewBox="0 0 200 220" width="100%" height="100%"><ellipse cx="100" cy="90" rx="50" ry="45" fill="#c4956a"/><ellipse cx="70" cy="82" r="6" fill="#3d2914"/><ellipse cx="130" cy="82" r="6" fill="#3d2914"/><ellipse cx="100" cy="155" rx="55" ry="50" fill="#d4a574"/></svg>`,
+      foods: [
+        { id: 'bone', correct: true, html: '<span style="font-size:40px">🦴</span>' },
+        { id: 'leaf', correct: false, html: '<span style="font-size:40px">🍃</span>' },
+      ],
+    },
+    {
+      id: 'cat', emoji: '🐱', name: 'Whiskers', hungry: 'Whiskers wants fish!',
+      mouth: 'left:38%;top:46%;width:24%;height:18%',
+      svg: `<svg viewBox="0 0 200 200" width="100%" height="100%"><ellipse cx="100" cy="110" rx="55" ry="50" fill="#f39c12"/><polygon points="55,65 45,30 70,55" fill="#f39c12"/><polygon points="145,65 155,30 130,55" fill="#f39c12"/><ellipse cx="80" cy="105" rx="10" ry="12" fill="#2c3e50"/><ellipse cx="120" cy="105" rx="10" ry="12" fill="#2c3e50"/></svg>`,
+      foods: [
+        { id: 'fish', correct: true, html: '<span style="font-size:40px">🐟</span>' },
+        { id: 'peanut', correct: false, html: '<span style="font-size:40px">🥜</span>' },
+      ],
+    },
+    {
+      id: 'owl', emoji: '🦉', name: 'Hoot', hungry: 'Hoot wants a snack!',
+      mouth: 'left:42%;top:42%;width:18%;height:16%',
+      svg: `<svg viewBox="0 0 200 220" width="100%" height="100%"><ellipse cx="100" cy="90" rx="50" ry="55" fill="#8d6e63"/><circle cx="78" cy="82" r="18" fill="#fff8e1"/><circle cx="122" cy="82" r="18" fill="#fff8e1"/><circle cx="78" cy="82" r="8" fill="#2c3e50"/><circle cx="122" cy="82" r="8" fill="#2c3e50"/><polygon points="95,100 100,115 105,100" fill="#f39c12"/></svg>`,
+      foods: [
+        { id: 'mouse', correct: true, html: '<span style="font-size:40px">🐭</span>' },
+        { id: 'carrot', correct: false, html: '<span style="font-size:40px">🥕</span>' },
+      ],
+    },
+  ];
+
+  const feedFed = new Set();
+  let currentFeedAnimal = null;
+
+  function buildFeedZoo() {
+    document.getElementById('feed-zoo-view').classList.remove('hidden');
+    document.getElementById('feed-view').classList.add('hidden');
+    const grid = document.getElementById('feed-zoo-grid');
+    grid.innerHTML = FEED_ANIMALS.map(a => `
+      <button class="patient-card feed-card ${feedFed.has(a.id) ? 'fed' : ''}" data-feed="${a.id}">
+        <span class="patient-card-icon">${a.emoji}</span>
+        <span class="patient-card-name">${a.name}</span>
+        <span class="patient-card-ailment">${feedFed.has(a.id) ? '✓ Full tummy!' : a.hungry.split('!')[0] + '…'}</span>
+      </button>`).join('');
+    grid.querySelectorAll('.feed-card').forEach(btn => {
+      btn.addEventListener('click', () => openFeedAnimal(btn.dataset.feed));
+    });
+  }
+
+  function openFeedAnimal(id) {
+    currentFeedAnimal = FEED_ANIMALS.find(a => a.id === id);
+    if (!currentFeedAnimal) return;
+    document.getElementById('feed-zoo-view').classList.add('hidden');
+    document.getElementById('feed-view').classList.remove('hidden');
+    document.getElementById('feed-hungry-banner').textContent = currentFeedAnimal.hungry;
+    document.getElementById('feed-animal-svg').innerHTML = currentFeedAnimal.svg;
+    const mouth = document.getElementById('feed-mouth-zone');
+    const glow = document.getElementById('feed-mouth-glow');
+    mouth.style.cssText = currentFeedAnimal.mouth;
+    const m = currentFeedAnimal.mouth.match(/left:([^;]+);top:([^;]+);width:([^;]+);height:([^;]+)/);
+    if (m) {
+      glow.style.left = m[1];
+      glow.style.top = m[2];
+      glow.style.width = m[3];
+      glow.style.height = m[4];
+    }
+    const wrap = document.getElementById('feed-animal-wrap');
+    wrap.classList.remove('chewing', 'happy-eyes');
+    const tray = document.getElementById('feed-tray');
+    tray.querySelectorAll('.draggable').forEach(unregisterDraggable);
+    tray.innerHTML = '';
+    shuffle([...currentFeedAnimal.foods]).forEach(f => {
+      makeDragTile(tray, 'feed-food', { foodId: f.id, correct: f.correct ? '1' : '0' }, f.html);
+    });
+    setTimeout(layoutAll, 80);
+  }
+
+  function closeFeedTreat() {
+    document.getElementById('feed-tray').querySelectorAll('.draggable').forEach(unregisterDraggable);
+    document.getElementById('feed-tray').innerHTML = '';
+    currentFeedAnimal = null;
+    buildFeedZoo();
+  }
+
+  function feedAnimalDone() {
+    if (!currentFeedAnimal) return;
+    feedFed.add(currentFeedAnimal.id);
+    const r = document.getElementById('feed-animal-wrap').getBoundingClientRect();
+    celebrateAt(r, ['#ffd166', '#ff6b8a', '#5cd6b3', '#f39c12']);
+    playMatch();
+    setTimeout(closeFeedTreat, 1400);
+    if (feedFed.size === FEED_ANIMALS.length) {
+      setTimeout(() => { feedFed.clear(); buildFeedZoo(); }, 3200);
+    }
+  }
+
+  function handleFeedFoodDrop(el, elRect, state, home) {
+    const mouth = document.getElementById('feed-mouth-zone');
+    if (!mouth || !currentFeedAnimal) { snapBack(el, home); return; }
+    const { cx, cy } = centerIn(elRect);
+    const mouthRect = mouth.getBoundingClientRect();
+    if (!hitRect(cx, cy, mouthRect, 24)) { snapBack(el, home); return; }
+    if (el.dataset.correct !== '1') {
+      el.classList.add('wiggle-wrong');
+      playBoop();
+      setTimeout(() => el.classList.remove('wiggle-wrong'), 450);
+      snapBack(el, home);
+      return;
+    }
+    const wrap = document.getElementById('feed-animal-wrap');
+    playChomp();
+    wrap.classList.add('chewing', 'happy-eyes');
+    burstParticles(cx, cy, ['#ffd166', '#f39c12', '#5cd6b3', '#ff6b8a'], 18);
+    spawnSparkles(cx, cy, 5);
+    el.style.transform = 'scale(0)';
+    el.style.opacity = '0';
+    state.matched = true;
+    setTimeout(() => {
+      wrap.classList.remove('chewing', 'happy-eyes');
+      feedAnimalDone();
+    }, 900);
+  }
+
+  document.getElementById('feed-back-btn')?.addEventListener('click', closeFeedTreat);
+
+  /* ══════════════════════════════════════════
+     ANIMAL HOSPITAL — 8 silly patients
+     ══════════════════════════════════════════ */
+  const HOSPITAL_PATIENTS = [
+    {
+      id: 'elephant', emoji: '🐘', name: 'Ellie', ailment: 'Boogers on her trunk!',
+      hint: 'Drag the tissue to wipe her trunk!',
+      svg: `<svg viewBox="0 0 200 220" width="100%" height="100%"><ellipse cx="100" cy="130" rx="70" ry="65" fill="#9a9a9a"/><ellipse cx="55" cy="95" rx="35" ry="40" fill="#8a8a8a"/><ellipse cx="70" cy="100" rx="8" ry="10" fill="#3d2914"/><ellipse cx="90" cy="98" rx="8" ry="10" fill="#3d2914"/><rect x="115" y="85" width="55" height="22" rx="10" fill="#7a7a7a" transform="rotate(15 115 85)"/><ellipse cx="155" cy="78" rx="14" ry="18" fill="#7cb342" opacity="0.9"/><ellipse cx="148" cy="72" rx="8" ry="10" fill="#558b2f" opacity="0.8"/><text x="160" y="82" font-size="10" fill="#33691e">💧</text></svg>`,
+      zones: [{ id:'trunk', style:'left:52%;top:28%;width:28%;height:18%' }],
+      tools: [{ match:'trunk', html:'<span style="font-size:40px">🧻</span>' }],
+    },
+    {
+      id: 'worm', emoji: '🪱', name: 'Wiggles', ailment: 'Accidentally tied in a rope knot!',
+      hint: 'Tap Wiggles — the knot will untie!',
+      tapUntie: true,
+      svg: `<svg viewBox="0 0 200 200" width="100%" height="100%" class="worm-svg" aria-hidden="true">
+        <g class="worm-rope-straight"><path d="M 30 100 Q 65 100 100 100 Q 135 100 170 100" fill="none" stroke="#e67e22" stroke-width="16" stroke-linecap="round"/></g>
+        <g class="worm-rope-knotted"><path d="M 30 100 Q 55 55 85 95 Q 115 135 145 95 Q 160 80 170 100" fill="none" stroke="#e67e22" stroke-width="16" stroke-linecap="round"/></g>
+        <circle class="worm-face" cx="28" cy="100" r="13" fill="#e67e22"/><circle cx="25" cy="97" r="3.5" fill="#2c3e50"/><circle cx="31" cy="97" r="3.5" fill="#2c3e50"/>
+        <g class="worm-knot"><ellipse cx="100" cy="98" rx="20" ry="18" fill="none" stroke="#8b4513" stroke-width="5"/><ellipse cx="88" cy="92" rx="10" ry="8" fill="none" stroke="#a0522d" stroke-width="3"/><ellipse cx="112" cy="104" rx="10" ry="8" fill="none" stroke="#a0522d" stroke-width="3"/><path d="M 82 88 Q 100 110 118 88" fill="none" stroke="#6d4c2d" stroke-width="3" stroke-linecap="round"/></g>
+      </svg>`,
+    },
+    {
+      id: 'alligator', emoji: '🐊', name: 'Chompy', ailment: 'Super dirty tooth!',
+      hint: 'Scrub the dirty tooth with a toothbrush!',
+      svg: `<svg viewBox="0 0 200 200" width="100%" height="100%"><ellipse cx="100" cy="110" rx="75" ry="50" fill="#27ae60"/><ellipse cx="55" cy="95" rx="10" ry="8" fill="#f1c40f"/><ellipse cx="75" cy="90" rx="10" ry="8" fill="#f1c40f"/><ellipse cx="95" cy="88" rx="10" ry="8" fill="#f1c40f"/><rect x="110" y="82" width="14" height="18" rx="3" fill="#5d4037" stroke="#3e2723" stroke-width="2"/><text x="113" y="96" font-size="8" fill="#fff">🦠</text><circle cx="45" cy="100" r="6" fill="#2c3e50"/></svg>`,
+      zones: [{ id:'tooth', style:'left:52%;top:36%;width:14%;height:16%' }],
+      tools: [{ match:'tooth', html:'<span style="font-size:40px">🪥</span>' }],
+    },
+    {
+      id: 'axolotl', emoji: '🦎', name: 'Axel', ailment: 'Prickly spikes everywhere!',
+      hint: 'Gently brush away the spikes!',
+      svg: `<svg viewBox="0 0 200 200" width="100%" height="100%"><ellipse cx="100" cy="115" rx="55" ry="45" fill="#f8bbd9"/><ellipse cx="45" cy="80" rx="28" ry="12" fill="#f48fb1"/><ellipse cx="155" cy="80" rx="28" ry="12" fill="#f48fb1"/><circle cx="80" cy="105" r="8" fill="#2c3e50"/><circle cx="120" cy="105" r="8" fill="#2c3e50"/><polygon points="85,70 90,50 95,70" fill="#c2185b"/><polygon points="100,65 105,42 110,65" fill="#c2185b"/><polygon points="115,70 120,50 125,70" fill="#c2185b"/><polygon points="70,85 68,60 78,82" fill="#c2185b"/><polygon points="130,85 128,60 138,82" fill="#c2185b"/></svg>`,
+      zones: [{ id:'spikes', style:'left:30%;top:22%;width:40%;height:30%' }],
+      tools: [{ match:'spikes', html:'<span style="font-size:40px">🧹</span>' }],
+    },
+    {
+      id: 'horse', emoji: '🐴', name: 'Thunder', ailment: 'Broken leg!',
+      hint: 'Wrap the broken leg with a cast!',
+      svg: `<svg viewBox="0 0 200 220" width="100%" height="100%"><ellipse cx="100" cy="80" rx="45" ry="40" fill="#a67c52"/><rect x="55" y="30" width="12" height="35" rx="4" fill="#8b6914"/><rect x="130" y="30" width="12" height="35" rx="4" fill="#8b6914"/><circle cx="88" cy="78" r="5" fill="#2c3e50"/><circle cx="112" cy="78" r="5" fill="#2c3e50"/><rect x="70" y="115" width="60" height="50" rx="10" fill="#a67c52"/><line x1="130" y1="165" x2="130" y2="210" stroke="#a67c52" stroke-width="10" stroke-linecap="round"/><line x1="70" y1="165" x2="70" y2="205" stroke="#a67c52" stroke-width="10" stroke-linecap="round"/><line x1="130" y1="195" x2="130" y2="215" stroke="#e74c3c" stroke-width="4" stroke-dasharray="4 3"/></svg>`,
+      zones: [{ id:'leg', style:'left:58%;top:68%;width:18%;height:28%' }],
+      tools: [{ match:'leg', html:'<span style="font-size:40px">🦴</span>' }],
+    },
+    {
+      id: 'dog', emoji: '🐕', name: 'Bingo', ailment: 'Ate EVERYTHING!',
+      hint: 'Drag each thing out of his tummy to the trash!',
+      svg: `<svg viewBox="0 0 200 220" width="100%" height="100%"><ellipse cx="100" cy="90" rx="50" ry="45" fill="#c4956a"/><ellipse cx="70" cy="82" r="6" fill="#3d2914"/><ellipse cx="130" cy="82" r="6" fill="#3d2914"/><ellipse cx="100" cy="155" rx="55" ry="50" fill="#d4a574" opacity="0.9"/><ellipse cx="100" cy="155" rx="40" ry="35" fill="rgba(100,180,255,0.25)" stroke="#5b9bd5" stroke-width="2" stroke-dasharray="4 3"/></svg>`,
+      bellyItems: [
+        { id:'door', emoji:'🚪', style:'left:42%;top:58%' },
+        { id:'candle', emoji:'🕯️', style:'left:52%;top:62%' },
+        { id:'computer', emoji:'💻', style:'left:48%;top:52%' },
+        { id:'saw', emoji:'🪚', style:'left:38%;top:55%' },
+        { id:'rubber', emoji:'📎', style:'left:55%;top:55%' },
+        { id:'ducky', emoji:'🦆', style:'left:45%;top:65%' },
+      ],
+    },
+    {
+      id: 'cat', emoji: '🐱', name: 'Whiskers', ailment: 'Never drinks water or milk!',
+      hint: 'Give water AND milk — drag both to Whiskers!',
+      svg: `<svg viewBox="0 0 200 200" width="100%" height="100%"><ellipse cx="100" cy="110" rx="55" ry="50" fill="#f39c12"/><polygon points="55,65 45,30 70,55" fill="#f39c12"/><polygon points="145,65 155,30 130,55" fill="#f39c12"/><ellipse cx="80" cy="105" rx="10" ry="12" fill="#2c3e50"/><ellipse cx="120" cy="105" rx="10" ry="12" fill="#2c3e50"/><path d="M 85 125 Q 100 118 115 125" fill="none" stroke="#c0392b" stroke-width="2"/><text x="100" y="145" text-anchor="middle" font-size="14" fill="#7f8c8d">😿 thirsty</text></svg>`,
+      zones: [
+        { id:'mouth', style:'left:38%;top:48%;width:24%;height:18%', needs:2 },
+      ],
+      tools: [
+        { match:'mouth', html:'<span style="font-size:40px">💧</span>', tag:'water' },
+        { match:'mouth', html:'<span style="font-size:40px">🥛</span>', tag:'milk' },
+      ],
+    },
+    {
+      id: 'owl', emoji: '🦉', name: 'Hoot', ailment: 'Hurt leg — needs milk!',
+      hint: 'Splint the leg, then bring warm milk!',
+      svg: `<svg viewBox="0 0 200 220" width="100%" height="100%"><ellipse cx="100" cy="90" rx="50" ry="55" fill="#8d6e63"/><circle cx="78" cy="82" r="18" fill="#fff8e1"/><circle cx="122" cy="82" r="18" fill="#fff8e1"/><circle cx="78" cy="82" r="8" fill="#2c3e50"/><circle cx="122" cy="82" r="8" fill="#2c3e50"/><polygon points="95,100 100,115 105,100" fill="#f39c12"/><ellipse cx="100" cy="155" rx="40" ry="35" fill="#a1887f"/><line x1="130" y1="175" x2="130" y2="210" stroke="#e74c3c" stroke-width="4" stroke-dasharray="5 4"/></svg>`,
+      zones: [
+        { id:'leg', style:'left:55%;top:72%;width:16%;height:22%' },
+        { id:'beak', style:'left:42%;top:42%;width:16%;height:14%' },
+      ],
+      tools: [
+        { match:'leg', html:'<span style="font-size:40px">🩹</span>', tag:'splint' },
+        { match:'beak', html:'<span style="font-size:40px">🥛</span>', tag:'milk' },
+      ],
+      ordered: true,
+    },
+  ];
+
+  const wardHealed = new Set();
+  let currentPatient = null;
+  let patientStep = 0;
+  let catGiven = new Set();
+  let wormTapHandler = null;
+  let wormTapTimers = [];
+
+  function buildDocWard() {
+    document.getElementById('ward-view').classList.remove('hidden');
+    document.getElementById('treat-view').classList.add('hidden');
+    const grid = document.getElementById('ward-grid');
+    grid.innerHTML = HOSPITAL_PATIENTS.map(p => `
+      <button class="patient-card ${wardHealed.has(p.id)?'healed':''}" data-patient="${p.id}">
+        <span class="patient-card-icon">${p.emoji}</span>
+        <span class="patient-card-name">${p.name}</span>
+        <span class="patient-card-ailment">${wardHealed.has(p.id)?'✓ Better!':p.ailment.split('!')[0]+'…'}</span>
+      </button>`).join('');
+    grid.querySelectorAll('.patient-card').forEach(btn => {
+      btn.addEventListener('click', () => openPatient(btn.dataset.patient));
+    });
+  }
+
+  function openPatient(id) {
+    currentPatient = HOSPITAL_PATIENTS.find(p => p.id === id);
+    if (!currentPatient) return;
+    patientStep = 0;
+    catGiven = new Set();
+    document.getElementById('ward-view').classList.add('hidden');
+    document.getElementById('treat-view').classList.remove('hidden');
+    document.getElementById('treat-ailment').textContent = currentPatient.ailment;
+    document.getElementById('treat-patient').innerHTML = currentPatient.svg;
+    const bin = document.getElementById('disposal-bin');
+    const tray = document.getElementById('treat-tray');
+    tray.querySelectorAll('.draggable').forEach(unregisterDraggable);
+    tray.innerHTML = '';
+
+    if (currentPatient.bellyItems) {
+      bin.classList.remove('hidden');
+      currentPatient.bellyItems.forEach(item => {
+        const wrap = document.createElement('div');
+        wrap.className = 'belly-home';
+        wrap.style.cssText = `position:absolute;${item.style};width:36px;height:36px;`;
+        const el = document.createElement('div');
+        el.className = 'draggable belly-item';
+        el.dataset.type = 'patient-pull';
+        el.dataset.itemId = item.id;
+        el.style.width = '100%';
+        el.style.height = '100%';
+        el.style.display = 'flex';
+        el.style.alignItems = 'center';
+        el.style.justifyContent = 'center';
+        el.style.fontSize = '22px';
+        el.textContent = item.emoji;
+        wrap.appendChild(el);
+        document.getElementById('treat-patient').appendChild(wrap);
+        registerDraggable(el);
+      });
+      setTimeout(layoutAll, 80);
+    } else if (currentPatient.tapUntie) {
+      bin.classList.add('hidden');
+      tray.innerHTML = `<p class="module-hint" id="worm-hint">${currentPatient.hint}</p>`;
+      setupWormTap();
+    } else {
+      bin.classList.add('hidden');
+      currentPatient.zones.forEach(z => {
+        const zone = document.createElement('div');
+        zone.className = 'patient-zone';
+        zone.dataset.zone = z.id;
+        zone.style.cssText = z.style;
+        document.getElementById('treat-patient').appendChild(zone);
+      });
+      const tools = currentPatient.ordered
+        ? [currentPatient.tools[patientStep]]
+        : currentPatient.tools;
+      (tools || currentPatient.tools).forEach(t => {
+        makeDragTile(tray, 'patient-cure', { match: t.match, tag: t.tag || '' }, t.html);
+      });
+    }
+    setTimeout(layoutAll, 80);
+  }
+
+  function setupWormTap() {
+    cleanupWormTap();
+    const patient = document.getElementById('treat-patient');
+    patient.classList.add('worm-tappable');
+    wormTapHandler = (e) => {
+      if (patient.dataset.untied) return;
+      e.preventDefault();
+      patient.dataset.untied = '1';
+      resumeAudio();
+      playTone(360, 0.1);
+      patient.classList.add('wiggling');
+      patient.querySelector('.worm-knot')?.classList.add('untied');
+      patient.querySelector('.worm-rope-knotted')?.classList.add('untied');
+      patient.querySelector('.worm-rope-straight')?.classList.add('show');
+      const hint = document.getElementById('worm-hint');
+      if (hint) hint.textContent = 'The knot is coming loose…';
+      wormTapTimers.push(setTimeout(() => playTone(520, 0.12), 400));
+      wormTapTimers.push(setTimeout(() => playTone(660, 0.15), 700));
+      wormTapTimers.push(setTimeout(() => {
+        if (currentPatient?.id !== 'worm') return;
+        patient.classList.remove('wiggling');
+        const doneHint = document.getElementById('worm-hint');
+        if (doneHint) doneHint.textContent = 'Yay! Wiggles is free!';
+        healPatient();
+      }, 1200));
+    };
+    patient.addEventListener('pointerdown', wormTapHandler);
+  }
+
+  function cleanupWormTap() {
+    wormTapTimers.forEach(clearTimeout);
+    wormTapTimers = [];
+    const patient = document.getElementById('treat-patient');
+    if (!patient) return;
+    patient.classList.remove('worm-tappable', 'wiggling');
+    delete patient.dataset.untied;
+    if (wormTapHandler) {
+      patient.removeEventListener('pointerdown', wormTapHandler);
+      wormTapHandler = null;
+    }
+  }
+
+  function closePatientTreat() {
+    cleanupWormTap();
+    document.getElementById('treat-tray').querySelectorAll('.draggable').forEach(unregisterDraggable);
+    document.getElementById('treat-patient').querySelectorAll('.belly-item').forEach(unregisterDraggable);
+    document.getElementById('treat-tray').innerHTML = '';
+    buildDocWard();
+  }
+
+  function healPatient() {
+    if (!currentPatient) return;
+    wardHealed.add(currentPatient.id);
+    const r = document.getElementById('treat-patient').getBoundingClientRect();
+    celebrateAt(r, ['#5cd6b3','#ffd166','#ff6b8a']);
+    playMatch();
+    setTimeout(closePatientTreat, 1600);
+    if (wardHealed.size === HOSPITAL_PATIENTS.length) {
+      setTimeout(() => { wardHealed.clear(); buildDocWard(); }, 3000);
+    }
+  }
+
+  function handlePatientCureDrop(el, elRect, state, home) {
+    const { cx, cy } = centerIn(elRect);
+    const tag = el.dataset.tag || '';
+    const match = el.dataset.match;
+    const zone = document.querySelector(`.patient-zone[data-zone="${match}"]:not(.healed)`);
+    if (!zone || !hitRect(cx, cy, zone.getBoundingClientRect(), 22)) {
+      wrongTile(el, home);
+      return;
+    }
+    if (currentPatient.id === 'cat') {
+      if (catGiven.has(tag)) { wrongTile(el, home); return; }
+      catGiven.add(tag);
+      zone.innerHTML = `<span class="zone-emoji">${tag==='water'?'💧':'🥛'}</span>`;
+      playTone(480, 0.1);
+      unregisterDraggable(el);
+      home.remove();
+      if (catGiven.size >= 2) {
+        zone.classList.add('healed');
+        healPatient();
+      }
+      setTimeout(layoutAll, 50);
+      return;
+    }
+    if (currentPatient.ordered) {
+      const expected = currentPatient.tools[patientStep];
+      if (expected.match !== match || (expected.tag && expected.tag !== tag)) {
+        wrongTile(el, home);
+        return;
+      }
+      zone.classList.add('healed');
+      zone.innerHTML = `<span class="zone-emoji">${el.querySelector('span')?.textContent || '✓'}</span>`;
+      unregisterDraggable(el);
+      home.remove();
+      patientStep++;
+      playTone(500 + patientStep * 40, 0.1);
+      if (patientStep >= currentPatient.tools.length) {
+        healPatient();
+      } else {
+        const tray = document.getElementById('treat-tray');
+        const next = currentPatient.tools[patientStep];
+        makeDragTile(tray, 'patient-cure', { match: next.match, tag: next.tag || '' }, next.html);
+        setTimeout(layoutAll, 50);
+      }
+      return;
+    }
+    zone.classList.add('healed');
+    zone.innerHTML = `<span class="zone-emoji">✨</span>`;
+    unregisterDraggable(el);
+    home.remove();
+    healPatient();
+  }
+
+  function handlePatientPullDrop(el, elRect, state, home) {
+    const bin = document.getElementById('disposal-bin');
+    const { cx, cy } = centerIn(elRect);
+    if (!hitRect(cx, cy, bin.getBoundingClientRect(), 20)) {
+      el.classList.add('wiggle-wrong');
+      playBoop();
+      setTimeout(() => el.classList.remove('wiggle-wrong'), 450);
+      snapBack(el, home);
+      return;
+    }
+    unregisterDraggable(el);
+    el.remove();
+    playTone(440 + document.querySelectorAll('.belly-item').length * 30, 0.08);
+    burstParticles(cx, cy, ['#ffd166','#ff6b8a'], 8);
+    if (!document.querySelectorAll('.belly-item').length) healPatient();
+  }
+
+  document.getElementById('ward-back-btn')?.addEventListener('click', closePatientTreat);
+
+  let heartScore = 0, heartTapWindow = false;
+
+  function buildDocHeart() {
+    heartScore = 0;
+    heartTapWindow = false;
+    const score = document.getElementById('heart-score');
+    score.innerHTML = Array(5).fill(0).map(() => '<div class="score-pip"></div>').join('');
+    const zone = document.getElementById('heart-tap-zone');
+    zone.classList.remove('tap-now');
+    if (heartTimer) clearInterval(heartTimer);
+    function pulse() {
+      zone.classList.remove('tap-now');
+      setTimeout(() => {
+        heartTapWindow = true;
+        zone.classList.add('tap-now');
+        playTone(300, 0.08, 'sine', 0.1);
+        setTimeout(() => { heartTapWindow = false; zone.classList.remove('tap-now'); }, 700);
+      }, 800 + Math.random()*1200);
+    }
+    pulse();
+    heartTimer = setInterval(pulse, 2200);
+    zone.onclick = () => {
+      resumeAudio();
+      if (heartTapWindow) {
+        heartScore++;
+        score.children[heartScore-1]?.classList.add('on');
+        playMatch();
+        burstParticles(zone.getBoundingClientRect().left+zone.offsetWidth/2, zone.getBoundingClientRect().top+zone.offsetHeight/2, ['#ff6b8a','#5cd6b3'], 10);
+        heartTapWindow = false;
+        zone.classList.remove('tap-now');
+        if (heartScore >= 5) {
+          clearInterval(heartTimer);
+          setTimeout(buildDocHeart, 2500);
+        }
+      } else playBoop();
+    };
+  }
+
   /* ── Drop handler registry ── */
   const dropHandlers = {
     food: handleFoodDrop,
@@ -1165,28 +2571,92 @@
     'math-num': handleMathDrop,
     letter: handleLetterDrop,
     pattern: handlePatternDrop,
+    'art-color': handleArtColorDrop,
+    sticker: handleStickerDrop,
+    rainbow: handleRainbowDrop,
+    mosaic: handleMosaicDrop,
+    bandage: handleBandageDrop,
+    thermo: handleThermoDrop,
+    'temp-fix': handleTempFixDrop,
+    'med-tool': (el, elRect, state, home) => {
+      if (currentModule === 'module-doc-medicine') handleMedicineDrop(el, elRect, state, home);
+      else handleToolSortDrop(el, elRect, state, home);
+    },
+    'xray-part': handleXrayDrop,
+    sponge: handleSpongeDrop,
+    'wound-bandage': handleWoundBandageDrop,
+    'patient-cure': handlePatientCureDrop,
+    'patient-pull': handlePatientPullDrop,
+    'feed-food': handleFeedFoodDrop,
   };
 
   /* ── Navigation ── */
   const MODULE_TITLES = {
     'module-hub': 'Pick a Game',
     'module-preschool': 'Animal & Shapes',
+    'module-feed-zoo': 'Feed All Animals',
     'module-math': 'Math Quest',
     'module-words': 'Word Builder',
     'module-memory': 'Memory Match',
     'module-pattern': 'Pattern Puzzle',
+    'module-art-mix': 'Color Mix',
+    'module-art-paint': 'Free Paint',
+    'module-art-sticker': 'Sticker Scene',
+    'module-art-rainbow': 'Rainbow Order',
+    'module-art-mosaic': 'Mosaic Art',
+    'module-art-stamp': 'Pattern Stamp',
+    'module-art-symmetry': 'Mirror Draw',
+    'module-doc-bandage': 'Bandage Boo-Boo',
+    'module-doc-temp': 'Temperature Check',
+    'module-doc-medicine': 'Medicine Match',
+    'module-doc-tools': 'Tool Sort',
+    'module-doc-xray': 'X-Ray Puzzle',
+    'module-doc-clean': 'Clean & Cover',
+    'module-doc-heart': 'Heart Beat',
+    'module-doc-ward': 'Animal Hospital',
   };
+
+  const MODULE_INIT = {
+    'module-math': buildMathRound,
+    'module-words': buildWordRound,
+    'module-memory': buildMemory,
+    'module-pattern': buildPatternRound,
+    'module-art-mix': buildArtMix,
+    'module-art-sticker': buildArtSticker,
+    'module-art-rainbow': buildArtRainbow,
+    'module-art-mosaic': buildArtMosaic,
+    'module-doc-bandage': buildDocBandage,
+    'module-doc-temp': buildDocTemp,
+    'module-doc-medicine': buildDocMedicine,
+    'module-doc-tools': buildDocTools,
+    'module-doc-xray': buildDocXray,
+    'module-doc-clean': buildDocClean,
+    'module-doc-heart': buildDocHeart,
+    'module-doc-ward': buildDocWard,
+    'module-feed-zoo': buildFeedZoo,
+  };
+
+  let paintInited = false, stampInited = false, symInited = false;
 
   function showModule(id) {
     if (activeDrag) { activeDrag = null; clearDragHighlights(); }
+    if (heartTimer) { clearInterval(heartTimer); heartTimer = null; }
+    if (id !== 'module-doc-ward') {
+      document.getElementById('ward-view')?.classList.remove('hidden');
+      document.getElementById('treat-view')?.classList.add('hidden');
+    }
+    if (id !== 'module-feed-zoo') {
+      document.getElementById('feed-zoo-view')?.classList.remove('hidden');
+      document.getElementById('feed-view')?.classList.add('hidden');
+    }
     currentModule = id;
     document.querySelectorAll('.module').forEach(m => m.classList.remove('active'));
     document.getElementById(id).classList.add('active');
     document.getElementById('nav-title').textContent = MODULE_TITLES[id] || '';
-    if (id === 'module-math') buildMathRound();
-    else if (id === 'module-words') buildWordRound();
-    else if (id === 'module-memory') buildMemory();
-    else if (id === 'module-pattern') buildPatternRound();
+    if (id === 'module-art-paint' && !paintInited) { initArtPaint(); paintInited = true; }
+    else if (id === 'module-art-stamp' && !stampInited) { initArtStamp(); stampInited = true; }
+    else if (id === 'module-art-symmetry' && !symInited) { initArtSymmetry(); symInited = true; }
+    else if (MODULE_INIT[id]) MODULE_INIT[id]();
     setTimeout(layoutAll, 80);
     setTimeout(layoutAll, 300);
   }
