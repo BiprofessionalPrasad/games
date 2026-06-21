@@ -22,3 +22,6 @@ build/
 
 # Generated scratch (keep committed assets in assets/)
 .scratch/
+
+# Private reference photos (local only)
+Lia.JPEG
