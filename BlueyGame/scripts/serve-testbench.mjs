@@ -1,5 +1,5 @@
 import { createServer } from "node:http";
-import { readFileSync, existsSync } from "node:fs";
+import { readFileSync, existsSync, statSync } from "node:fs";
 import { join, extname, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -18,19 +18,43 @@ const MIME = {
   ".svg": "image/svg+xml",
 };
 
-createServer((req, res) => {
-  const urlPath = req.url === "/" ? "/testbench/index.html" : req.url.split("?")[0];
-  const filePath = join(ROOT, decodeURIComponent(urlPath));
+function resolveFilePath(urlPath) {
+  let filePath = join(ROOT, decodeURIComponent(urlPath));
 
   if (!filePath.startsWith(ROOT) || !existsSync(filePath)) {
-    res.writeHead(404);
-    res.end("Not found");
-    return;
+    return null;
   }
 
-  const ext = extname(filePath);
-  res.writeHead(200, { "Content-Type": MIME[ext] ?? "application/octet-stream" });
-  res.end(readFileSync(filePath));
+  if (statSync(filePath).isDirectory()) {
+    filePath = join(filePath, "index.html");
+    if (!existsSync(filePath)) {
+      return null;
+    }
+  }
+
+  return filePath;
+}
+
+createServer((req, res) => {
+  try {
+    const raw = req.url?.split("?")[0] ?? "/";
+    const urlPath = raw === "/" ? "/testbench/index.html" : raw;
+    const filePath = resolveFilePath(urlPath);
+
+    if (!filePath) {
+      res.writeHead(404);
+      res.end("Not found");
+      return;
+    }
+
+    const ext = extname(filePath);
+    res.writeHead(200, { "Content-Type": MIME[ext] ?? "application/octet-stream" });
+    res.end(readFileSync(filePath));
+  } catch (err) {
+    console.error(err);
+    res.writeHead(500);
+    res.end("Server error");
+  }
 }).listen(PORT, () => {
   console.log(`Bluey testbench: http://localhost:${PORT}/testbench/`);
 });
