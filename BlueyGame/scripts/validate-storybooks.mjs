@@ -36,6 +36,26 @@ for (const story of manifest.stories) {
     fail(`${story.id} must have at least 6 pages`);
   }
 
+  if (storyData.mode === "illustrated") {
+    if (!storyData.coverIllustration) {
+      fail(`${story.id} illustrated mode requires coverIllustration`);
+    }
+    const coverPath = join(ROOT, storyData.coverIllustration);
+    if (!existsSync(coverPath)) {
+      fail(`${story.id} cover illustration missing: ${storyData.coverIllustration}`);
+    }
+
+    for (const [index, page] of storyData.pages.entries()) {
+      if (!page.illustration) {
+        fail(`${story.id} page ${index + 1} missing illustration`);
+      }
+      const pagePath = join(ROOT, page.illustration);
+      if (!existsSync(pagePath)) {
+        fail(`${story.id} page ${index + 1} illustration missing: ${page.illustration}`);
+      }
+    }
+  }
+
   const pdfPath = join(ROOT, story.output);
   if (!existsSync(pdfPath)) {
     fail(`PDF missing for ${story.id}: ${story.output} — run npm run build:storybooks`);

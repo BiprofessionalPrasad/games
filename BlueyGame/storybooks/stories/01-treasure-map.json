@@ -2,93 +2,48 @@
   "id": "01-treasure-map",
   "title": "Lia's Treasure Map in the Backyard",
   "subtitle": "A rainy-day game turns into a real adventure",
-  "coverCharacters": ["bluey", "lia", "bingo"],
+  "mode": "illustrated",
+  "coverIllustration": "storybooks/illustrations/01-treasure-map/cover.png",
   "pages": [
     {
-      "scene": "backyard-rain",
-      "text": "Rain tapped the windows like tiny drums. Bluey pressed her nose to the glass. \"I'm bored,\" she sighed. Bingo cuddled her toy bunny. Then the doorbell rang — DING DONG! It was Lia, wearing her green puffer jacket and a grin as bright as sunshine.",
-      "characters": [
-        { "id": "bluey", "x": 18, "y": 42, "scale": 0.55 },
-        { "id": "lia", "x": 58, "y": 40, "scale": 0.58 }
-      ]
+      "illustration": "storybooks/illustrations/01-treasure-map/page-01.png",
+      "text": "Rain tapped the windows like tiny drums. Bluey pressed her nose to the glass. \"I'm bored,\" she sighed. Bingo cuddled her toy bunny. Then the doorbell rang — DING DONG! It was Lia, wearing her green puffer jacket and a grin as bright as sunshine."
     },
     {
-      "scene": "living-room",
-      "text": "\"Let's play Treasure Island!\" Bluey declared, spreading cushions across the floor. Bandit saluted. \"Captain Dad reporting for duty.\" Chilli laughed and handed everyone paper hats. Even Muffin and Socks arrived just in time, shaking rain off their paws.",
-      "characters": [
-        { "id": "bandit", "x": 10, "y": 38, "scale": 0.52 },
-        { "id": "chilli", "x": 72, "y": 38, "scale": 0.52 },
-        { "id": "muffin", "x": 42, "y": 48, "scale": 0.45 }
-      ]
+      "illustration": "storybooks/illustrations/01-treasure-map/page-02.png",
+      "text": "\"Let's play Treasure Island!\" Bluey declared, spreading cushions across the floor. Bandit saluted. \"Captain Dad reporting for duty.\" Chilli laughed and handed everyone paper hats. Even Muffin and Socks arrived just in time, shaking rain off their paws."
     },
     {
-      "scene": "backyard-day",
-      "text": "When the rain stopped, Bluey crawled under the deck to find a torch. Instead she found something crinkly and old — a folded map! \"Look!\" she whispered. Lia's eyes went wide. \"My grandma says maps are stories waiting to be walked.\"",
-      "characters": [
-        { "id": "bluey", "x": 28, "y": 42, "scale": 0.55 },
-        { "id": "lia", "x": 62, "y": 40, "scale": 0.58 }
-      ]
+      "illustration": "storybooks/illustrations/01-treasure-map/page-03.png",
+      "text": "When the rain stopped, Bluey crawled under the deck to find a torch. Instead she found something crinkly and old — a folded map! \"Look!\" she whispered. Lia's eyes went wide. \"My grandma says maps are stories waiting to be walked.\""
     },
     {
-      "scene": "backyard-day",
-      "text": "The first clue read: Where the red rock sleeps beside the fern. Bingo spotted it near the garden bed — a painted stone half-hidden in leaves. \"X marks the spot!\" Socks cheered, though nobody was sure what an X was.",
-      "characters": [
-        { "id": "bingo", "x": 22, "y": 44, "scale": 0.5 },
-        { "id": "socks", "x": 55, "y": 50, "scale": 0.42 },
-        { "id": "lia", "x": 72, "y": 40, "scale": 0.55 }
-      ]
+      "illustration": "storybooks/illustrations/01-treasure-map/page-04.png",
+      "text": "The first clue read: Where the red rock sleeps beside the fern. Bingo spotted it near the garden bed — a painted stone half-hidden in leaves. \"X marks the spot!\" Socks cheered, though nobody was sure what an X was."
     },
     {
-      "scene": "backyard-day",
-      "text": "Muffin raced ahead. \"I'll win! I'll win!\" But the hollow log was deeper than it looked. \"Teamwork, cousin,\" Chilli called gently. They all held hands and peered inside together. A feather rested there, striped blue and black.",
-      "characters": [
-        { "id": "muffin", "x": 20, "y": 42, "scale": 0.48 },
-        { "id": "chilli", "x": 68, "y": 38, "scale": 0.52 }
-      ]
+      "illustration": "storybooks/illustrations/01-treasure-map/page-05.png",
+      "text": "Muffin raced ahead. \"I'll win! I'll win!\" But the hollow log was deeper than it looked. \"Teamwork, cousin,\" Chilli called gently. They all held hands and peered inside together. A feather rested there, striped blue and black."
     },
     {
-      "scene": "backyard-day",
-      "text": "Lia knelt beside the feather. \"That's from a forest bird. Grandma says feathers mean: look up, then look around.\" Bluey looked up at the gum tree. Looked around at the fence. And spotted a jar tied with string!",
-      "characters": [
-        { "id": "lia", "x": 35, "y": 40, "scale": 0.58 },
-        { "id": "bluey", "x": 65, "y": 42, "scale": 0.55 }
-      ]
+      "illustration": "storybooks/illustrations/01-treasure-map/page-06.png",
+      "text": "Lia knelt beside the feather. \"That's from a forest bird. Grandma says feathers mean: look up, then look around.\" Bluey looked up at the gum tree. Looked around at the fence. And spotted a jar tied with string!"
     },
     {
-      "scene": "backyard-day",
-      "text": "Inside the jar was no gold — just marbles, a toy car, and a note: For the next explorers. Love, Nana. Bingo clapped. \"Treasure!\" Bandit wiped pretend tears. \"Beautiful. Absolutely beautiful.\"",
-      "characters": [
-        { "id": "bingo", "x": 25, "y": 44, "scale": 0.5 },
-        { "id": "bandit", "x": 60, "y": 38, "scale": 0.52 }
-      ]
+      "illustration": "storybooks/illustrations/01-treasure-map/page-07.png",
+      "text": "Inside the jar was no gold — just marbles, a toy car, and a note: For the next explorers. Love, Nana. Bingo clapped. \"Treasure!\" Bandit wiped pretend tears. \"Beautiful. Absolutely beautiful.\""
     },
     {
-      "scene": "backyard-sunset",
-      "text": "They sat on the grass as the sky turned peach and gold. Lia smiled. \"The best treasures are the ones you find together.\" Bluey hugged her map. Bingo shared a marble. Socks put one in each pocket — and still lost one anyway.",
-      "characters": [
-        { "id": "lia", "x": 20, "y": 40, "scale": 0.55 },
-        { "id": "bluey", "x": 45, "y": 42, "scale": 0.52 },
-        { "id": "bingo", "x": 68, "y": 44, "scale": 0.48 },
-        { "id": "socks", "x": 82, "y": 50, "scale": 0.4 }
-      ]
+      "illustration": "storybooks/illustrations/01-treasure-map/page-08.png",
+      "text": "They sat on the grass as the sky turned peach and gold. Lia smiled. \"The best treasures are the ones you find together.\" Bluey hugged her map. Bingo shared a marble. Socks put one in each pocket — and still lost one anyway."
     },
     {
-      "scene": "backyard-sunset",
-      "text": "Chilli brought warm milk and biscuits. \"Same time next week?\" she asked. Everyone shouted YES at once — even the magpie on the fence. And somewhere under the deck, another map waited for another rainy day.",
-      "characters": [
-        { "id": "chilli", "x": 30, "y": 38, "scale": 0.52 },
-        { "id": "muffin", "x": 55, "y": 44, "scale": 0.45 },
-        { "id": "socks", "x": 75, "y": 48, "scale": 0.4 }
-      ]
+      "illustration": "storybooks/illustrations/01-treasure-map/page-09.png",
+      "text": "Chilli brought warm milk and biscuits. \"Same time next week?\" she asked. Everyone shouted YES at once — even the magpie on the fence. And somewhere under the deck, another map waited for another rainy day."
     },
     {
-      "scene": "cover-treasure",
+      "illustration": "storybooks/illustrations/01-treasure-map/page-10.png",
       "text": "THE END\n\nThank you for reading!\n\nIf you liked this adventure, share it with a friend and draw your own backyard map.",
-      "characters": [
-        { "id": "bluey", "x": 15, "y": 42, "scale": 0.5 },
-        { "id": "lia", "x": 42, "y": 40, "scale": 0.52 },
-        { "id": "bingo", "x": 68, "y": 44, "scale": 0.48 }
-      ],
       "isEnding": true
     }
   ]

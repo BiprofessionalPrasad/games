@@ -56,14 +56,32 @@ function renderCharacters(characters, characterMap, basePath) {
     .join("\n");
 }
 
+function illustrationSrc(relativePath) {
+  return pathToFileURL(resolve(ROOT, relativePath)).href;
+}
+
+function renderIllustratedCover(story) {
+  const src = illustrationSrc(story.coverIllustration);
+  return `<section class="page cover-illustrated">
+    <img class="cover-illustration" src="${src}" alt="" />
+    <div class="cover-overlay">
+      <div class="cover-badge">A Backyard Adventure Storybook</div>
+      <h1>${escapeHtml(story.title)}</h1>
+      <p class="subtitle">${escapeHtml(story.subtitle)}</p>
+    </div>
+  </section>`;
+}
+
 function renderCoverPage(story, characterMap) {
+  if (story.mode === "illustrated" && story.coverIllustration) {
+    return renderIllustratedCover(story);
+  }
+
   const theme = COVER_THEMES[story.id] ?? "cover-treasure";
-  const cast = story.coverCharacters
-    .map((id, i) => {
-      const meta = characterMap.get(id);
-      const x = 12 + i * 28;
-      return { id, x, y: 55, scale: 0.48 };
-    });
+  const cast = (story.coverCharacters ?? []).map((id, i) => {
+    const x = 12 + i * 28;
+    return { id, x, y: 55, scale: 0.48 };
+  });
 
   return `<section class="page cover ${theme}">
     <div class="cover-badge">A Backyard Adventure Storybook</div>
@@ -76,7 +94,27 @@ function renderCoverPage(story, characterMap) {
   </section>`;
 }
 
-function renderStoryPage(page, pageNum, totalPages, characterMap) {
+function renderIllustratedStoryPage(page, pageNum, totalPages) {
+  const endingClass = page.isEnding ? " ending" : "";
+  const label = page.isEnding ? "The End" : `Page ${pageNum} of ${totalPages}`;
+  const src = illustrationSrc(page.illustration);
+
+  return `<section class="page story-page illustrated">
+    <div class="illustration-panel">
+      <img src="${src}" alt="" />
+    </div>
+    <div class="text-panel">
+      <div class="page-number">${label}</div>
+      <p class="story-text${endingClass}">${escapeHtml(page.text)}</p>
+    </div>
+  </section>`;
+}
+
+function renderStoryPage(page, pageNum, totalPages, characterMap, story) {
+  if (story.mode === "illustrated" && page.illustration) {
+    return renderIllustratedStoryPage(page, pageNum, totalPages);
+  }
+
   const decor = SCENE_DECOR[page.scene] ?? "";
   const endingClass = page.isEnding ? " ending" : "";
   const label = page.isEnding ? "The End" : `Page ${pageNum} of ${totalPages}`;
@@ -100,7 +138,7 @@ function buildHtml(story, characterMap) {
   const storyPages = story.pages.length;
   const pages = [
     renderCoverPage(story, characterMap),
-    ...story.pages.map((page, i) => renderStoryPage(page, i + 1, storyPages, characterMap)),
+    ...story.pages.map((page, i) => renderStoryPage(page, i + 1, storyPages, characterMap, story)),
   ];
 
   return `<!DOCTYPE html>
