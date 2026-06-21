@@ -2,73 +2,40 @@
   "id": "04-missing-sock",
   "title": "Operation: Find Socks' Missing Sock",
   "subtitle": "The smallest mystery needs the biggest team",
-  "coverCharacters": ["bluey", "lia", "socks"],
+  "mode": "illustrated",
+  "coverIllustration": "storybooks/illustrations/04-missing-sock/cover.png",
   "pages": [
     {
-      "scene": "living-room",
-      "text": "Socks stood in the hallway with one bare foot. \"My sock!\" she wailed. \"It was here and now it's GONE!\" Bluey pulled on imaginary detective glasses. \"This is a case for Detective Bluey.\"",
-      "characters": [
-        { "id": "socks", "x": 25, "y": 48, "scale": 0.42 },
-        { "id": "bluey", "x": 62, "y": 42, "scale": 0.55 }
-      ]
+      "illustration": "storybooks/illustrations/04-missing-sock/page-01.png",
+      "text": "Socks stood in the hallway with one bare foot. \"My sock!\" she wailed. \"It was here and now it's GONE!\" Bluey pulled on imaginary detective glasses. \"This is a case for Detective Bluey.\""
     },
     {
-      "scene": "living-room",
-      "text": "Lia arrived with a notebook. \"Chief Clue Spotter reporting.\" Bingo found muddy footprints by the back door — tiny, wobbly, definitely Socks-shaped. Muffin pointed at the washing machine. \"Guilty!\" she declared.",
-      "characters": [
-        { "id": "lia", "x": 18, "y": 40, "scale": 0.58 },
-        { "id": "bingo", "x": 48, "y": 44, "scale": 0.5 },
-        { "id": "muffin", "x": 75, "y": 44, "scale": 0.45 }
-      ]
+      "illustration": "storybooks/illustrations/04-missing-sock/page-02.png",
+      "text": "Lia arrived with a notebook. \"Chief Clue Spotter reporting.\" Bingo found muddy footprints by the back door — tiny, wobbly, definitely Socks-shaped. Muffin pointed at the washing machine. \"Guilty!\" she declared."
     },
     {
-      "scene": "kitchen",
-      "text": "Bandit searched the fridge. \"Not in here. But I found last week's sandwich.\" Chilli raised an eyebrow. \"Leave that mystery for another day.\" They checked the toy box, the couch, and under Bandit's hat.",
-      "characters": [
-        { "id": "bandit", "x": 20, "y": 38, "scale": 0.52 },
-        { "id": "chilli", "x": 65, "y": 38, "scale": 0.52 }
-      ]
+      "illustration": "storybooks/illustrations/04-missing-sock/page-03.png",
+      "text": "Bandit searched the fridge. \"Not in here. But I found last week's sandwich.\" Chilli raised an eyebrow. \"Leave that mystery for another day.\" They checked the toy box, the couch, and under Bandit's hat."
     },
     {
-      "scene": "backyard-day",
-      "text": "Outside, Lia spotted a clue on the clothesline — one lonely striped sock, dancing in the breeze! \"Found it!\" she cheered. But Socks shook her head. \"Nope. That's my OTHER lonely sock.\"",
-      "characters": [
-        { "id": "lia", "x": 30, "y": 40, "scale": 0.58 },
-        { "id": "socks", "x": 65, "y": 48, "scale": 0.42 }
-      ]
+      "illustration": "storybooks/illustrations/04-missing-sock/page-04.png",
+      "text": "Outside, Lia spotted a clue on the clothesline — one lonely striped sock, dancing in the breeze! \"Found it!\" she cheered. But Socks shook her head. \"Nope. That's my OTHER lonely sock.\""
     },
     {
-      "scene": "backyard-day",
-      "text": "Bluey studied the trail. Mud to the sandpit. Sand to the slide. Slide to... the dog bed? They tiptoed closer. A soft snoring came from inside. Not Socks. Someone else.",
-      "characters": [
-        { "id": "bluey", "x": 22, "y": 42, "scale": 0.55 },
-        { "id": "bingo", "x": 55, "y": 44, "scale": 0.5 }
-      ]
+      "illustration": "storybooks/illustrations/04-missing-sock/page-05.png",
+      "text": "Bluey studied the trail. Mud to the sandpit. Sand to the slide. Slide to... the dog bed? They tiptoed closer. A soft snoring came from inside. Not Socks. Someone else."
     },
     {
-      "scene": "backyard-day",
-      "text": "It was Lucky the neighbour's cat, curled around the missing sock like a fluffy doughnut. Socks gasped. \"Kitty found it!\" Lucky opened one eye, unimpressed. Bandit offered a treat. Trade accepted.",
-      "characters": [
-        { "id": "socks", "x": 20, "y": 48, "scale": 0.42 },
-        { "id": "bandit", "x": 58, "y": 40, "scale": 0.52 }
-      ]
+      "illustration": "storybooks/illustrations/04-missing-sock/page-06.png",
+      "text": "It was Lucky the neighbour's cat, curled around the missing sock like a fluffy doughnut. Socks gasped. \"Kitty found it!\" Lucky opened one eye, unimpressed. Bandit offered a treat. Trade accepted."
     },
     {
-      "scene": "living-room",
-      "text": "Socks pulled on both socks and did a victory wiggle. Chilli smiled. \"I knew where it was all along.\" Everyone stared. \"I wanted you to solve it together,\" she winked.",
-      "characters": [
-        { "id": "socks", "x": 28, "y": 48, "scale": 0.42 },
-        { "id": "chilli", "x": 62, "y": 38, "scale": 0.52 }
-      ]
+      "illustration": "storybooks/illustrations/04-missing-sock/page-07.png",
+      "text": "Socks pulled on both socks and did a victory wiggle. Chilli smiled. \"I knew where it was all along.\" Everyone stared. \"I wanted you to solve it together,\" she winked."
     },
     {
-      "scene": "living-room",
+      "illustration": "storybooks/illustrations/04-missing-sock/page-08.png",
       "text": "THE END\n\nDetective badge for you: draw three places YOU would search for a lost sock. Don't forget the dog bed!",
-      "characters": [
-        { "id": "bluey", "x": 20, "y": 42, "scale": 0.55 },
-        { "id": "lia", "x": 48, "y": 40, "scale": 0.58 },
-        { "id": "socks", "x": 72, "y": 48, "scale": 0.42 }
-      ],
       "isEnding": true
     }
   ]
