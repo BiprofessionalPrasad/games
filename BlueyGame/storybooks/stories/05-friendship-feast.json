@@ -15,7 +15,7 @@
     },
     {
       "scene": "picnic",
-      "text": "Bandit arrived with sausages sizzling on a tray. \"Chef Dad on duty.\" Socks brought a single grape and ate it immediately. Lia walked up carefully carrying a small tin of warm frybread her mum had made.",
+      "text": "Bandit arrived with sausages sizzling on a tray. \"Chef Dad on duty.\" Socks brought a single grape and ate it immediately. Lia walked up carefully carrying a small tin of warm parathas her mum had made.",
       "characters": [
         { "id": "bandit", "x": 15, "y": 38, "scale": 0.52 },
         { "id": "lia", "x": 50, "y": 40, "scale": 0.58 },
@@ -24,7 +24,7 @@
     },
     {
       "scene": "picnic",
-      "text": "Lia placed the frybread in the centre. \"Before we eat, my family says thank you to the earth for growing the food and to the hands that made it.\" Everyone bowed their heads for a quiet moment.",
+      "text": "Lia placed the parathas in the centre. \"Before we eat, my family says a quiet thank-you — to the food, the cooks, and everyone who made the day.\" Everyone bowed their heads for a quiet moment.",
       "characters": [
         { "id": "lia", "x": 35, "y": 40, "scale": 0.58 },
         { "id": "bingo", "x": 68, "y": 44, "scale": 0.5 }
@@ -41,7 +41,7 @@
     },
     {
       "scene": "picnic",
-      "text": "Lia tore the frybread into pieces. \"Try it with honey,\" she said. Socks got honey on her nose. Bingo got honey on her ear. Bandit got honey on everything and called it success.",
+      "text": "Lia tore the parathas into pieces. \"Try it with mango pickle,\" she said. Socks got pickle on her nose. Bingo got pickle on her ear. Bandit got pickle on everything and called it success.",
       "characters": [
         { "id": "lia", "x": 28, "y": 40, "scale": 0.58 },
         { "id": "socks", "x": 58, "y": 48, "scale": 0.42 },

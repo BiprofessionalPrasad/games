@@ -33,7 +33,7 @@
     },
     {
       "scene": "night-sky",
-      "text": "Lia told a story her grandma shared: long ago, storytellers placed memories in the stars so families far apart could still look up and feel together. Bingo sighed happily. \"That's my favorite kind of story.\"",
+      "text": "Lia told a story her Nani shared from India: families who live oceans apart can still look at the same stars and feel close. Bingo sighed happily. \"That's my favorite kind of story.\"",
       "characters": [
         { "id": "lia", "x": 35, "y": 40, "scale": 0.58 },
         { "id": "bingo", "x": 68, "y": 44, "scale": 0.5 }
