@@ -54,6 +54,15 @@
       "width": 864,
       "height": 1152,
       "description": "Toddler blue heeler cousin — tiny, wobbly, endlessly curious."
+    },
+    {
+      "id": "lia",
+      "name": "Lia",
+      "role": "friend",
+      "file": "assets/characters/lia.png",
+      "width": 832,
+      "height": 1248,
+      "description": "7-year-old American Indian girl — warm smile, olive puffer jacket, loves backyard adventures."
     }
   ]
 }

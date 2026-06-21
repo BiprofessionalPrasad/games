@@ -52,6 +52,7 @@ try {
     [`${BASE}/testbench/`, 200],
     [`${BASE}/assets/characters/manifest.json`, 200],
     [`${BASE}/assets/characters/bluey.png`, 200],
+    [`${BASE}/assets/characters/lia.png`, 200],
   ];
 
   for (const [url, expected] of checks) {
