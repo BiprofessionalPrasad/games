@@ -1,4 +1,4 @@
-import { readFileSync, existsSync } from "node:fs";
+import { readFileSync, existsSync, statSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -6,6 +6,7 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const MANIFEST_PATH = join(ROOT, "assets", "characters", "manifest.json");
 const MIN_WIDTH = 512;
 const MIN_HEIGHT = 512;
+const MIN_BYTES = 10_000;
 
 function fail(message) {
   console.error(`FAIL: ${message}`);
@@ -44,6 +45,11 @@ for (const character of manifest.characters) {
   const assetPath = join(ROOT, character.file);
   if (!existsSync(assetPath)) {
     fail(`asset missing for '${character.id}': ${character.file}`);
+  }
+
+  const bytes = statSync(assetPath).size;
+  if (bytes < MIN_BYTES) {
+    fail(`${character.id} asset too small (${bytes} bytes)`);
   }
 
   if (character.width < MIN_WIDTH || character.height < MIN_HEIGHT) {
