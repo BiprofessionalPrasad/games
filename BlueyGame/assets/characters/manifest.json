@@ -63,6 +63,15 @@
       "width": 864,
       "height": 1152,
       "description": "7-year-old Indian American girl — parents from India, warm smile, olive puffer jacket, loves backyard adventures."
+    },
+    {
+      "id": "unicorn",
+      "name": "Stardust",
+      "role": "mythical",
+      "file": "assets/characters/unicorn.png",
+      "width": 864,
+      "height": 1152,
+      "description": "Gentle mythical unicorn — white coat, purple-pink rainbow mane, golden horn, appears on magical backyard parade days."
     }
   ]
 }
