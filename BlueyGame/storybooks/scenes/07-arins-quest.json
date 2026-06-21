@@ -1,0 +1,125 @@
+{
+  "id": "07-arins-quest",
+  "width": 768,
+  "height": 737,
+  "pages": [
+    {
+      "file": "cover.png",
+      "scene": "backyard-day",
+      "decor": "sun",
+      "characters": [
+        { "id": "arin", "x": 50, "y": 52, "scale": 0.62, "flip": false },
+        { "id": "lia", "x": 22, "y": 58, "scale": 0.5 },
+        { "id": "bluey", "x": 78, "y": 60, "scale": 0.48 }
+      ],
+      "props": [{ "type": "ipad", "x": 58, "y": 42 }]
+    },
+    {
+      "file": "page-01.png",
+      "scene": "backyard-day",
+      "decor": "sun",
+      "characters": [
+        { "id": "lia", "x": 28, "y": 55, "scale": 0.52 },
+        { "id": "arin", "x": 55, "y": 50, "scale": 0.58 },
+        { "id": "bluey", "x": 82, "y": 58, "scale": 0.46 }
+      ],
+      "props": [{ "type": "ipad", "x": 62, "y": 38 }]
+    },
+    {
+      "file": "page-02.png",
+      "scene": "backyard-day",
+      "characters": [
+        { "id": "arin", "x": 35, "y": 50, "scale": 0.58 },
+        { "id": "bluey", "x": 62, "y": 58, "scale": 0.48 },
+        { "id": "bingo", "x": 82, "y": 60, "scale": 0.44 },
+        { "id": "lia", "x": 18, "y": 58, "scale": 0.48 }
+      ],
+      "props": [{ "type": "ipad", "x": 42, "y": 32, "glow": true }]
+    },
+    {
+      "file": "page-03.png",
+      "scene": "backyard-day",
+      "decor": "sun",
+      "characters": [
+        { "id": "lia", "x": 20, "y": 56, "scale": 0.5 },
+        { "id": "bingo", "x": 45, "y": 60, "scale": 0.44 },
+        { "id": "socks", "x": 68, "y": 65, "scale": 0.38 },
+        { "id": "chilli", "x": 88, "y": 52, "scale": 0.46 }
+      ],
+      "props": [{ "type": "bucket", "x": 65, "y": 72 }]
+    },
+    {
+      "file": "page-04.png",
+      "scene": "living-room",
+      "characters": [
+        { "id": "bluey", "x": 42, "y": 55, "scale": 0.5, "rotate": -5 },
+        { "id": "bingo", "x": 22, "y": 58, "scale": 0.46 },
+        { "id": "lia", "x": 72, "y": 56, "scale": 0.48 },
+        { "id": "arin", "x": 88, "y": 48, "scale": 0.5 }
+      ],
+      "props": [{ "type": "lava", "x": 50, "y": 85 }]
+    },
+    {
+      "file": "page-05.png",
+      "scene": "backyard-day",
+      "characters": [
+        { "id": "bandit", "x": 15, "y": 55, "scale": 0.5 },
+        { "id": "muffin", "x": 35, "y": 58, "scale": 0.42 },
+        { "id": "bluey", "x": 55, "y": 56, "scale": 0.48 },
+        { "id": "arin", "x": 78, "y": 48, "scale": 0.52 }
+      ],
+      "props": [{ "type": "camera-flash", "x": 75, "y": 30 }]
+    },
+    {
+      "file": "page-06.png",
+      "scene": "backyard-day",
+      "characters": [
+        { "id": "arin", "x": 32, "y": 52, "scale": 0.55 },
+        { "id": "socks", "x": 58, "y": 62, "scale": 0.4 }
+      ],
+      "props": [{ "type": "hose-snake", "x": 55, "y": 78 }]
+    },
+    {
+      "file": "page-07.png",
+      "scene": "backyard-sunset",
+      "characters": [
+        { "id": "lia", "x": 38, "y": 54, "scale": 0.52 },
+        { "id": "arin", "x": 68, "y": 50, "scale": 0.56 }
+      ],
+      "props": [{ "type": "ipad", "x": 72, "y": 36, "glow": "gold" }]
+    },
+    {
+      "file": "page-08.png",
+      "scene": "backyard-day",
+      "characters": [
+        { "id": "muffin", "x": 28, "y": 58, "scale": 0.44 },
+        { "id": "arin", "x": 62, "y": 52, "scale": 0.56 }
+      ],
+      "props": [{ "type": "pool-noodle", "x": 48, "y": 45 }]
+    },
+    {
+      "file": "page-09.png",
+      "scene": "backyard-day",
+      "decor": "tree",
+      "characters": [
+        { "id": "bandit", "x": 12, "y": 54, "scale": 0.42 },
+        { "id": "bluey", "x": 28, "y": 58, "scale": 0.4 },
+        { "id": "bingo", "x": 40, "y": 60, "scale": 0.38 },
+        { "id": "lia", "x": 52, "y": 56, "scale": 0.4 },
+        { "id": "arin", "x": 64, "y": 52, "scale": 0.44 },
+        { "id": "chilli", "x": 76, "y": 54, "scale": 0.42 },
+        { "id": "muffin", "x": 86, "y": 58, "scale": 0.36 }
+      ]
+    },
+    {
+      "file": "page-10.png",
+      "scene": "backyard-sunset",
+      "characters": [
+        { "id": "arin", "x": 40, "y": 52, "scale": 0.58 },
+        { "id": "bluey", "x": 62, "y": 58, "scale": 0.48 },
+        { "id": "lia", "x": 82, "y": 56, "scale": 0.5 }
+      ],
+      "props": [{ "type": "ipad", "x": 35, "y": 38, "glow": true }]
+    }
+  ]
+}

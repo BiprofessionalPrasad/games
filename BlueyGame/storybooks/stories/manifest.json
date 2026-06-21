@@ -42,6 +42,13 @@
       "subtitle": "Everyone makes a mount. One is real.",
       "output": "storybooks/output/06-unicorn-parade.pdf",
       "file": "storybooks/stories/06-unicorn-parade.json"
+    },
+    {
+      "id": "07-arins-quest",
+      "title": "Arin's Backyard Quest",
+      "subtitle": "One iPad. Five levels. Everyone plays.",
+      "output": "storybooks/output/07-arins-quest.pdf",
+      "file": "storybooks/stories/07-arins-quest.json"
     }
   ]
 }

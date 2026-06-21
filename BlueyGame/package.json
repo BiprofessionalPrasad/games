@@ -7,7 +7,8 @@
   "scripts": {
     "test": "node scripts/validate-assets.mjs && node scripts/validate-testbench.mjs && node scripts/smoke-test-server.mjs && node scripts/validate-storybooks.mjs",
     "testbench": "node scripts/serve-testbench.mjs",
-    "build:storybooks": "node scripts/build-storybooks.mjs"
+    "build:storybooks": "node scripts/build-storybooks.mjs",
+    "compose:illustrations": "node scripts/compose-illustrations.mjs"
   },
   "devDependencies": {
     "puppeteer": "^24.0.0"

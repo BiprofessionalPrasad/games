@@ -1,0 +1,50 @@
+{
+  "id": "07-arins-quest",
+  "title": "Arin's Backyard Quest",
+  "subtitle": "One iPad. Five levels. Everyone plays.",
+  "mode": "illustrated",
+  "coverIllustration": "storybooks/illustrations/07-arins-quest/cover.png",
+  "pages": [
+    {
+      "illustration": "storybooks/illustrations/07-arins-quest/page-01.png",
+      "text": "Saturday morning. Lia bounced on the back steps. \"Bluey's here!\" Behind her came Arin — Lia's 12-year-old brother — in blue star pajamas, blue Ray-Ban glasses, and a grin. He hugged his blue-covered iPad like a treasure."
+    },
+    {
+      "illustration": "storybooks/illustrations/07-arins-quest/page-02.png",
+      "text": "\"I built something,\" Arin said, tapping the screen. \"Arin's Backyard Quest. Five levels. Real life, not just on the iPad.\" Bluey's ears shot up. Bingo whispered, \"Is it hard?\" Arin winked. \"Level one is easy.\""
+    },
+    {
+      "illustration": "storybooks/illustrations/07-arins-quest/page-03.png",
+      "text": "LEVEL 1: Find three blue things. Lia pointed at Arin's glasses. Bingo found the sky. Socks found a blue bucket and sat in it. \"That counts!\" laughed Chilli. Ding! The iPad chimed."
+    },
+    {
+      "illustration": "storybooks/illustrations/07-arins-quest/page-04.png",
+      "text": "LEVEL 2: Balance walk. The deck edge became a narrow bridge over pretend lava. Bluey concentrated. Bingo held her paw. Lia cheered. Arin filmed quietly, proud. Ding! Level complete."
+    },
+    {
+      "illustration": "storybooks/illustrations/07-arins-quest/page-05.png",
+      "text": "LEVEL 3: Silly squad photo. Everyone made the goofiest face they could. Bandit crossed his eyes. Muffin stuck out her tongue. Arin counted down on his iPad camera. \"Three, two, one — CHEESE!\""
+    },
+    {
+      "illustration": "storybooks/illustrations/07-arins-quest/page-06.png",
+      "text": "LEVEL 4: Help a teammate. Socks had to step over a garden hose \"snake.\" She wobbled. Arin knelt down — big brother mode. \"You've got this. One step.\" Socks stepped. Then two. Ding!"
+    },
+    {
+      "illustration": "storybooks/illustrations/07-arins-quest/page-07.png",
+      "text": "LEVEL 5: Say the code word. Lia thought hard. Arin hinted, \"Nani's word for brave heart.\" Lia smiled. \"Himmat!\" she said. The screen glowed gold. Ding-ding-ding! FINAL LEVEL UNLOCKED."
+    },
+    {
+      "illustration": "storybooks/illustrations/07-arins-quest/page-08.png",
+      "text": "Muffin tried to skip to the end. Arin blocked the path with a pool noodle. \"No skipping levels, cousin.\" Muffin huffed, then laughed. \"Fine. I'll beat level three again — even goofier.\""
+    },
+    {
+      "illustration": "storybooks/illustrations/07-arins-quest/page-09.png",
+      "text": "FINAL BOSS: The Gum Tree Hug. The whole team had to hug the gum tree together without letting go for ten seconds. Bandit counted. \"Seven… eight… nine… TEN!\" The iPad erupted: YOU WIN!"
+    },
+    {
+      "illustration": "storybooks/illustrations/07-arins-quest/page-10.png",
+      "text": "Arin high-fived everyone — even the iPad got a gentle tap. \"New high score,\" he said. Bluey asked, \"Can we play again tomorrow?\" Arin nodded. \"I'll build Quest Two tonight.\"\n\nTHE END\n\nInvent your own backyard level. What would Level 1 be?",
+      "isEnding": true
+    }
+  ]
+}
