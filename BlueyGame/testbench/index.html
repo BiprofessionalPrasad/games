@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bluey Game — Character Testbench</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="header">
+    <h1>Bluey Game Character Testbench</h1>
+    <p class="subtitle">HD character asset preview · zoom · metadata</p>
+  </header>
+
+  <section class="controls">
+    <label>
+      Zoom
+      <input type="range" id="zoomSlider" min="25" max="200" value="100">
+      <span id="zoomLabel">100%</span>
+    </label>
+    <label>
+      Background
+      <select id="bgSelect">
+        <option value="checker">Checker (alpha)</option>
+        <option value="sky">Sky blue</option>
+        <option value="grass">Grass green</option>
+        <option value="dark">Dark</option>
+      </select>
+    </label>
+    <button id="fitAllBtn" type="button">Fit all</button>
+  </section>
+
+  <main id="gallery" class="gallery" aria-live="polite"></main>
+
+  <footer class="footer">
+    <span id="status">Loading manifest…</span>
+  </footer>
+
+  <script src="testbench.js" type="module"></script>
+</body>
+</html>

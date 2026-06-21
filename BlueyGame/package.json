@@ -1,0 +1,11 @@
+{
+  "name": "bluey-game",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Bluey family game — character testbench and assets",
+  "type": "module",
+  "scripts": {
+    "test": "node scripts/validate-assets.mjs",
+    "testbench": "node scripts/serve-testbench.mjs"
+  }
+}
