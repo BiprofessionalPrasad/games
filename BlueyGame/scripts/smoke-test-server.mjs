@@ -54,6 +54,7 @@ try {
     [`${BASE}/assets/characters/bluey.png`, 200],
     [`${BASE}/assets/characters/lia.png`, 200],
     [`${BASE}/assets/characters/unicorn.png`, 200],
+    [`${BASE}/assets/characters/arin.png`, 200],
   ];
 
   for (const [url, expected] of checks) {

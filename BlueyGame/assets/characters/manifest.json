@@ -65,6 +65,15 @@
       "description": "7-year-old Indian American girl — parents from India, warm smile, olive puffer jacket, loves backyard adventures."
     },
     {
+      "id": "arin",
+      "name": "Arin",
+      "role": "friend",
+      "file": "assets/characters/arin.png",
+      "width": 864,
+      "height": 1152,
+      "description": "12-year-old Indian American boy — Lia's brother, parents from India, blue Ray-Ban glasses, cozy blue pajamas, loves his blue-covered iPad."
+    },
+    {
       "id": "unicorn",
       "name": "Stardust",
       "role": "mythical",
