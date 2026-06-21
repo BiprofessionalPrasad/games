@@ -178,8 +178,8 @@ async function testArtRainbow(page) {
 async function testArtMosaic(page) {
   if (!await openModule(page, 'module-art-mosaic')) return;
   const cells = await page.locator('.mosaic-cell').count();
-  if (cells !== 16) fail(`art-mosaic: expected 16 cells, got ${cells}`);
-  else pass('art-mosaic: 16 cells');
+  if (cells !== 25) fail(`art-mosaic: expected 25 cells, got ${cells}`);
+  else pass('art-mosaic: 25 cells');
   const empty = await page.locator('.mosaic-cell:not(.filled)').count();
   if (empty < 1) fail('art-mosaic: no empty cells');
   else pass(`art-mosaic: ${empty} empty cells`);
