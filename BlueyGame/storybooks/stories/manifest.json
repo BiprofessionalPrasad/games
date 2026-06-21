@@ -35,6 +35,13 @@
       "subtitle": "Everyone brings something. Together it's a feast",
       "output": "storybooks/output/05-friendship-feast.pdf",
       "file": "storybooks/stories/05-friendship-feast.json"
+    },
+    {
+      "id": "06-unicorn-parade",
+      "title": "The Unicorn Parade",
+      "subtitle": "Everyone makes a mount. One is real.",
+      "output": "storybooks/output/06-unicorn-parade.pdf",
+      "file": "storybooks/stories/06-unicorn-parade.json"
     }
   ]
 }
