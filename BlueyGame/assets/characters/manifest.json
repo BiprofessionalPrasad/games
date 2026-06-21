@@ -1,4 +1,59 @@
 {
   "version": 1,
-  "characters": []
+  "characters": [
+    {
+      "id": "bluey",
+      "name": "Bluey",
+      "role": "protagonist",
+      "file": "assets/characters/bluey.png",
+      "width": 864,
+      "height": 1152,
+      "description": "6-year-old blue heeler puppy — curious, playful, imaginative."
+    },
+    {
+      "id": "bingo",
+      "name": "Bingo",
+      "role": "sister",
+      "file": "assets/characters/bingo.png",
+      "width": 864,
+      "height": 1152,
+      "description": "4-year-old red heeler puppy — sweet, gentle, loves games."
+    },
+    {
+      "id": "bandit",
+      "name": "Bandit",
+      "role": "dad",
+      "file": "assets/characters/bandit.png",
+      "width": 864,
+      "height": 1152,
+      "description": "Adult blue heeler dad — playful, creative, loves family adventures."
+    },
+    {
+      "id": "chilli",
+      "name": "Chilli",
+      "role": "mum",
+      "file": "assets/characters/chilli.png",
+      "width": 864,
+      "height": 1152,
+      "description": "Adult red heeler mum — warm, patient, keeps the family grounded."
+    },
+    {
+      "id": "muffin",
+      "name": "Muffin",
+      "role": "cousin",
+      "file": "assets/characters/muffin.png",
+      "width": 864,
+      "height": 1152,
+      "description": "5-year-old white heeler cousin — spirited, sometimes stubborn."
+    },
+    {
+      "id": "socks",
+      "name": "Socks",
+      "role": "cousin",
+      "file": "assets/characters/socks.png",
+      "width": 864,
+      "height": 1152,
+      "description": "Toddler blue heeler cousin — tiny, wobbly, endlessly curious."
+    }
+  ]
 }
