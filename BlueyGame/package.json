@@ -5,7 +5,11 @@
   "description": "Bluey family game — character testbench and assets",
   "type": "module",
   "scripts": {
-    "test": "node scripts/validate-assets.mjs && node scripts/validate-testbench.mjs && node scripts/smoke-test-server.mjs",
-    "testbench": "node scripts/serve-testbench.mjs"
+    "test": "node scripts/validate-assets.mjs && node scripts/validate-testbench.mjs && node scripts/smoke-test-server.mjs && node scripts/validate-storybooks.mjs",
+    "testbench": "node scripts/serve-testbench.mjs",
+    "build:storybooks": "node scripts/build-storybooks.mjs"
+  },
+  "devDependencies": {
+    "puppeteer": "^24.0.0"
   }
 }

@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "stories": [
+    {
+      "id": "01-treasure-map",
+      "title": "Lia's Treasure Map in the Backyard",
+      "subtitle": "A rainy-day game turns into a real adventure",
+      "output": "storybooks/output/01-treasure-map.pdf",
+      "file": "storybooks/stories/01-treasure-map.json"
+    },
+    {
+      "id": "02-blanket-fort",
+      "title": "The Great Blanket Fort Kingdom",
+      "subtitle": "Build it big enough for everyone — or it falls apart",
+      "output": "storybooks/output/02-blanket-fort.pdf",
+      "file": "storybooks/stories/02-blanket-fort.json"
+    },
+    {
+      "id": "03-sleepout",
+      "title": "Stars, Stories, and the Sleepout",
+      "subtitle": "One night outside. Many stories above",
+      "output": "storybooks/output/03-sleepout.pdf",
+      "file": "storybooks/stories/03-sleepout.json"
+    },
+    {
+      "id": "04-missing-sock",
+      "title": "Operation: Find Socks' Missing Sock",
+      "subtitle": "The smallest mystery needs the biggest team",
+      "output": "storybooks/output/04-missing-sock.pdf",
+      "file": "storybooks/stories/04-missing-sock.json"
+    },
+    {
+      "id": "05-friendship-feast",
+      "title": "The Friendship Feast",
+      "subtitle": "Everyone brings something. Together it's a feast",
+      "output": "storybooks/output/05-friendship-feast.pdf",
+      "file": "storybooks/stories/05-friendship-feast.json"
+    }
+  ]
+}

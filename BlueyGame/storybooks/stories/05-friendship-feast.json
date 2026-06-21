@@ -1,0 +1,99 @@
+{
+  "id": "05-friendship-feast",
+  "title": "The Friendship Feast",
+  "subtitle": "Everyone brings something. Together it's a feast",
+  "coverCharacters": ["lia", "chilli", "bluey"],
+  "pages": [
+    {
+      "scene": "kitchen",
+      "text": "Chilli spread a checkered cloth on the grass. \"Friendship Feast rules,\" she announced. \"Everyone brings one thing to share.\" Bluey ran to pick berries. Bingo gathered her best drawings. Muffin grabbed crackers — mostly for Muffin.",
+      "characters": [
+        { "id": "chilli", "x": 20, "y": 38, "scale": 0.52 },
+        { "id": "bluey", "x": 55, "y": 42, "scale": 0.55 },
+        { "id": "muffin", "x": 78, "y": 44, "scale": 0.45 }
+      ]
+    },
+    {
+      "scene": "picnic",
+      "text": "Bandit arrived with sausages sizzling on a tray. \"Chef Dad on duty.\" Socks brought a single grape and ate it immediately. Lia walked up carefully carrying a small tin of warm frybread her mum had made.",
+      "characters": [
+        { "id": "bandit", "x": 15, "y": 38, "scale": 0.52 },
+        { "id": "lia", "x": 50, "y": 40, "scale": 0.58 },
+        { "id": "socks", "x": 78, "y": 48, "scale": 0.4 }
+      ]
+    },
+    {
+      "scene": "picnic",
+      "text": "Lia placed the frybread in the centre. \"Before we eat, my family says thank you to the earth for growing the food and to the hands that made it.\" Everyone bowed their heads for a quiet moment.",
+      "characters": [
+        { "id": "lia", "x": 35, "y": 40, "scale": 0.58 },
+        { "id": "bingo", "x": 68, "y": 44, "scale": 0.5 }
+      ]
+    },
+    {
+      "scene": "picnic",
+      "text": "Bluey shared berries. Bingo shared drawings of everyone at the table — even the magpie. Muffin shared crackers after Chilli gave her the look. Bandit shared sausages, one each, no favourites.",
+      "characters": [
+        { "id": "bluey", "x": 18, "y": 42, "scale": 0.55 },
+        { "id": "bingo", "x": 45, "y": 44, "scale": 0.5 },
+        { "id": "bandit", "x": 72, "y": 38, "scale": 0.52 }
+      ]
+    },
+    {
+      "scene": "picnic",
+      "text": "Lia tore the frybread into pieces. \"Try it with honey,\" she said. Socks got honey on her nose. Bingo got honey on her ear. Bandit got honey on everything and called it success.",
+      "characters": [
+        { "id": "lia", "x": 28, "y": 40, "scale": 0.58 },
+        { "id": "socks", "x": 58, "y": 48, "scale": 0.42 },
+        { "id": "bingo", "x": 78, "y": 44, "scale": 0.48 }
+      ]
+    },
+    {
+      "scene": "picnic",
+      "text": "A magpie landed near the sausages. \"Ah ah ah,\" Bandit warned. The magpie stole one anyway and flew off. \"CHASE!\" shouted Bluey. The whole family thundered across the yard, laughing.",
+      "characters": [
+        { "id": "bluey", "x": 20, "y": 42, "scale": 0.55 },
+        { "id": "bandit", "x": 48, "y": 40, "scale": 0.5 },
+        { "id": "muffin", "x": 75, "y": 44, "scale": 0.45 }
+      ]
+    },
+    {
+      "scene": "picnic",
+      "text": "They flopped on the grass, breathless and happy. Chilli poured juice. \"What did we learn?\" Bingo raised her paw. \"Sharing tastes better.\" Lia added, \"And saying thank you makes it sweeter.\"",
+      "characters": [
+        { "id": "bingo", "x": 22, "y": 44, "scale": 0.5 },
+        { "id": "lia", "x": 50, "y": 40, "scale": 0.58 },
+        { "id": "chilli", "x": 75, "y": 38, "scale": 0.52 }
+      ]
+    },
+    {
+      "scene": "backyard-sunset",
+      "text": "As the sun set, they packed up together. Socks found an extra sock in the basket — not hers, but she kept it anyway. Muffin hugged Lia. \"Best feast ever.\" Bluey agreed. \"Same again tomorrow?\"",
+      "characters": [
+        { "id": "socks", "x": 18, "y": 48, "scale": 0.4 },
+        { "id": "muffin", "x": 42, "y": 44, "scale": 0.45 },
+        { "id": "lia", "x": 68, "y": 40, "scale": 0.55 }
+      ]
+    },
+    {
+      "scene": "picnic",
+      "text": "Chilli wrote FRIENDSHIP FEAST on the calendar and circled it twice. Bandit drew a tiny magpie with a sausage hat. Everyone signed the napkin with paw prints and one very polite handprint from Lia.",
+      "characters": [
+        { "id": "chilli", "x": 25, "y": 38, "scale": 0.52 },
+        { "id": "bandit", "x": 55, "y": 40, "scale": 0.5 },
+        { "id": "lia", "x": 78, "y": 40, "scale": 0.55 }
+      ]
+    },
+    {
+      "scene": "picnic",
+      "text": "THE END\n\nPlan your own Friendship Feast! What one thing would you bring to share?",
+      "characters": [
+        { "id": "lia", "x": 20, "y": 40, "scale": 0.58 },
+        { "id": "bluey", "x": 45, "y": 42, "scale": 0.55 },
+        { "id": "bingo", "x": 68, "y": 44, "scale": 0.5 },
+        { "id": "chilli", "x": 82, "y": 38, "scale": 0.48 }
+      ],
+      "isEnding": true
+    }
+  ]
+}

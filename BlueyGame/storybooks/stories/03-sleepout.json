@@ -1,0 +1,97 @@
+{
+  "id": "03-sleepout",
+  "title": "Stars, Stories, and the Sleepout",
+  "subtitle": "One night outside. Many stories above",
+  "coverCharacters": ["lia", "bluey", "bandit"],
+  "pages": [
+    {
+      "scene": "backyard-sunset",
+      "text": "Bandit hammered the last tent peg. \"Operation Sleepout is GO!\" Bluey bounced in sleeping bags. Bingo arranged teddies in a neat row. Lia arrived with a star chart she had drawn on purple paper.",
+      "characters": [
+        { "id": "bandit", "x": 15, "y": 38, "scale": 0.52 },
+        { "id": "bluey", "x": 42, "y": 42, "scale": 0.55 },
+        { "id": "lia", "x": 70, "y": 40, "scale": 0.58 }
+      ]
+    },
+    {
+      "scene": "backyard-sunset",
+      "text": "Muffin claimed the loudest sleeping bag. Socks wore pajamas with feet. Chilli set out cocoa in thermoses. \"One story each,\" she said, \"then lights out.\" Bandit saluted with a marshmallow on a stick.",
+      "characters": [
+        { "id": "muffin", "x": 18, "y": 44, "scale": 0.45 },
+        { "id": "chilli", "x": 55, "y": 38, "scale": 0.52 },
+        { "id": "socks", "x": 78, "y": 48, "scale": 0.4 }
+      ]
+    },
+    {
+      "scene": "night-sky",
+      "text": "As the sky darkened, Lia pointed up. \"See that group of stars? Connect them like dots.\" Bluey saw a jumping kangaroo. Bingo saw a bunny. Bandit saw a barbecue spatula. \"Valid,\" said Chilli.",
+      "characters": [
+        { "id": "lia", "x": 25, "y": 40, "scale": 0.58 },
+        { "id": "bluey", "x": 55, "y": 42, "scale": 0.55 },
+        { "id": "bingo", "x": 78, "y": 44, "scale": 0.48 }
+      ]
+    },
+    {
+      "scene": "night-sky",
+      "text": "Lia told a story her grandma shared: long ago, storytellers placed memories in the stars so families far apart could still look up and feel together. Bingo sighed happily. \"That's my favorite kind of story.\"",
+      "characters": [
+        { "id": "lia", "x": 35, "y": 40, "scale": 0.58 },
+        { "id": "bingo", "x": 68, "y": 44, "scale": 0.5 }
+      ]
+    },
+    {
+      "scene": "night-sky",
+      "text": "Bluey's story had rocket ships, a dancing fridge, and a pigeon mayor. Muffin told a tale where she was Queen of Everything. Socks fell asleep before the second sentence. \"Still a classic,\" Bandit whispered.",
+      "characters": [
+        { "id": "bluey", "x": 20, "y": 42, "scale": 0.55 },
+        { "id": "muffin", "x": 50, "y": 44, "scale": 0.45 },
+        { "id": "socks", "x": 75, "y": 50, "scale": 0.38 }
+      ]
+    },
+    {
+      "scene": "night-sky",
+      "text": "Rustle-rustle in the bushes! Everyone froze. A possum nose peeked out, shiny and curious. \"Easy there, mate,\" Bandit said softly. They watched it waddle past, then burst into giggles of relief.",
+      "characters": [
+        { "id": "bandit", "x": 25, "y": 40, "scale": 0.52 },
+        { "id": "bluey", "x": 52, "y": 42, "scale": 0.52 },
+        { "id": "bingo", "x": 75, "y": 44, "scale": 0.48 }
+      ]
+    },
+    {
+      "scene": "night-sky",
+      "text": "Chilli poured the last of the cocoa. \"My story,\" she said, \"is that you are all my favorite constellation.\" Bluey and Bingo hugged her paws. Lia smiled. \"That one goes in the sky too.\"",
+      "characters": [
+        { "id": "chilli", "x": 30, "y": 38, "scale": 0.52 },
+        { "id": "lia", "x": 65, "y": 40, "scale": 0.55 }
+      ]
+    },
+    {
+      "scene": "night-sky",
+      "text": "One by one, eyelids grew heavy. Crickets sang a lullaby. The tent glowed faintly with torchlight. Above them, a million quiet stars kept watch.",
+      "characters": [
+        { "id": "bingo", "x": 22, "y": 46, "scale": 0.48 },
+        { "id": "bluey", "x": 48, "y": 44, "scale": 0.5 },
+        { "id": "lia", "x": 72, "y": 42, "scale": 0.55 }
+      ]
+    },
+    {
+      "scene": "backyard-day",
+      "text": "Morning birds woke them early. Socks was already eating toast. Bandit made pancakes shaped like stars. \"Same time next month?\" Bluey asked. Lia high-fived everyone. \"I'll bring another chart.\"",
+      "characters": [
+        { "id": "bluey", "x": 18, "y": 42, "scale": 0.55 },
+        { "id": "lia", "x": 45, "y": 40, "scale": 0.58 },
+        { "id": "bandit", "x": 72, "y": 38, "scale": 0.52 }
+      ]
+    },
+    {
+      "scene": "night-sky",
+      "text": "THE END\n\nLook up tonight. What shape do you see in the stars? Draw it and tell someone your story.",
+      "characters": [
+        { "id": "lia", "x": 25, "y": 40, "scale": 0.55 },
+        { "id": "bingo", "x": 55, "y": 44, "scale": 0.5 },
+        { "id": "bluey", "x": 78, "y": 42, "scale": 0.52 }
+      ],
+      "isEnding": true
+    }
+  ]
+}
