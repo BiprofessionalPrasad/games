@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barbie's Fashion Runway Challenge</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #ff69b4; /* Hot pink background */
+            font-family: 'Arial Rounded MT Bold', 'Comic Sans MS', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            user-select: none;
+        }
+
+        #game-container {
+            position: relative;
+            width: 400px;
+            height: 600px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            background: linear-gradient(#ffb6c1, #fff0f5);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        .screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 105, 180, 0.85);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white;
+            z-index: 10;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .screen h1 {
+            font-size: 32px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            margin-bottom: 10px;
+            line-height: 1.2;
+        }
+
+        .screen p {
+            font-size: 18px;
+            margin: 5px 0;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .emoji-row {
+            font-size: 35px;
+            margin: 15px 0;
+            letter-spacing: 5px;
+        }
+
+        button {
+            margin-top: 25px;
+            padding: 12px 30px;
+            font-size: 22px;
+            font-family: inherit;
+            font-weight: bold;
+            background-color: #fff;
+            color: #ff1493;
+            border: 3px solid #ff1493;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            transition: all 0.2s;
+        }
+
+        button:hover {
+            background-color: #ff1493;
+            color: #fff;
+            transform: scale(1.05);
+        }
+
+        button:active {
+            transform: scale(0.95);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        #hud {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            right: 15px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 22px;
+            font-weight: bold;
+            color: #ff1493;
+            z-index: 5;
+            pointer-events: none;
+            text-shadow: 1px 1px 0px #fff;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="game-container">
+        <canvas id="gameCanvas" width="400" height="600"></canvas>
+        
+        <!-- Heads Up Display -->
+        <div id="hud" class="hidden">
+            <span>Score: <span id="score">0</span></span>
+            <span>Time: <span id="time">30</span>s</span>
+        </div>
+
+        <!-- Start Screen -->
+        <div id="start-screen" class="screen">
+            <h1>Barbie's Fashion<br>Runway Challenge</h1>
+            <p>Help Barbie catch the falling fashion items!</p>
+            <div class="emoji-row">👠 👗 👑</div>
+            <p>Avoid the mud: 💩</p>
+            <p>Use <b>Arrow Keys</b> or <b>Mouse</b> to move.</p>
+            <button id="start-btn">Start Game</button>
+        </div>
+
+        <!-- Game Over Screen -->
+        <div id="game-over-screen" class="screen hidden">
+            <h1>Game Over!</h1>
+            <p>Time's up, fashionista!</p>
+            <p>Your Final Score: <span id="final-score">0</span></p>
+            <button id="restart-btn">Restart</button>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Game State Variables
+        let gameState = 'start'; // 'start', 'playing', 'gameover'
+        let score = 0;
+        let timeLeft = 30;
+        let lastTime = 0;
+        let spawnTimer = 0;
+        let spawnInterval = 0.8; // Seconds between spawns
+
+        // Basket Object
+        const basket = {
+            x: canvas.width / 2,
+            y: canvas.height - 50,
+            width: 60,
+            height: 50
+        };
+
+        // Falling Items Array
+        let items = [];
+        const keys = {};
+
+        // --- Event Listeners ---
+        window.addEventListener('keydown', (e) => {
+            // Prevent scrolling with arrow keys
+            if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(e.key)) {
+                e.preventDefault();
+            }
+            keys[e.key] = true;
+        });
+
+        window.addEventListener('keyup', (e) => {
+            keys[e.key] = false;
+        });
+
+        canvas.addEventListener('mousemove', (e) => {
+            if (gameState !== 'playing') return;
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const mouseX = (e.clientX - rect.left) * scaleX;
+            basket.x = mouseX;
+            clampBasket();
+        });
+
+        document.getElementById('start-btn').addEventListener('click', startGame);
+        document.getElementById('restart-btn').addEventListener('click', startGame);
+
+        // --- Core Functions ---
+        function clampBasket() {
+            if (basket.x < basket.width / 2) basket.x = basket.width / 2;
+            if (basket.x > canvas.width - basket.width / 2) basket.x = canvas.width - basket.width / 2;
+        }
+
+        function startGame() {
+            gameState = 'playing';
+            score = 0;
+            timeLeft = 30;
+            items = [];
+            spawnTimer = 0;
+            basket.x = canvas.width / 2;
+            
+            document.getElementById('start-screen').classList.add('hidden');
+            document.getElementById('game-over-screen').classList.add('hidden');
+            document.getElementById('hud').classList.remove('hidden');
+            
+            lastTime = performance.now();
+        }
+
+        function endGame() {
+            gameState = 'gameover';
+            document.getElementById('hud').classList.add('hidden');
+            document.getElementById('game-over-screen').classList.remove('hidden');
+            document.getElementById('final-score').innerText = score;
+        }
+
+        function spawnItem() {
+            const emojis = [
+                { char: '👠', type: 'good' },
+                { char: '👗', type: 'good' },
+                { char: '👑', type: 'good' },
+                { char: '💩', type: 'bad' }
+            ];
+            
+            let itemDef;
+            // 25% chance for bad mud, 75% chance for good fashion items
+            if (Math.random() < 0.25) {
+                itemDef = emojis[3]; 
+            } else {
+                itemDef = emojis[Math.floor(Math.random() * 3)]; 
+            }
+            
+            items.push({
+                x: Math.random() * (canvas.width - 40) + 20,
+                y: -30,
+                emoji: itemDef.char,
+                type: itemDef.type,
+                speed: 150 + Math.random() * 100, // Falls between 150px/s and 250px/s
+                size: 40
+            });
+        }
+
+        function update(dt) {
+            // Timer Logic
+            timeLeft -= dt;
+            if (timeLeft <= 0) {
+                timeLeft = 0;
+                endGame();
+                return;
+            }
+            
+            // Keyboard Movement
+            if (keys['ArrowLeft']) basket.x -= 400 * dt;
+            if (keys['ArrowRight']) basket.x += 400 * dt;
+            clampBasket();
+            
+            // Item Spawning
+            spawnTimer += dt;
+            if (spawnTimer >= spawnInterval) {
+                spawnTimer = 0;
+                spawnItem();
+            }
+            
+            // Items Update & Collision (Iterate backwards for safe splicing)
+            for (let i = items.length - 1; i >= 0; i--) {
+                let item = items[i];
+                item.y += item.speed * dt;
+                
+                // AABB Collision Detection with Basket
+                if (
+                    item.y + item.size / 2 > basket.y - basket.height / 2 &&
+                    item.y - item.size / 2 < basket.y + basket.height / 2 &&
+                    item.x + item.size / 2 > basket.x - basket.width / 2 &&
+                    item.x - item.size / 2 < basket.x + basket.width / 2
+                ) {
+                    if (item.type === 'good') {
+                        score += 10;
+                    } else {
+                        score -= 10;
+                        if (score < 0) score = 0; // Prevent negative score
+                    }
+                    items.splice(i, 1);
+                    continue;
+                }
+                
+                // Remove if it falls off the bottom of the screen
+                if (item.y > canvas.height + 30) {
+                    items.splice(i, 1);
+                }
+            }
+            
+            // Update HUD DOM
+            document.getElementById('score').innerText = score;
+            document.getElementById('time').innerText = Math.ceil(timeLeft);
+        }
+
+        function draw() {
+            // Draw Background Gradient
+            let grad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            grad.addColorStop(0, '#ffb6c1');
+            grad.addColorStop(1, '#fff0f5');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw Falling Items
+            ctx.font = '40px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            items.forEach(item => {
+                ctx.fillText(item.emoji, item.x, item.y);
+            });
+            
+            // Draw Basket (Using Emoji)
+            ctx.font = '50px Arial';
+            ctx.fillText('🧺', basket.x, basket.y);
+        }
+
+        // --- Game Loop ---
+        function loop(timestamp) {
+            if (!lastTime) lastTime = timestamp;
+            
+            // Calculate Delta Time (dt) and cap it to prevent huge jumps if tab is inactive
+            let dt = (timestamp - lastTime) / 1000;
+            if (dt > 0.1) dt = 0.1; 
+            lastTime = timestamp;
+            
+            if (gameState === 'playing') {
+                update(dt);
+                draw();
+            }
+            
+            requestAnimationFrame(loop);
+        }
+
+        // Initialize Game Loop
+        requestAnimationFrame(loop);
+    </script>
+</body>
+</html>
