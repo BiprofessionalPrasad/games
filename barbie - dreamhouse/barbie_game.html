@@ -1,0 +1,1566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Barbie's Magical City Simulator - Dream Sandbox Game</title>
+  <meta name="description" content="Welcome to Barbie's Magical City Simulator! Cook delicious soups in the kitchen, care for your pets at the stables, garden in the greenhouse, and build your dreamhouse.">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap');
+
+    :root {
+      --primary-pink: #ff6097;
+      --primary-pink-hover: #ff3c7f;
+      --pastel-pink: #ffe6ef;
+      --bg-gradient: linear-gradient(135deg, #fff0f5 0%, #ffd1df 100%);
+      --card-bg: rgba(255, 255, 255, 0.9);
+      --shadow: 0 8px 32px 0 rgba(255, 96, 151, 0.15);
+      --border-radius: 16px;
+      --border: 1px solid rgba(255, 255, 255, 0.5);
+      --text-dark: #4a2c3a;
+      --text-muted: #8c6a7a;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Outfit', sans-serif;
+      background: var(--bg-gradient);
+      background-attachment: fixed;
+      color: var(--text-dark);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Header & Nav */
+    header {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border-bottom: 2px solid rgba(255, 182, 193, 0.4);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+      padding: 0.8rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    h1 {
+      margin: 0;
+      font-weight: 800;
+      font-size: 1.4rem;
+      color: var(--primary-pink);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .stats-container {
+      display: flex;
+      gap: 1rem;
+      font-size: 1rem;
+      font-weight: 600;
+      flex-wrap: wrap;
+    }
+
+    .stat-badge {
+      background: var(--pastel-pink);
+      padding: 0.4rem 0.9rem;
+      border-radius: 30px;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      border: 1px solid rgba(255, 96, 151, 0.2);
+      box-shadow: 0 2px 8px rgba(255, 96, 151, 0.1);
+      transition: transform 0.2s;
+    }
+    .stat-badge:hover {
+      transform: scale(1.05);
+    }
+
+    .player-profile {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    .profile-avatar {
+      font-size: 1.4rem;
+      background: white;
+      padding: 0.2rem 0.5rem;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid var(--primary-pink);
+      box-shadow: 0 4px 10px rgba(255, 96, 151, 0.2);
+    }
+
+    .profile-name {
+      font-weight: 800;
+      color: var(--primary-pink);
+      font-size: 1.1rem;
+    }
+
+    /* City Nav Menu (tab switching) */
+    .city-nav {
+      display: flex;
+      justify-content: center;
+      gap: 0.8rem;
+      padding: 1rem;
+      background: rgba(255, 255, 255, 0.5);
+      border-bottom: 1px solid rgba(255, 182, 193, 0.2);
+      flex-wrap: wrap;
+    }
+
+    .nav-btn {
+      background: white;
+      border: 2px solid rgba(255, 96, 151, 0.3);
+      color: var(--text-dark);
+      font-family: 'Outfit', sans-serif;
+      font-weight: 600;
+      font-size: 1rem;
+      padding: 0.6rem 1.2rem;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    }
+
+    .nav-btn:hover {
+      transform: translateY(-2px);
+      border-color: var(--primary-pink);
+      background: var(--pastel-pink);
+      color: var(--primary-pink-hover);
+    }
+
+    .nav-btn.active {
+      background: var(--primary-pink);
+      color: white;
+      border-color: var(--primary-pink);
+      box-shadow: 0 8px 15px rgba(255, 96, 151, 0.3);
+    }
+
+    /* Tab Container and Screens */
+    .game-container {
+      flex: 1;
+      max-width: 900px;
+      width: 90%;
+      margin: 1.5rem auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .tab {
+      display: none;
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: var(--border-radius);
+      border: var(--border);
+      box-shadow: var(--shadow);
+      padding: 2rem;
+      animation: fadeIn 0.4s ease-out;
+    }
+
+    .tab.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h2 {
+      margin-top: 0;
+      color: var(--primary-pink);
+      font-weight: 800;
+      font-size: 1.8rem;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      border-bottom: 2px dashed rgba(255, 96, 151, 0.2);
+      padding-bottom: 0.8rem;
+      margin-bottom: 1.5rem;
+    }
+
+    /* Avatar Creator Screen styling */
+    .avatar-card {
+      max-width: 500px;
+      margin: 1rem auto;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 0.6rem;
+      color: var(--text-dark);
+    }
+
+    .option-chips {
+      display: flex;
+      gap: 0.8rem;
+      width: 100%;
+    }
+
+    .chip-btn {
+      flex: 1;
+      background: white;
+      border: 2px solid rgba(255, 96, 151, 0.2);
+      border-radius: 12px;
+      padding: 0.8rem;
+      font-size: 1.5rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.3rem;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    .chip-btn span.label-text {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .chip-btn:hover {
+      transform: translateY(-2px);
+      border-color: var(--primary-pink);
+      background: var(--pastel-pink);
+    }
+
+    .chip-btn.selected {
+      border-color: var(--primary-pink);
+      background: var(--primary-pink);
+      color: white;
+      box-shadow: 0 4px 15px rgba(255, 96, 151, 0.3);
+    }
+
+    .chip-btn.selected span.label-text {
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .text-input {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 0.8rem 1rem;
+      border-radius: 12px;
+      border: 2px solid rgba(255, 96, 151, 0.2);
+      font-family: 'Outfit', sans-serif;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .text-input:focus {
+      border-color: var(--primary-pink);
+      box-shadow: 0 0 0 3px rgba(255, 96, 151, 0.15);
+    }
+
+    .btn-primary {
+      width: 100%;
+      background: linear-gradient(135deg, #ff6097 0%, #ff8ebb 100%);
+      color: white;
+      border: none;
+      padding: 1rem;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 1.1rem;
+      border-radius: 12px;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(255, 96, 151, 0.3);
+      transition: all 0.3s;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(255, 96, 151, 0.4);
+    }
+
+    .btn-primary:disabled {
+      background: #ccc;
+      box-shadow: none;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* Dream Kitchen */
+    .kitchen-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+
+    @media(max-width: 768px) {
+      .kitchen-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .pantry-card, .pot-card {
+      background: rgba(255, 255, 255, 0.6);
+      border-radius: var(--border-radius);
+      border: 1px solid rgba(255, 182, 193, 0.3);
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .pantry-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.8rem;
+      width: 100%;
+    }
+
+    .ing-btn {
+      background: white;
+      border: 1px solid rgba(255, 96, 151, 0.15);
+      border-radius: 12px;
+      padding: 0.8rem;
+      font-size: 1.8rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.3rem;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+    }
+
+    .ing-btn:hover {
+      transform: translateY(-3px);
+      border-color: var(--primary-pink);
+      background: var(--pastel-pink);
+    }
+
+    .ing-name {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-dark);
+    }
+
+    .pot-container {
+      position: relative;
+      width: 200px;
+      height: 200px;
+      margin: 1.5rem 0;
+    }
+
+    .magic-pot {
+      width: 100%;
+      height: 100%;
+      font-size: 6.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+      filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.1));
+    }
+
+    .stirring {
+      animation: stir 2s infinite linear;
+    }
+
+    @keyframes stir {
+      0% { transform: rotate(0deg) scale(1); }
+      50% { transform: rotate(180deg) scale(1.05); }
+      100% { transform: rotate(360deg) scale(1); }
+    }
+
+    .pot-ingredients-list {
+      position: absolute;
+      top: 30%;
+      left: 15%;
+      width: 70%;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 4px;
+      font-size: 1.3rem;
+      pointer-events: none;
+    }
+
+    .progress-container {
+      width: 100%;
+      height: 10px;
+      background: rgba(0, 0, 0, 0.05);
+      border-radius: 5px;
+      overflow: hidden;
+      margin: 1rem 0;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--primary-pink);
+      transition: width 0.1s linear;
+    }
+
+    .pot-actions {
+      display: flex;
+      gap: 0.8rem;
+      width: 100%;
+    }
+
+    .btn-secondary {
+      flex: 1;
+      background: white;
+      border: 2px solid var(--primary-pink);
+      color: var(--primary-pink);
+      padding: 0.8rem;
+      border-radius: 12px;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-secondary:hover {
+      background: var(--pastel-pink);
+    }
+    .btn-secondary:disabled {
+      border-color: #ccc;
+      color: #ccc;
+      cursor: not-allowed;
+      background: transparent;
+    }
+
+    /* Stables Tab styling */
+    .stables-layout {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .pet-box {
+      background: white;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 182, 193, 0.3);
+      width: 200px;
+      height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 7.5rem;
+      box-shadow: var(--shadow);
+      position: relative;
+    }
+
+    .floating-pet {
+      animation: petBob 3s ease-in-out infinite;
+    }
+
+    @keyframes petBob {
+      0% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-12px) rotate(2deg); }
+      100% { transform: translateY(0px) rotate(0deg); }
+    }
+
+    .speech-bubble {
+      background: var(--pastel-pink);
+      border: 1px solid rgba(255, 96, 151, 0.2);
+      border-radius: 15px;
+      padding: 0.8rem 1.2rem;
+      position: relative;
+      max-width: 300px;
+      text-align: center;
+      font-weight: 600;
+      color: var(--text-dark);
+      box-shadow: 0 4px 12px rgba(255, 96, 151, 0.1);
+      min-height: 24px;
+    }
+
+    .speech-bubble::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-width: 10px 10px 0;
+      border-style: solid;
+      border-color: var(--pastel-pink) transparent;
+      display: block;
+      width: 0;
+    }
+
+    .affection-bar-container {
+      width: 300px;
+      background: rgba(0, 0, 0, 0.05);
+      border-radius: 10px;
+      height: 18px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 96, 151, 0.2);
+      margin: 0 auto;
+    }
+
+    .affection-bar {
+      background: linear-gradient(90deg, #ff8ebb 0%, #ff6097 100%);
+      height: 100%;
+      width: 0%;
+      transition: width 0.4s ease;
+    }
+
+    .stables-actions {
+      display: flex;
+      gap: 0.8rem;
+      width: 100%;
+      max-width: 500px;
+    }
+
+    .stables-btn {
+      flex: 1;
+      background: white;
+      border: 1px solid rgba(255, 96, 151, 0.2);
+      border-radius: 12px;
+      padding: 0.8rem;
+      font-size: 1.4rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.3rem;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.03);
+      font-family: 'Outfit', sans-serif;
+    }
+
+    .stables-btn:hover {
+      transform: translateY(-3px);
+      border-color: var(--primary-pink);
+      background: var(--pastel-pink);
+    }
+
+    .stables-btn span.btn-lbl {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text-dark);
+    }
+
+    /* Garden Tab styling */
+    .garden-layout {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .garden-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.2rem;
+      width: 100%;
+      max-width: 500px;
+    }
+
+    .patch {
+      background: #f5ddd1; /* Soft dirt color */
+      border: 2px dashed rgba(139, 87, 66, 0.3);
+      border-radius: var(--border-radius);
+      aspect-ratio: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+      box-shadow: inset 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .patch:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 16px rgba(139, 87, 66, 0.15);
+      border-color: rgba(139, 87, 66, 0.6);
+    }
+
+    .patch.growing {
+      background: #eef9ee;
+      border-color: rgba(76, 175, 80, 0.3);
+      border-style: solid;
+    }
+
+    .patch.mature {
+      background: #fff0f5;
+      border-color: var(--primary-pink);
+      border-style: solid;
+      animation: gentlePulse 2s infinite alternate;
+    }
+
+    @keyframes gentlePulse {
+      0% { transform: scale(1); box-shadow: 0 0 5px rgba(255, 96, 151, 0.2); }
+      100% { transform: scale(1.03); box-shadow: 0 0 15px rgba(255, 96, 151, 0.4); }
+    }
+
+    .patch-soil {
+      font-size: 2.2rem;
+    }
+
+    .patch-plant {
+      font-size: 2.5rem;
+    }
+
+    .sparkling {
+      animation: sparkle 1s infinite alternate;
+    }
+
+    @keyframes sparkle {
+      from { filter: drop-shadow(0 0 2px #fff) drop-shadow(0 0 4px var(--primary-pink)); }
+      to { filter: drop-shadow(0 0 4px #fff) drop-shadow(0 0 8px var(--primary-pink)) scale(1.1); }
+    }
+
+    .patch-label {
+      font-size: 0.8rem;
+      font-weight: 700;
+      margin-top: 0.4rem;
+    }
+
+    .patch-cost, .patch-reward {
+      font-size: 0.75rem;
+      font-weight: 800;
+      color: var(--text-muted);
+    }
+
+    .patch-reward {
+      color: #27ae60;
+    }
+
+    .patch-timer {
+      font-size: 0.8rem;
+      font-weight: bold;
+      color: #27ae60;
+    }
+
+    /* Dreamhouse Builder */
+    .builder-layout {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      gap: 2rem;
+      width: 100%;
+    }
+
+    @media(max-width: 768px) {
+      .builder-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .builder-palette {
+      background: rgba(255, 255, 255, 0.6);
+      border-radius: var(--border-radius);
+      border: 1px solid rgba(255, 182, 193, 0.3);
+      padding: 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .palette-item {
+      background: white;
+      border: 2px solid rgba(255, 96, 151, 0.15);
+      border-radius: 12px;
+      padding: 0.6rem 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .palette-item:hover {
+      transform: translateX(3px);
+      border-color: var(--primary-pink);
+      background: var(--pastel-pink);
+    }
+
+    .palette-item.selected {
+      border-color: var(--primary-pink);
+      background: var(--primary-pink);
+      color: white;
+      box-shadow: 0 4px 10px rgba(255, 96, 151, 0.2);
+    }
+
+    .palette-item.selected .item-cost {
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .item-visual {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 600;
+    }
+
+    .item-cost {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--primary-pink);
+    }
+
+    .build-grid-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .build-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.8rem;
+      max-width: 360px;
+      width: 100%;
+    }
+
+    .build-cell {
+      aspect-ratio: 1;
+      background: #fff;
+      border: 1px solid rgba(255, 96, 151, 0.15);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.2rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+      user-select: none;
+    }
+
+    .build-cell:hover {
+      transform: scale(1.05);
+      border-color: var(--primary-pink);
+      background: var(--pastel-pink);
+    }
+
+    /* Feedback panel and text */
+    .feedback-box {
+      background: #fff;
+      border-left: 5px solid var(--primary-pink);
+      border-radius: 8px;
+      padding: 0.8rem 1.2rem;
+      margin-top: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 600;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+      animation: slideIn 0.3s ease-out;
+    }
+
+    @keyframes slideIn {
+      from { transform: translateY(15px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    @keyframes bounceIn {
+      0% { transform: scale(0); opacity: 0; }
+      70% { transform: scale(1.2); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .hidden {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===================== NAVIGATION BAR ===================== -->
+  <header>
+    <h1>
+      <span>🏰</span>
+      <span>Barbie's Dreamworld</span>
+    </h1>
+    
+    <div id="statsNav" class="stats-container hidden">
+      <div class="stat-badge">⭐ Coins: <span id="coins">100</span></div>
+      <div class="stat-badge">💖 Joy: <span id="joy">0</span></div>
+      <div class="stat-badge" id="navLocation">📍 Location: Home</div>
+    </div>
+    
+    <div id="playerProfile" class="player-profile hidden">
+      <div id="profileAvatar" class="profile-avatar">💇‍♀️</div>
+      <div id="profileName" class="profile-name">Barbie</div>
+    </div>
+  </header>
+
+  <!-- ===================== CITY NAV BUTTONS ===================== -->
+  <div id="cityNav" class="city-nav hidden">
+    <button class="nav-btn active" data-tab="kitchen">🍲 Dream Kitchen</button>
+    <button class="nav-btn" data-tab="stables">🦄 Stables</button>
+    <button class="nav-btn" data-tab="garden">🌿 Greenhouse</button>
+    <button class="nav-btn" data-tab="builder">🏠 Dreamhouse Builder</button>
+  </div>
+
+  <div class="game-container">
+    
+    <!-- ===================== AVATAR CREATOR ===================== -->
+    <div id="avatarScreen" class="tab active">
+      <div class="avatar-card">
+        <h2 style="justify-content: center; border: none; margin-bottom: 2rem;">Create Your Barbie Character</h2>
+        
+        <div class="form-group">
+          <label>Choose a Hairstyle</label>
+          <div class="option-chips" data-group="hairstyle">
+            <button class="chip-btn selected" data-value="💇‍♀️">💇‍♀️ <span class="label-text">Short Pink</span></button>
+            <button class="chip-btn" data-value="👱‍♀️">👱‍♀️ <span class="label-text">Blonde Ponytail</span></button>
+            <button class="chip-btn" data-value="👸">👸 <span class="label-text">Tiara Crown</span></button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Choose a Dress Style</label>
+          <div class="option-chips" data-group="dress">
+            <button class="chip-btn selected" data-value="👘">👘 <span class="label-text">Kimono</span></button>
+            <button class="chip-btn" data-value="👗">👗 <span class="label-text">Ballgown</span></button>
+            <button class="chip-btn" data-value="👚">👚 <span class="label-text">Casual Shirt</span></button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Choose a Magical Companion</label>
+          <div class="option-chips" data-group="companion">
+            <button class="chip-btn selected" data-value="🦄">🦄 <span class="label-text">Unicorn</span></button>
+            <button class="chip-btn" data-value="🐎">🐎 <span class="label-text">Horse</span></button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="playerName">Your Character Name</label>
+          <input type="text" id="playerName" class="text-input" placeholder="Enter your name..." value="Barbie">
+        </div>
+
+        <button class="btn-primary" id="enterCityBtn">🌟 Enter Barbie City 🌟</button>
+      </div>
+    </div>
+
+    <!-- ===================== DREAM KITCHEN ===================== -->
+    <div id="kitchen" class="tab">
+      <h2>🍲 Dream Kitchen</h2>
+      <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Click ingredients to add them to the cooking pot. Cook up a magical soup to earn coins and joy! (Costs 10 ⭐ to cook, rewards 25 ⭐)</p>
+      
+      <div class="kitchen-layout">
+        <div class="pantry-card">
+          <h3 style="margin-top:0; color: var(--primary-pink); font-weight: 700; width:100%; border-bottom:1px solid rgba(255, 96, 151, 0.15); padding-bottom:0.5rem; text-align:center;">Pantry</h3>
+          <div class="pantry-grid">
+            <button class="ing-btn" data-ing="🥕">🥕 <span class="ing-name">Vegetable</span></button>
+            <button class="ing-btn" data-ing="🍅">🍅 <span class="ing-name">Tomato</span></button>
+            <button class="ing-btn" data-ing="🍄">🍄 <span class="ing-name">Mushroom</span></button>
+            <button class="ing-btn" data-ing="🧀">🧀 <span class="ing-name">Cheese</span></button>
+            <button class="ing-btn" data-ing="🥩">🥩 <span class="ing-name">Protein</span></button>
+          </div>
+        </div>
+        
+        <div class="pot-card">
+          <h3 style="margin-top:0; color: var(--primary-pink); font-weight: 700; width:100%; border-bottom:1px solid rgba(255, 96, 151, 0.15); padding-bottom:0.5rem; text-align:center;">Cooking Pot</h3>
+          <div class="pot-container">
+            <div id="magicPot" class="magic-pot">🍲</div>
+            <div id="potContents" class="pot-ingredients-list"></div>
+          </div>
+          
+          <div class="progress-container">
+            <div id="cookProgress" class="progress-bar-fill"></div>
+          </div>
+          
+          <div class="pot-actions">
+            <button class="btn-primary" id="cookBtn">✨ Cook Soup! ✨</button>
+            <button class="btn-secondary" id="emptyPotBtn">Empty Pot</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================== MAGICAL STABLES ===================== -->
+    <div id="stables" class="tab">
+      <h2>🏇 Magical Stables</h2>
+      <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Care for your companion! Feed them sweet apples, brush their silky mane, or ride through Barbie Valley together.</p>
+      
+      <div class="stables-layout">
+        <div class="pet-box">
+          <div id="stablesPetEmoji" class="floating-pet">🦄</div>
+        </div>
+        
+        <div id="speechBubble" class="speech-bubble">Hello there! Let's play! 💖</div>
+        
+        <div style="width: 100%; max-width: 300px; text-align: center;">
+          <div style="font-weight: 700; font-size: 0.9rem; margin-bottom: 0.3rem; color: var(--primary-pink);">Affection Level: <span id="affectionVal">0</span>%</div>
+          <div class="affection-bar-container">
+            <div id="affectionBar" class="affection-bar"></div>
+          </div>
+        </div>
+        
+        <div class="stables-actions">
+          <button class="stables-btn" data-act="feed">
+            <span>🍎</span>
+            <span class="btn-lbl">Feed Apple</span>
+            <span style="font-size:0.7rem; color:var(--text-muted);">Cost: 5 ⭐</span>
+          </button>
+          <button class="stables-btn" data-act="brush">
+            <span>🪮</span>
+            <span class="btn-lbl">Brush Mane</span>
+            <span style="font-size:0.7rem; color:var(--text-muted);">Free</span>
+          </button>
+          <button class="stables-btn" data-act="ride">
+            <span>🏞️</span>
+            <span class="btn-lbl">Go for Ride</span>
+            <span style="font-size:0.7rem; color:var(--text-muted);">+15 ⭐</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================== GREENHOUSE (GARDEN) ===================== -->
+    <div id="garden" class="tab">
+      <h2>🌿 Greenhouse</h2>
+      <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Click an empty soil patch to plant a seed for 5 ⭐. Let it grow, then click to harvest it for 15 ⭐ and joy!</p>
+      
+      <div class="garden-layout">
+        <div id="gardenGrid" class="garden-grid"></div>
+        <button class="btn-primary" id="harvestAll" style="max-width: 250px;">Harvest All Mature</button>
+      </div>
+    </div>
+
+    <!-- ===================== DREAMHOUSE BUILDER ===================== -->
+    <div id="builder" class="tab">
+      <h2>🏠 Dreamhouse Builder</h2>
+      <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Select an item from the furniture palette, then click on the grid cells to build your Dreamhouse. Click a placed item again to remove/refund it (50% refund!).</p>
+      
+      <div class="builder-layout">
+        <div class="builder-palette">
+          <h3 style="margin: 0 0 0.5rem 0; font-size: 1.1rem; color: var(--primary-pink); text-align: center; border-bottom: 1px solid rgba(255, 96, 151, 0.15); padding-bottom: 0.5rem;">Furniture Palette</h3>
+          
+          <div class="palette-item" data-item="🛋️" data-cost="10">
+            <div class="item-visual">🛋️ <span>Sofa</span></div>
+            <div class="item-cost">10 ⭐</div>
+          </div>
+          
+          <div class="palette-item" data-item="🛏️" data-cost="12">
+            <div class="item-visual">🛏️ <span>Bed</span></div>
+            <div class="item-cost">12 ⭐</div>
+          </div>
+          
+          <div class="palette-item" data-item="📺" data-cost="15">
+            <div class="item-visual">📺 <span>TV Set</span></div>
+            <div class="item-cost">15 ⭐</div>
+          </div>
+          
+          <div class="palette-item" data-item="🛁" data-cost="20">
+            <div class="item-visual">🛁 <span>Bathtub</span></div>
+            <div class="item-cost">20 ⭐</div>
+          </div>
+          
+          <div class="palette-item" data-item="🌸" data-cost="8">
+            <div class="item-visual">🌸 <span>Pink Plant</span></div>
+            <div class="item-cost">8 ⭐</div>
+          </div>
+          
+          <div class="palette-item" data-item="🪞" data-cost="14">
+            <div class="item-visual">🪞 <span>Magic Mirror</span></div>
+            <div class="item-cost">14 ⭐</div>
+          </div>
+        </div>
+        
+        <div class="build-grid-container">
+          <div id="buildGrid" class="build-grid"></div>
+          <div id="builderStatus" style="font-size:0.9rem; font-weight:600; color:var(--text-muted);">No furniture selected. Select one from the palette.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================== FEEDBACK BOX ===================== -->
+    <div id="feedbackPanel" class="feedback-box hidden"></div>
+
+  </div>
+
+  <script>
+    /* -------------------------------------------------------------
+       GLOBAL GAME STATE
+    ------------------------------------------------------------- */
+    const gameState = {
+      coins: 100,
+      joy: 0,
+      playerName: "Barbie",
+      avatar: {
+        hairstyle: "💇‍♀️",
+        dress: "👘",
+        companion: "🦄"
+      },
+      location: "home",
+      stables: {
+        companion: "🦄",
+        joyMeter: 0,
+        hasRidden: false
+      },
+      garden: {
+        patches: {
+          p0: { state: "empty", timer: null, secs: 0, flower: "" },
+          p1: { state: "empty", timer: null, secs: 0, flower: "" },
+          p2: { state: "empty", timer: null, secs: 0, flower: "" },
+          p3: { state: "empty", timer: null, secs: 0, flower: "" },
+          p4: { state: "empty", timer: null, secs: 0, flower: "" },
+          p5: { state: "empty", timer: null, secs: 0, flower: "" }
+        }
+      },
+      house: {
+        grid: {}
+      }
+    };
+
+    /* -------------------------------------------------------------
+       UTILITIES
+    ------------------------------------------------------------- */
+    function updateNav() {
+      document.getElementById("coins").textContent = gameState.coins;
+      document.getElementById("joy").textContent = gameState.joy;
+    }
+
+    function addCoins(amount) {
+      gameState.coins += amount;
+      updateNav();
+    }
+
+    function spendCoins(amount) {
+      if (gameState.coins >= amount) {
+        gameState.coins -= amount;
+        updateNav();
+        return true;
+      }
+      return false;
+    }
+
+    function addJoy(amount) {
+      gameState.joy += amount;
+      updateNav();
+    }
+
+    function showScreen(id) {
+      // Hide all tabs
+      document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+      
+      // Show specified tab
+      const target = document.getElementById(id);
+      if (target) {
+        target.classList.add("active");
+      }
+      
+      // Update location indicator
+      let locName = "Hub";
+      if (id === "kitchen") locName = "Dream Kitchen";
+      else if (id === "stables") locName = "Magical Stables";
+      else if (id === "garden") locName = "Greenhouse";
+      else if (id === "builder") locName = "Dreamhouse Builder";
+      else if (id === "avatarScreen") locName = "Avatar Creator";
+      
+      gameState.location = id;
+      document.getElementById("navLocation").textContent = `📍 Location: ${locName}`;
+    }
+
+    /* -------------------------------------------------------------
+       FEEDBACK SYSTEM
+    ------------------------------------------------------------- */
+    let feedbackTimer = null;
+    function showFeedback(message, type = "info") {
+      const panel = document.getElementById("feedbackPanel");
+      panel.textContent = message;
+      panel.className = "feedback-box";
+      
+      if (type === "warning") {
+        panel.style.borderLeftColor = "#f39c12";
+      } else if (type === "error") {
+        panel.style.borderLeftColor = "#e74c3c";
+      } else if (type === "success") {
+        panel.style.borderLeftColor = "#2ecc71";
+      } else {
+        panel.style.borderLeftColor = "var(--primary-pink)";
+      }
+      
+      panel.classList.remove("hidden");
+      
+      if (feedbackTimer) clearTimeout(feedbackTimer);
+      feedbackTimer = setTimeout(() => {
+        panel.classList.add("hidden");
+      }, 4000);
+    }
+
+    /* -------------------------------------------------------------
+       AVATAR CREATOR LOGIC
+    ------------------------------------------------------------- */
+    document.querySelectorAll(".option-chips").forEach(container => {
+      const group = container.dataset.group;
+      const buttons = container.querySelectorAll(".chip-btn");
+      
+      buttons.forEach(btn => {
+        btn.addEventListener("click", () => {
+          buttons.forEach(b => b.classList.remove("selected"));
+          btn.classList.add("selected");
+          gameState.avatar[group] = btn.dataset.value;
+        });
+      });
+    });
+
+    document.getElementById("enterCityBtn").addEventListener("click", () => {
+      const nameInput = document.getElementById("playerName").value.trim();
+      gameState.playerName = nameInput || "Barbie";
+      
+      // Setup nav items & details
+      document.getElementById("statsNav").classList.remove("hidden");
+      document.getElementById("playerProfile").classList.remove("hidden");
+      document.getElementById("cityNav").classList.remove("hidden");
+      
+      // Update profile display
+      document.getElementById("profileAvatar").textContent = gameState.avatar.hairstyle + gameState.avatar.dress;
+      document.getElementById("profileName").textContent = gameState.playerName;
+      
+      // Copy companion avatar
+      gameState.stables.companion = gameState.avatar.companion;
+      
+      // Render layout systems
+      renderPet();
+      renderGarden();
+      renderBuildGrid();
+      
+      // Switch screens
+      showScreen("kitchen");
+      updateNav();
+      
+      showFeedback(`Welcome to Barbie City, ${gameState.playerName}! ✨`, "success");
+    });
+
+    /* -------------------------------------------------------------
+       HUB NAVIGATION
+    ------------------------------------------------------------- */
+    document.querySelectorAll(".nav-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        
+        const tab = btn.dataset.tab;
+        showScreen(tab);
+      });
+    });
+
+    /* -------------------------------------------------------------
+       KITCHEN LOGIC
+    ------------------------------------------------------------- */
+    let potIngredients = [];
+
+    function updatePotDisplay() {
+      const display = document.getElementById("potContents");
+      display.innerHTML = "";
+      potIngredients.forEach(ing => {
+        const span = document.createElement("span");
+        span.textContent = ing;
+        span.style.animation = "bounceIn 0.3s ease-out";
+        display.appendChild(span);
+      });
+    }
+
+    document.querySelectorAll("#kitchen .ing-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        if (potIngredients.length >= 5) {
+          showFeedback("The cooking pot is full! Max 5 ingredients.", "warning");
+          return;
+        }
+        const ing = btn.dataset.ing;
+        potIngredients.push(ing);
+        updatePotDisplay();
+      });
+    });
+
+    document.getElementById("emptyPotBtn").addEventListener("click", () => {
+      potIngredients = [];
+      updatePotDisplay();
+      showFeedback("Emptied the cooking pot.");
+    });
+
+    document.getElementById("cookBtn").addEventListener("click", () => {
+      if (potIngredients.length === 0) {
+        showFeedback("Add ingredients from the pantry first!", "warning");
+        return;
+      }
+
+      if (gameState.coins < 10) {
+        showFeedback("Not enough coins! Cooking costs 10 ⭐.", "error");
+        return;
+      }
+
+      const pot = document.getElementById("magicPot");
+      const cookBtn = document.getElementById("cookBtn");
+      const emptyBtn = document.getElementById("emptyPotBtn");
+      const progress = document.getElementById("cookProgress");
+
+      cookBtn.disabled = true;
+      emptyBtn.disabled = true;
+      pot.classList.add("stirring");
+      showFeedback("Stirring and simmering your soup... 🪄");
+
+      let pct = 0;
+      progress.style.width = "0%";
+      const interval = setInterval(() => {
+        pct += 4;
+        progress.style.width = pct + "%";
+        if (pct >= 100) {
+          clearInterval(interval);
+          
+          pot.classList.remove("stirring");
+          cookBtn.disabled = false;
+          emptyBtn.disabled = false;
+          
+          // Double check funds just in case
+          if (spendCoins(10)) {
+            const title = potIngredients.join("") + " Soup";
+            addCoins(25);
+            addJoy(5);
+            showFeedback(`✨ Delicious! You cooked a magical ${title}! (+15 Coins, +5 Joy) ✨`, "success");
+          } else {
+            showFeedback("Cooking failed! Not enough coins.", "error");
+          }
+          
+          potIngredients = [];
+          updatePotDisplay();
+          progress.style.width = "0%";
+        }
+      }, 100);
+    });
+
+    /* -------------------------------------------------------------
+       STABLES LOGIC
+    ------------------------------------------------------------- */
+    function renderPet() {
+      document.getElementById("stablesPetEmoji").textContent = gameState.stables.companion;
+      document.getElementById("affectionVal").textContent = gameState.stables.joyMeter;
+      document.getElementById("affectionBar").style.width = gameState.stables.joyMeter + "%";
+    }
+
+    document.querySelectorAll(".stables-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const act = btn.dataset.act;
+        const pet = gameState.stables.companion;
+        const bubble = document.getElementById("speechBubble");
+        
+        if (act === "feed") {
+          if (gameState.coins < 5) {
+            showFeedback("Not enough coins to buy a magical apple! (Needs 5 ⭐)", "error");
+            return;
+          }
+          spendCoins(5);
+          
+          gameState.stables.joyMeter = Math.min(100, gameState.stables.joyMeter + 20);
+          addJoy(4);
+          renderPet();
+          
+          if (pet === "🦄") {
+            bubble.textContent = "*Crunch!* 🦄 Rainbow apples taste like stardust!";
+          } else {
+            bubble.textContent = "*Crunch!* 🐎 Yum! This sweet apple is delicious!";
+          }
+          showFeedback("Fed your pet an apple! (+4 Joy)", "success");
+          
+        } else if (act === "brush") {
+          gameState.stables.joyMeter = Math.min(100, gameState.stables.joyMeter + 10);
+          addJoy(2);
+          renderPet();
+          
+          if (pet === "🦄") {
+            bubble.textContent = "*Sparkle!* 🦄 My mane is super shiny now!";
+          } else {
+            bubble.textContent = "*Purr...* 🐎 That feels so soft and clean!";
+          }
+          showFeedback("Brushed your pet's mane! (+2 Joy)", "success");
+          
+        } else if (act === "ride") {
+          if (gameState.stables.joyMeter < 30) {
+            bubble.textContent = pet === "🦄" ? "*Shakes head* 🦄 I need more affection before we go for a ride!" : "*Stomps hoof* 🐎 Let's bond a bit more first!";
+            showFeedback("Need at least 30% affection to ride!", "warning");
+            return;
+          }
+          
+          if (gameState.stables.hasRidden) {
+            bubble.textContent = pet === "🦄" ? "*Yawn* 🦄 Let me rest a bit before our next ride." : "*Pants* 🐎 Let me catch my breath first.";
+            showFeedback("Your companion is resting. Cooldown in progress!", "warning");
+            return;
+          }
+          
+          // Perform ride
+          if (pet === "🦄") {
+            bubble.textContent = "*Zoom!* 🦄 We galloped across a rainbow highway!";
+          } else {
+            bubble.textContent = "*Gallop!* 🐎 We crossed the beautiful forest trail!";
+          }
+          
+          addCoins(15);
+          addJoy(8);
+          gameState.stables.joyMeter = Math.max(0, gameState.stables.joyMeter - 15); // tires pet out a bit
+          gameState.stables.hasRidden = true;
+          renderPet();
+          showFeedback("Went for a ride! (+15 Coins, +8 Joy)", "success");
+          
+          // Cooldown timer (15 seconds)
+          setTimeout(() => {
+            gameState.stables.hasRidden = false;
+            if (gameState.location === "stables") {
+              bubble.textContent = pet === "🦄" ? "🦄 Ready for another magical ride whenever you are!" : "🐎 I'm rested and ready to run again!";
+            }
+          }, 15000);
+        }
+      });
+    });
+
+    /* -------------------------------------------------------------
+       GARDEN LOGIC
+    ------------------------------------------------------------- */
+    function renderGarden() {
+      const grid = document.getElementById("gardenGrid");
+      grid.innerHTML = "";
+      
+      for (let id in gameState.garden.patches) {
+        const patchData = gameState.garden.patches[id];
+        const patch = document.createElement("div");
+        patch.className = `patch ${patchData.state}`;
+        patch.dataset.id = id;
+        
+        if (patchData.state === "empty") {
+          patch.innerHTML = `
+            <div class="patch-soil">🪴</div>
+            <div class="patch-label">Empty Patch</div>
+            <div class="patch-cost">Plant: 5 ⭐</div>
+          `;
+        } else if (patchData.state === "growing") {
+          patch.innerHTML = `
+            <div class="patch-plant" style="animation: petBob 1.5s ease-in-out infinite;">🌱</div>
+            <div class="patch-label">Growing</div>
+            <div class="patch-timer">⏳ ${patchData.secs}s</div>
+          `;
+        } else if (patchData.state === "mature") {
+          patch.innerHTML = `
+            <div class="patch-plant sparkling">${patchData.flower}</div>
+            <div class="patch-label" style="color:var(--primary-pink);">Ready!</div>
+            <div class="patch-reward">+15 ⭐</div>
+          `;
+        }
+        
+        patch.addEventListener("click", () => {
+          handlePatchClick(id);
+        });
+        
+        grid.appendChild(patch);
+      }
+    }
+
+    function handlePatchClick(id) {
+      const patchData = gameState.garden.patches[id];
+      
+      if (patchData.state === "empty") {
+        if (gameState.coins < 5) {
+          showFeedback("Not enough coins to plant a seed! (Costs 5 ⭐)", "error");
+          return;
+        }
+        
+        spendCoins(5);
+        patchData.state = "growing";
+        patchData.secs = 5;
+        
+        const flowers = ["🌹", "🌻", "🌸", "🌷", "🌺", "🌼"];
+        patchData.flower = flowers[Math.floor(Math.random() * flowers.length)];
+        
+        renderGarden();
+        showFeedback("Planted a seed! 🌱");
+        
+        patchData.timer = setInterval(() => {
+          patchData.secs--;
+          if (patchData.secs <= 0) {
+            clearInterval(patchData.timer);
+            patchData.timer = null;
+            patchData.state = "mature";
+          }
+          renderGarden();
+        }, 1000);
+        
+      } else if (patchData.state === "mature") {
+        addCoins(15);
+        addJoy(2);
+        
+        const harvestedFlower = patchData.flower;
+        patchData.state = "empty";
+        patchData.flower = "";
+        
+        renderGarden();
+        showFeedback(`Harvested a beautiful ${harvestedFlower}! (+15 Coins, +2 Joy)`, "success");
+        
+      } else if (patchData.state === "growing") {
+        showFeedback(`This seed is still growing! Wait ${patchData.secs}s... ⏳`);
+      }
+    }
+
+    document.getElementById("harvestAll").addEventListener("click", () => {
+      let harvestedCount = 0;
+      for (let id in gameState.garden.patches) {
+        const patchData = gameState.garden.patches[id];
+        if (patchData.state === "mature") {
+          addCoins(15);
+          addJoy(2);
+          patchData.state = "empty";
+          patchData.flower = "";
+          harvestedCount++;
+        }
+      }
+      
+      if (harvestedCount > 0) {
+        renderGarden();
+        showFeedback(`Harvested ${harvestedCount} mature flowers! 🌸`, "success");
+      } else {
+        showFeedback("No mature flowers to harvest.", "warning");
+      }
+    });
+
+    /* -------------------------------------------------------------
+       DREAMHOUSE BUILDER LOGIC
+    ------------------------------------------------------------- */
+    let selectedBuilderItem = null;
+    let selectedBuilderItemCost = 0;
+
+    document.querySelectorAll(".palette-item").forEach(item => {
+      item.addEventListener("click", () => {
+        // Toggle selected state
+        if (selectedBuilderItem === item.dataset.item) {
+          selectedBuilderItem = null;
+          selectedBuilderItemCost = 0;
+          item.classList.remove("selected");
+          document.getElementById("builderStatus").textContent = "No furniture selected. Select one from the palette.";
+        } else {
+          document.querySelectorAll(".palette-item").forEach(i => i.classList.remove("selected"));
+          selectedBuilderItem = item.dataset.item;
+          selectedBuilderItemCost = parseInt(item.dataset.cost);
+          item.classList.add("selected");
+          document.getElementById("builderStatus").textContent = `Selected: ${selectedBuilderItem} (Costs ${selectedBuilderItemCost} ⭐). Click on any grid cell to place it.`;
+        }
+      });
+    });
+
+    function renderBuildGrid() {
+      const grid = document.getElementById("buildGrid");
+      grid.innerHTML = "";
+      
+      for (let i = 0; i < 16; i++) {
+        const cell = document.createElement("div");
+        cell.className = "build-cell";
+        cell.dataset.pos = i;
+        
+        if (gameState.house.grid[i]) {
+          cell.textContent = gameState.house.grid[i];
+          cell.title = "Click to remove/replace";
+        } else {
+          cell.textContent = "";
+          cell.title = "Empty space";
+        }
+        
+        cell.addEventListener("click", () => {
+          handleCellClick(i);
+        });
+        
+        grid.appendChild(cell);
+      }
+    }
+
+    function handleCellClick(pos) {
+      const currentItem = gameState.house.grid[pos];
+      
+      if (currentItem) {
+        // Cell is already occupied
+        if (selectedBuilderItem === currentItem) {
+          // If placing the same item on it, treat it as a removal and refund 50%
+          let itemCost = 10;
+          const paletteEl = document.querySelector(`.palette-item[data-item="${currentItem}"]`);
+          if (paletteEl) {
+            itemCost = parseInt(paletteEl.dataset.cost);
+          }
+          const refund = Math.floor(itemCost / 2);
+          
+          addCoins(refund);
+          delete gameState.house.grid[pos];
+          renderBuildGrid();
+          showFeedback(`Removed ${currentItem} and refunded ${refund} Coins!`, "success");
+        } else if (selectedBuilderItem) {
+          // Replace it with another item (requires enough coins)
+          if (gameState.coins < selectedBuilderItemCost) {
+            showFeedback(`Not enough coins to buy this furniture! (${selectedBuilderItemCost} ⭐)`, "error");
+            return;
+          }
+          
+          // Get refund of current item
+          let oldCost = 10;
+          const paletteEl = document.querySelector(`.palette-item[data-item="${currentItem}"]`);
+          if (paletteEl) {
+            oldCost = parseInt(paletteEl.dataset.cost);
+          }
+          const refund = Math.floor(oldCost / 2);
+          
+          addCoins(refund);
+          spendCoins(selectedBuilderItemCost);
+          gameState.house.grid[pos] = selectedBuilderItem;
+          addJoy(2);
+          renderBuildGrid();
+          showFeedback(`Replaced ${currentItem} with ${selectedBuilderItem}! (+${refund} refund, -${selectedBuilderItemCost} cost)`, "success");
+        } else {
+          // No item selected, just remove and refund
+          let itemCost = 10;
+          const paletteEl = document.querySelector(`.palette-item[data-item="${currentItem}"]`);
+          if (paletteEl) {
+            itemCost = parseInt(paletteEl.dataset.cost);
+          }
+          const refund = Math.floor(itemCost / 2);
+          
+          addCoins(refund);
+          delete gameState.house.grid[pos];
+          renderBuildGrid();
+          showFeedback(`Removed ${currentItem} and refunded ${refund} Coins!`, "success");
+        }
+      } else {
+        // Cell is empty
+        if (!selectedBuilderItem) {
+          showFeedback("Select a piece of furniture from the palette first!", "warning");
+          return;
+        }
+        
+        if (gameState.coins < selectedBuilderItemCost) {
+          showFeedback(`Not enough coins! ${selectedBuilderItem} costs ${selectedBuilderItemCost} ⭐.`, "error");
+          return;
+        }
+        
+        spendCoins(selectedBuilderItemCost);
+        gameState.house.grid[pos] = selectedBuilderItem;
+        addJoy(3);
+        renderBuildGrid();
+        showFeedback(`Placed ${selectedBuilderItem}! (-${selectedBuilderItemCost} Coins, +3 Joy)`, "success");
+      }
+    }
+
+    /* -------------------------------------------------------------
+       INITIALIZATION
+    ------------------------------------------------------------- */
+    showScreen("avatarScreen");
+  </script>
+</body>
+</html>
